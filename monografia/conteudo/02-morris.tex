@@ -3,7 +3,12 @@
 
 \section{Problema}
 
-Descrever o problema \dots
+O problema de contagem aproximada foi abordado pela primeira vez por Robert  Morris (Morris, 1978). 
+Neste artigo, o autor descreve a tentativa de se contar eventos cujas frequências podiam chegar até 130.000, mas só usando contadores de 8 bits.
+
+Um registrador de n bits pode guardar valores até $2^n-1$. Dessa forma, em uma máquina que possui registradores de 8 bits, pode-se contar até 255.
+Assim, o autor não conseguia manter as frequências exatas dos eventos devido à limitação de máquina. 
+Contudo, ele podia armazenar contagens aproximadas.
 
 \section{Ideias}
 
