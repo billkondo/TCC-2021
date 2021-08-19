@@ -1,7 +1,7 @@
 \chapter{Contagem aproximada}
 \label{chap:morris}
 
-\section{Problema}
+\section{O Problema}
 
 O problema de contagem aproximada foi abordado pela primeira vez por Robert  Morris (Morris, 1978). 
 Neste artigo, o autor descreve a tentativa de se contar eventos cujas frequências podiam chegar até 130.000, mas só usando contadores de 8 bits.
@@ -10,9 +10,18 @@ Um registrador de n bits pode guardar valores até $2^n-1$. Dessa forma, em uma 
 Assim, o autor não conseguia manter as frequências exatas dos eventos devido à limitação de máquina. 
 Contudo, ele podia armazenar contagens aproximadas.
 
-\section{Ideias}
+\section{Ideias para solução}
 
-Apresentar ideias para atacar o problema \dots
+Para se manter um contador exato até $n$, precisa-se de $\log_2 n$ bits. Para se conseguir contar até $n$ usando menos bits, 
+deve-se abrir mão da exatidão da contagem. 
+
+Uma das primeiras ideias é manter no contador o valor de $\log_2 n$ e assim, utilizar $\log_2 \log_2 n$ bits de memória. 
+A estimativa da contagem seria $2^x$, em que, $x$ é o valor armazenado no contador.
+
+Outra ideia é como deve ser feita o incremento desse contador. 
+A solução proposta por Morris é aumentar o contador com base em um método probabilístico. 
+
+
 
 \section{Pseudocódigo}
 
