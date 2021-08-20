@@ -1,32 +1,56 @@
 \chapter{Contagem aproximada}
 \label{chap:morris}
 
+
 \section{O Problema}
 
-O problema de contagem aproximada foi abordado pela primeira vez por Robert  Morris (Morris, 1978). 
+O problema de contagem aproximada consiste em contar um grande número de eventos usando pouca memória.  
+Esse problema foi abordado pela primeira vez por Robert  Morris (Morris, 1978). 
 Neste artigo, o autor descreve a tentativa de se contar eventos cujas frequências podiam chegar até 130.000, mas só usando contadores de 8 bits.
 
 Um registrador de n bits pode guardar valores até $2^n-1$. Dessa forma, em uma máquina que possui registradores de 8 bits, pode-se contar até 255.
 Assim, o autor não conseguia manter as frequências exatas dos eventos devido à limitação de máquina. 
 Contudo, ele podia armazenar contagens aproximadas.
 
+
 \section{Ideias para solução}
 
-Para se manter um contador exato até $n$, precisa-se de $\log_2 n$ bits. Para se conseguir contar até $n$ usando menos bits, 
+Para se manter um contador exato até $n$, precisa-se de $O(\log n)$ bits. Para se conseguir contar até $n$ usando menos bits, 
 deve-se abrir mão da exatidão da contagem. 
 
-Uma das primeiras ideias é manter no contador o valor de $\log_2 n$ e assim, utilizar $\log_2 \log_2 n$ bits de memória. 
+Uma das primeiras ideias é manter no contador o valor de $\log_2 n$ e assim, utilizar $O(\log \log n)$ bits de memória. 
 A estimativa da contagem seria $2^x$, em que, $x$ é o valor armazenado no contador.
 
 Outra ideia é como deve ser feita o incremento desse contador. 
-A solução proposta por Morris é aumentar o contador com base em um método probabilístico. 
-
+A solução proposta por Morris é aumentar o contador com base em um método probabilístico, como pode ser visto no Programa \ref{prog:morris}. 
 
 
 \section{Pseudocódigo}
 
-Escrever pseudocódigo \dots
+\begin{programruledcaption}{Contagem aproximada: algoritmo de Morris\label{prog:morris}}
+  \begin{lstlisting}[
+    language={[brazilian]pseudocode},
+    style=pseudocode,
+    style=wider,
+    functions={},
+    specialidentifiers={},
+  ]
+      funcao Morris(M)  // Estima o tamanho de um conjunto de dados M
+        X := 0  // Inicia o contador que guarda o logarítmo na base 2 do tamanho do conjunto M
+        para cada dado do conjunto M faça
+          para i de 0 até X faça
+            jogue uma moeda 
+          fim
 
-\section{Prova}
+          se todas as jogadas forem cara faça
+            X := X + 1
+          fim
+        fim
+      devolva $2^X - 1$
+      fim
+  \end{lstlisting}
+\end{programruledcaption}
+
+\section{Erro cometido}
 
 Escrever a prova do algorimo \dots
