@@ -27,6 +27,15 @@ A solução proposta por Morris é aumentar o contador com base em um método pr
 
 \section{Pseudocódigo}
 
+Morris propôs originalmente manter um contador $X$ que poderia ser aumentado com probabilidade $2^{-X}$ a cada novo item que precisasse ser contado.
+Assim, a estimativa do total de itens seria $2^{X} - 1$, sendo que o $-1$ é para que essa aproximação funcione para quando não há itens, ou seja, $X = 0$.
+
+No entanto, o pseudocódigo abaixo é também baseado em uma ideia da seção \textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm} (~\cite{ApproximateCountingAlgorithm}), 
+em que, é exposta a noção de expressar a condição de incremento do contador como um experimento de lançamento de moedas. 
+Se um novo item precisa ser contado e o contador guarda o valor $X$, então será feito o lançamento de $X$ moedas. Se todas as moedas forem cara, então o contadador é incrementado.
+E a probabilidade deste evento ocorrer é $2^{-X}$. 
+
+Segue o pseudocódigo:
 \begin{programruledcaption}{Contagem aproximada: algoritmo de Morris\label{prog:morris}}
   \begin{lstlisting}[
     language={[brazilian]pseudocode},
@@ -38,11 +47,9 @@ A solução proposta por Morris é aumentar o contador com base em um método pr
       funcao Morris(M)  // Estima o tamanho de um conjunto de dados M
         X := 0  // Inicia o contador que guarda o logarítmo na base 2 do tamanho do conjunto M
         para cada dado do conjunto M faça
-          para i de 0 até X faça
-            jogue uma moeda 
-          fim
+          jogue uma moeda X vezes
 
-          se todas as jogadas forem cara faça
+          se X = 0 ou todas as jogadas forem cara faça
             X := X + 1
           fim
         fim
@@ -51,6 +58,44 @@ A solução proposta por Morris é aumentar o contador com base em um método pr
   \end{lstlisting}
 \end{programruledcaption}
 
-\section{Erro cometido}
+\section{Análise do Algoritmo}
 
-Escrever a prova do algorimo \dots
+Esta seção busca esclarecer o quanto a estimativa do Programa \ref{prog:morris} se distância do tamanho real do conjunto estimado.
+Considere que $X_n$ é a saída deste programa para uma entrada de tamanho $n$.
+
+\begin{lemma}
+A estimativa do Programa \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E}[2^{X_n} - 1] = n$.
+\end{lemma}
+
+\begin{proof}
+A prova será por indução em $n$. 
+
+\textbf{Caso base:} Para $n = 0$, $X_n$ = 0. Logo, $\mathbb{E}[2^0 - 1] = 0$
+
+\textbf{Passo indutivo:} Suponha que $n > 0$ e que $\mathbb{E}[2^{X_{n-1}} - 1] = n-1$.
+
+\begin{align*}
+  \mathbb{E}[2^{X_n} - 1] &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ \mathbb{E}[2^{X_n} - 1 | X_{n-1} = x] \\
+                          &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ ((2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x})) \\
+                          &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ 2^x \\
+                          &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ (2^x - 1) + \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \\
+                          &= \mathbb{E}[2^{X_n-1} - 1] + 1 \\
+                          &= n - 1 + 1 \\
+                          &= n
+\end{align*}
+
+Serão feitos alguns comentários sobre a equação acima. Primeiro, por se tratar de uma prova por indução em $n$, é interessante tentar escrever 
+$\mathbb{E}[2^{X_n} - 1]$ em função de $\mathbb{E}[2^{X_n-1} - 1]$. Portanto, aplica-se a definição de valor esperado e escreve-se $\mathbb{E}[2^{X_n} - 1]$
+em função de $X_{n-1}$, de modo que $\mathbb{E}[2^{X_n} - 1] = \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ \mathbb{E}[2^{X_n} - 1 | X_{n-1} = x]$ . 
+
+Para calcular $\mathbb{E}[2^{X_n} - 1]$ dado que $X_{n-1} = x$, basta considerar dois casos: 
+\begin{itemize}
+  \item o contador é aumentado com probabilidade $2^{-x}$ e a nova estimativa de $n$ é $2^{x+1} - 1$.
+  \item o contador não é aumentado com probabilidade $1 - 2^{-x}$ e a estimativa de $n$ permanece como $2^{x} - 1$.
+\end{itemize}
+
+Assim, $\mathbb{E}[2^{X_n} - 1 | X_{n-1} = x] = (2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x})$. 
+A partir deste ponto, basta manipular as contas para concluir que $\mathbb{E}[2^{X_n} - 1] = n$.
+
+\end{proof}
+
