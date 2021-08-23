@@ -28,7 +28,7 @@ A solução proposta por Morris é aumentar o contador com base em um método pr
 \section{Pseudocódigo}
 
 Morris propôs originalmente manter um contador $X$ que poderia ser aumentado com probabilidade $2^{-X}$ a cada novo item que precisasse ser contado.
-Assim, a estimativa do total de itens seria $2^{X} - 1$, sendo que o $-1$ é para que essa aproximação funcione para quando não há itens, ou seja, $X = 0$.
+Assim, a estimativa do total de itens seria $2^{X} - 1$, sendo que o $-1$ é para que essa aproximação funcionasse quando não houvessem itens.
 
 No entanto, o pseudocódigo abaixo é também baseado em uma ideia da seção \textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm} (~\cite{ApproximateCountingAlgorithm}), 
 em que, é exposta a noção de expressar a condição de incremento do contador como um experimento de lançamento de moedas. 
@@ -60,7 +60,8 @@ Segue o pseudocódigo:
 
 \section{Análise do Algoritmo}
 
-Esta seção busca esclarecer o quanto a estimativa do Programa \ref{prog:morris} se distância do tamanho real do conjunto estimado.
+Esta seção busca esclarecer o quanto a estimativa do Programa \ref{prog:morris} se distância do tamanho real do conjunto estimado, e as provas
+serão baseadas nas notas de aula de \citep{LectureNotesAndoni}.
 Considere que $X_n$ é a saída deste programa para uma entrada de tamanho $n$.
 
 \begin{lemma}
@@ -75,27 +76,58 @@ A prova será por indução em $n$.
 \textbf{Passo indutivo:} Suponha que $n > 0$ e que $\mathbb{E}[2^{X_{n-1}} - 1] = n-1$.
 
 \begin{align*}
-  \mathbb{E}[2^{X_n} - 1] &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ \mathbb{E}[2^{X_n} - 1 | X_{n-1} = x] \\
-                          &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ ((2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x})) \\
-                          &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ 2^x \\
-                          &= \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ (2^x - 1) + \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \\
-                          &= \mathbb{E}[2^{X_n-1} - 1] + 1 \\
-                          &= n - 1 + 1 \\
-                          &= n
+  \mathbb{E}[2^{X_n} - 1] 
+    &= \sum_{x} \mathbb{P} (X_{n-1} = x) \mathbb{E}[2^{X_n} - 1 | X_{n-1} = x] \\
+    &= \sum_{x} \mathbb{P} (X_{n-1} = x) \Big[ (2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x}) \Big] \\
+    &= \sum_{x} \mathbb{P} (X_{n-1} = x) 2^x \\
+    &= \sum_{x} \mathbb{P} (X_{n-1} = x) (2^x - 1) + \sum_{x} \mathbb{P} (X_{n-1} = x) \\
+    &= \mathbb{E}[2^{X_n-1} - 1] + 1 \\
+    &= n - 1 + 1 \\
+    &= n
 \end{align*}
 
-Serão feitos alguns comentários sobre a equação acima. Primeiro, por se tratar de uma prova por indução em $n$, é interessante tentar escrever 
-$\mathbb{E}[2^{X_n} - 1]$ em função de $\mathbb{E}[2^{X_n-1} - 1]$. Portanto, aplica-se a definição de valor esperado e escreve-se $\mathbb{E}[2^{X_n} - 1]$
-em função de $X_{n-1}$, de modo que $\mathbb{E}[2^{X_n} - 1] = \sum_{x = 0} \mathbb{P} (X_{n-1} = x) \ \mathbb{E}[2^{X_n} - 1 | X_{n-1} = x]$ . 
+\end{proof}
 
-Para calcular $\mathbb{E}[2^{X_n} - 1]$ dado que $X_{n-1} = x$, basta considerar dois casos: 
-\begin{itemize}
-  \item o contador é aumentado com probabilidade $2^{-x}$ e a nova estimativa de $n$ é $2^{x+1} - 1$.
-  \item o contador não é aumentado com probabilidade $1 - 2^{-x}$ e a estimativa de $n$ permanece como $2^{x} - 1$.
-\end{itemize}
+\begin{lemma}
+$\mathbb{V}[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$
+\end{lemma}
 
-Assim, $\mathbb{E}[2^{X_n} - 1 | X_{n-1} = x] = (2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x})$. 
-A partir deste ponto, basta manipular as contas para concluir que $\mathbb{E}[2^{X_n} - 1] = n$.
+\begin{proof}
+Primeiro, aplica-se a definição de variância em $\mathbb{V}[2^{X_n} - 1]$, de modo que:
+\begin{align*}
+  \mathbb{V}[2^{X_n} - 1] 
+    &= \mathbb{E}[(2^{X_n} - 1) ^ 2] - \mathbb{E}[X_n]^2  \\
+    &= \mathbb{E}[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
+    &= \mathbb{E}[2^{2X_n}] -2 \mathbb{E} [2^{X_n}] + 1 - n^2 \\
+    &\leq \mathbb{E}[2^{2X_n}]
+\end{align*}
+
+Agora, precisa-se calcular $\mathbb{E}[2^{2X_n}]$:
+
+\begin{align*}
+  \mathbb{E}[2^{2X_n}]  
+    &=  \sum_{x} 2^{2x} \mathbb{P}(X_n = x) \\
+    &=  \sum_{x} 2^{2x} \Big[ 2^{-(x-1)} \mathbb{P}(X_{n-1} = x-1) + (1 - 2^{-x}) \mathbb{P}(X_{n-1} = x) \Big] \\
+    &=  \sum_{x} 2^{x+1} \mathbb{P}(X_{n-1} = x-1) + \sum_{x} 2^{2x} \mathbb{P}(X_{n-1} = x) - \sum_{x} 2^{x} \mathbb{P}(X_{n-1} = x) \\
+    &=  \sum_{x} 4 \ 2^{x-1} \mathbb{P}(X_{n-1} = x-1) + \sum_{x} 2^{2x} \mathbb{P}(X_{n-1} = x) - \sum_{x} 2^{x} \mathbb{P}(X_{n-1} = x)  \\
+    &=  4 \mathbb{E}[2^{X_{n-1}}] + \mathbb{E}[2^{2X_{n-1}}] - \mathbb{E}[2^{X_{n-1}}]  \\
+    &=  3 \mathbb{E}[2^{X_{n-1}}] + \mathbb{E}[2^{2X_{n-1}}]  \\
+    &=  3 n + \mathbb{E}[2^{2X_{n-1}}]  \\
+\end{align*}
+
+Note que $\mathbb{E}[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
+
+\begin{align*}
+  \mathbb{E}[2^{2X_{n}}] 
+    &= 3n + 3(n-1) + 3(n-2) + \dots + E[2^{2X_2}] \\
+    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 \ 2 + E[2^{2X_1}] \\
+    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 \ 2 + 3 \ 1 + E[2^{2X_0}] \\
+    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 \ 2 + 3 \ 1 + 1 \\
+    &= \frac{3n(n+1)}{2} + 1
+\end{align*}
+
+Portanto, 
+\[ \mathbb{V}[2^{X_n} - 1] \leq \mathbb{E}[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \]
 
 \end{proof}
 
