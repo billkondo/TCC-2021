@@ -71,7 +71,7 @@ A estimativa do Programa \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E}
 \begin{proof}
 A prova será por indução em $n$. 
 
-\textbf{Caso base:} Para $n = 0$, $X_n$ = 0. Logo, $\mathbb{E}[2^0 - 1] = 0$
+\textbf{Caso base:} Para $n = 0$, $X_n$ = 0. Logo, $\mathbb{E}[2^0 - 1] = 0$.
 
 \textbf{Passo indutivo:} Suponha que $n > 0$ e que $\mathbb{E}[2^{X_{n-1}} - 1] = n-1$.
 
@@ -93,7 +93,7 @@ $\mathbb{V}[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$
 \end{lemma}
 
 \begin{proof}
-Primeiro, aplica-se a definição de variância em $\mathbb{V}[2^{X_n} - 1]$, de modo que:
+Primeiro, aplica-se a definição de variância em $\mathbb{V}[2^{X_n} - 1]$, de modo que
 \begin{align*}
   \mathbb{V}[2^{X_n} - 1] 
     &= \mathbb{E}[(2^{X_n} - 1) ^ 2] - \mathbb{E}[X_n]^2  \\
@@ -102,7 +102,7 @@ Primeiro, aplica-se a definição de variância em $\mathbb{V}[2^{X_n} - 1]$, de
     &\leq \mathbb{E}[2^{2X_n}]
 \end{align*}
 
-Agora, precisa-se calcular $\mathbb{E}[2^{2X_n}]$:
+Agora, precisa-se calcular $\mathbb{E}[2^{2X_n}]$.
 
 \begin{align*}
   \mathbb{E}[2^{2X_n}]  
@@ -137,7 +137,7 @@ Portanto,
 \end{lemma}
 
 \begin{proof}
-  Usando \nameref{ap:markov} com $X = 2^{X_n} - 1$ e $\alpha = 10n$, segue-se:
+  Usando a \nameref{ap:markov} com $X = 2^{X_n} - 1$ e $\alpha = 10n$, segue que
 
 \[ \mathbb{P}(2^{X_n} - 1 \geq 10n)  \leq \frac{\mathbb{E}[2^X_n - 1]}{(10n)^2} = \frac{n}{100n^2} = \frac{1}{100n} \leq \frac{1}{10} \]
 
@@ -146,7 +146,7 @@ Assim, com probabilidade maior que $\frac{9}{10} = 90\%$, $2^{X_n} - 1 \leq 10n$
 \[ 2^{X_n} - 1 \leq 10n  \]
 \[ X_n \leq \log_2(10n + 1)\]
 
-Para armazenar $X_n$, gasta-se $\log_2(X_n)$ bits. Assim:
+Para armazenar $X_n$, gasta-se $\log_2(X_n)$ bits. Assim,
 
 \begin{align*}
   \log_2(X_n) 
@@ -157,3 +157,30 @@ Para armazenar $X_n$, gasta-se $\log_2(X_n)$ bits. Assim:
 Portanto, o Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ de memória com probabilidade acima de $90\%$.
 
 \end{proof}
+
+
+Agora, usando a \nameref{ap:chebyshev} com $X = 2^{X_n} - 1$, segue que
+
+\[ \mathbb{P}(|2^{X_n} - 1 - \mathbb{E}[2^{X_n} - 1]| \geq \sigma ) \leq \frac{Var[2^{X_n} - 1]}{\sigma^2}\]
+
+\[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sigma ) \leq \frac{3\frac{n(n+1)}{2} + 1}{\sigma^2}\]
+\begin{align*}
+  \mathbb{P}(|2^{X_n} - 1 - n| \geq \sigma ) 
+    &\leq \frac{3\frac{n(n+1)}{2} + 1}{\sigma^2}  \\
+    &= \frac{3n^2 + 3n + 2}{2\sigma^2}
+\end{align*}
+
+
+Tomando $\sigma = \epsilon n$, conclui-se
+
+\begin{align*}
+  \mathbb{P}(|2^{X_n} - 1 - n| \geq \epsilon n) 
+    &\leq \frac{3n^2 + 3n + 2}{2 \epsilon^2 n^2}  \\
+    &\leq \frac{4n^2}{2 \epsilon^2 n^2}  \\
+    &= \frac{2}{\epsilon^2}
+\end{align*}
+
+Tome $\epsilon = \sqrt{40} \approx 6.3 $, de modo que 
+\[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sqrt{40} n)  \leq 0.05 \]
+
+Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algoritmo \ref{prog:morris} pode ser de até $6.3$ vezes o valor de $n$.
