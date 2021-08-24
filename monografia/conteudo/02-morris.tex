@@ -53,12 +53,13 @@ Segue o pseudocódigo:
             X := X + 1
           fim
         fim
-      devolva $2^X - 1$
+        devolva $2^X - 1$
       fim
   \end{lstlisting}
 \end{programruledcaption}
 
 \section{Análise do Algoritmo}
+\label{sec:morris:analysis}
 
 Esta seção busca esclarecer o quanto a estimativa do Programa \ref{prog:morris} se distância do tamanho real do conjunto estimado, e as provas
 serão baseadas nas notas de aula de \citep{LectureNotesAndoni}.
@@ -184,3 +185,83 @@ Tome $\epsilon = \sqrt{40} \approx 6.3 $, de modo que
 \[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sqrt{40} n)  \leq 0.05 \]
 
 Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algoritmo \ref{prog:morris} pode ser de até $6.3$ vezes o valor de $n$.
+
+
+\section{Melhorando a precisão do algoritmo}
+
+Pela análise \ref{sec:morris:analysis} do Algoritmo \ref{prog:morris}, nota-se que este programa apresenta uma grande variabilidade. 
+Esta seção busca abordar uma técnica para diminuir este problema e também é baseada nas notas de aula de \citep{LectureNotesAndoni}.
+
+A ideia principal é executar $k$ instâncias do Algoritmo \ref{prog:morris} e a nova estimativa será a média aritmética dos resultados
+dos programas. Será visto que isso diminuirá a variância da estimativa.
+
+Segue o pseudocódigo do algoritmo adaptado:
+\begin{programruledcaption}{Contagem aproximada: algoritmo de Morris\label{prog:morris:plus}}
+  \begin{lstlisting}[
+    language={[brazilian]pseudocode},
+    style=pseudocode,
+    style=wider,
+    functions={},
+    specialidentifiers={},
+  ]
+      funcao Morris+(M, K)  // Estima o tamanho de um conjunto de dados M
+        Y := 0
+        para k de 1 até K faça
+          X_k := Morris(M)
+          Y := Y + X_k
+        fim
+        devolva $\frac{Y}{K}$
+      fim
+  \end{lstlisting}
+\end{programruledcaption}
+
+Considere que $Y_n$ é a saída do Algoritmo \ref{prog:morris:plus} para uma entrada de tamanho $n$.
+
+\begin{lemma}\label{morris:plus:expected_value}
+  $\mathbb{E}[Y_n] = n$
+\end{lemma}
+
+\begin{proof}
+
+\begin{align*}
+  \mathbb{E}[Y_n] 
+    &= \mathbb{E} \Big[ \frac{1}{k} \sum_{i=1}^{k} X_n \Big]  \\
+    &= \frac{1}{k} \sum_{i=1}^{k} \mathbb{E}[X_n] \\
+    &= \frac{1}{k} k n  \\
+    &= n
+\end{align*}
+
+\end{proof}
+
+\begin{lemma}\label{morris:plus:variance}
+  $\mathbb{V}[Y_n] \leq \frac{1}{k} ( \frac{3n(n+1)}{2} + 1 )$
+\end{lemma}
+
+\begin{proof}
+  
+\begin{align*}
+  \mathbb{V}[Y_n] 
+    &= \mathbb{V}[\frac{1}{k} \sum_{i=1}^{k} X_n] \\
+    &= \frac{1}{k^2} \sum_{i=1}^{k}\mathbb{V}[X_n]  \\
+    &\leq \frac{1}{k^2} \sum_{i=1}^{k} \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
+    &= \frac{1}{k^2} k \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
+    &= \frac{1}{k} \Big( \frac{3n(n+1)}{2} + 1 \Big)
+\end{align*}
+
+\end{proof}
+
+Agora, pode-se usar os Lemas \ref{morris:plus:expected_value} e \ref{morris:plus:variance} para se conseguir uma estimativa para o 
+erro do Algoritmo \ref{prog:morris:plus}. De forma análoga ao que foi feito na conclusão da Análise \ref{sec:morris:analysis}, pode-se 
+concluir que
+
+\[ \mathbb{P}(|Y_n - n| \geq \epsilon n ) \leq \frac{2}{\epsilon^2 k}\]
+
+em que $\epsilon$ é o erro relativo do Algoritmo \ref{prog:morris:plus} e $k$, a quantidade de execuções do Algoritmo \ref{prog:morris}.
+Assim, para um intervalo de confiança de $\delta$, pode-se escrever $k$ em função de $\epsilon$ e $\delta$:
+
+\begin{align*}
+      &\frac{2}{\epsilon^2 k^2} = 1 - \delta \\
+  \iff& k = \Bigg\lceil \frac{2}{(1 - \delta) \epsilon^2} \Bigg\rceil
+\end{align*}
+
+Por fim, fixando um intervalo de confiança de $95\%$ e erro relativo de $10\%$ ($\epsilon = 0.1$), $k$ deve ser $4000$.  
