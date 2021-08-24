@@ -131,3 +131,29 @@ Portanto,
 
 \end{proof}
 
+
+\begin{lemma}
+  O Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ de memória com probabilidade acima de $90\%$.
+\end{lemma}
+
+\begin{proof}
+  Usando \nameref{ap:markov} com $X = 2^{X_n} - 1$ e $\alpha = 10n$, segue-se:
+
+\[ \mathbb{P}(2^{X_n} - 1 \geq 10n)  \leq \frac{\mathbb{E}[2^X_n - 1]}{(10n)^2} = \frac{n}{100n^2} = \frac{1}{100n} \leq \frac{1}{10} \]
+
+Assim, com probabilidade maior que $\frac{9}{10} = 90\%$, $2^{X_n} - 1 \leq 10n$. Logo, 
+
+\[ 2^{X_n} - 1 \leq 10n  \]
+\[ X_n \leq \log_2(10n + 1)\]
+
+Para armazenar $X_n$, gasta-se $\log_2(X_n)$ bits. Assim:
+
+\begin{align*}
+  \log_2(X_n) 
+    &\leq \log_2\log_2(10n + 1) \\ 
+    &= O(\lg \lg n)
+\end{align*} 
+
+Portanto, o Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ de memória com probabilidade acima de $90\%$.
+
+\end{proof}
