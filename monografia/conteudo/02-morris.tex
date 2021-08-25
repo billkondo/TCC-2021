@@ -32,7 +32,7 @@ Assim, a estimativa do total de itens seria $2^{X} - 1$, sendo que o $-1$ é par
 
 No entanto, o pseudocódigo abaixo é também baseado em uma ideia da seção \textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm} (~\cite{ApproximateCountingAlgorithm}), 
 em que, é exposta a noção de expressar a condição de incremento do contador como um experimento de lançamento de moedas. 
-Se um novo item precisa ser contado e o contador guarda o valor $X$, então será feito o lançamento de $X$ moedas. Se todas as moedas forem cara, então o contadador é incrementado.
+Se um novo item precisa ser contado e o contador guarda o valor $X$, então será feito o lançamento de $X$ moedas. Se todas as jogadas resultarem em cara, então o contadador é incrementado.
 E a probabilidade deste evento ocorrer é $2^{-X}$. 
 
 Segue o pseudocódigo:
@@ -65,7 +65,7 @@ Esta seção busca esclarecer o quanto a estimativa do Programa \ref{prog:morris
 serão baseadas nas notas de aula de \citep{LectureNotesAndoni}.
 Considere que $X_n$ é a saída deste programa para uma entrada de tamanho $n$.
 
-\begin{lemma}
+\begin{lemma} \label{morris:expected_value}
 A estimativa do Programa \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E}[2^{X_n} - 1] = n$.
 \end{lemma}
 
@@ -89,21 +89,22 @@ A prova será por indução em $n$.
 
 \end{proof}
 
-\begin{lemma}
+\begin{lemma} \label{morris:variance}
 $\mathbb{V}[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$
 \end{lemma}
 
 \begin{proof}
-Primeiro, aplica-se a definição de variância em $\mathbb{V}[2^{X_n} - 1]$, de modo que
+Primeiro, aplica-se a definição de \hyperref[ap:variance]{variância} em $2^{X_n} - 1$, de modo que
+
 \begin{align*}
   \mathbb{V}[2^{X_n} - 1] 
     &= \mathbb{E}[(2^{X_n} - 1) ^ 2] - \mathbb{E}[X_n]^2  \\
     &= \mathbb{E}[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
-    &= \mathbb{E}[2^{2X_n}] -2 \mathbb{E} [2^{X_n}] + 1 - n^2 \\
+    &= \mathbb{E}[2^{2X_n}] \underbrace{-2 \mathbb{E} [2^{X_n}] + 1 - n^2}_{\leq 0} \\ 
     &\leq \mathbb{E}[2^{2X_n}]
 \end{align*}
 
-Agora, precisa-se calcular $\mathbb{E}[2^{2X_n}]$.
+Agora, deve-se calcular $\mathbb{E}[2^{2X_n}]$.
 
 \begin{align*}
   \mathbb{E}[2^{2X_n}]  
@@ -134,7 +135,7 @@ Portanto,
 
 
 \begin{lemma}
-  O Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ de memória com probabilidade acima de $90\%$.
+  O Algoritmo \ref{prog:morris} consome $O(\log \log n)$ de memória com probabilidade acima de $90\%$.
 \end{lemma}
 
 \begin{proof}
@@ -152,19 +153,19 @@ Para armazenar $X_n$, gasta-se $\log_2(X_n)$ bits. Assim,
 \begin{align*}
   \log_2(X_n) 
     &\leq \log_2\log_2(10n + 1) \\ 
-    &= O(\lg \lg n)
+    &= O(\log \log n)
 \end{align*} 
 
-Portanto, o Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ de memória com probabilidade acima de $90\%$.
+Portanto, o Algoritmo \ref{prog:morris} consome $O(\log \log n)$ de memória com probabilidade acima de $90\%$.
 
 \end{proof}
 
-
-Agora, usando a \nameref{ap:chebyshev} com $X = 2^{X_n} - 1$, segue que
+Agora, pode-se usar os Lemas \ref{morris:expected_value} e \ref{morris:variance} para se conseguir uma estimativa para o 
+erro do Algoritmo \ref{prog:morris}.
+Usando a \nameref{ap:chebyshev} com $X = 2^{X_n} - 1$, segue que
 
 \[ \mathbb{P}(|2^{X_n} - 1 - \mathbb{E}[2^{X_n} - 1]| \geq \sigma ) \leq \frac{Var[2^{X_n} - 1]}{\sigma^2}\]
 
-\[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sigma ) \leq \frac{3\frac{n(n+1)}{2} + 1}{\sigma^2}\]
 \begin{align*}
   \mathbb{P}(|2^{X_n} - 1 - n| \geq \sigma ) 
     &\leq \frac{3\frac{n(n+1)}{2} + 1}{\sigma^2}  \\
@@ -177,14 +178,14 @@ Tomando $\sigma = \epsilon n$, conclui-se
 \begin{align*}
   \mathbb{P}(|2^{X_n} - 1 - n| \geq \epsilon n) 
     &\leq \frac{3n^2 + 3n + 2}{2 \epsilon^2 n^2}  \\
-    &\leq \frac{4n^2}{2 \epsilon^2 n^2}  \\
+    &\leq \frac{4n^2}{2 \epsilon^2 n^2}  &&(\text{$3n + 2 \leq n^2$ para $n \geq 4$}) \\
     &= \frac{2}{\epsilon^2}
 \end{align*}
 
-Tome $\epsilon = \sqrt{40} \approx 6.3 $, de modo que 
+Tome $\epsilon = \sqrt{40} \approx 6 $, de modo que 
 \[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sqrt{40} n)  \leq 0.05 \]
 
-Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algoritmo \ref{prog:morris} pode ser de até $6.3$ vezes o valor de $n$.
+Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algoritmo \ref{prog:morris} pode ser de até $6$ vezes o valor de $n$.
 
 
 \section{Melhorando a precisão do algoritmo}
@@ -192,11 +193,11 @@ Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algorit
 Pela análise \ref{sec:morris:analysis} do Algoritmo \ref{prog:morris}, nota-se que este programa apresenta uma grande variabilidade. 
 Esta seção busca abordar uma técnica para diminuir este problema e também é baseada nas notas de aula de \citep{LectureNotesAndoni}.
 
-A ideia principal é executar $k$ instâncias do Algoritmo \ref{prog:morris} e a nova estimativa será a média aritmética dos resultados
+A ideia principal é executar $k$ vezes o Algoritmo \ref{prog:morris} e a nova estimativa será a média aritmética dos resultados
 dos programas. Será visto que isso diminuirá a variância da estimativa.
 
 Segue o pseudocódigo do algoritmo adaptado:
-\begin{programruledcaption}{Contagem aproximada: algoritmo de Morris\label{prog:morris:plus}}
+\begin{programruledcaption}{Contagem aproximada: algoritmo de Morris adaptado\label{prog:morris:plus}}
   \begin{lstlisting}[
     language={[brazilian]pseudocode},
     style=pseudocode,
@@ -207,8 +208,8 @@ Segue o pseudocódigo do algoritmo adaptado:
       funcao Morris+(M, K)  // Estima o tamanho de um conjunto de dados M
         Y := 0
         para k de 1 até K faça
-          X_k := Morris(M)
-          Y := Y + X_k
+          $X_k$ := Morris(M)
+          Y := Y + $X_k$
         fim
         devolva $\frac{Y}{K}$
       fim
