@@ -1,0 +1,29 @@
+\chapter{Probabilidade}
+\label{ap:probability}
+
+\section{Variância}
+\label{ap:variance}
+
+Seja $X$ uma variável aleatória. Então,
+
+\[ \mathbb{V}[X] = \mathbb{E}[X^2] - \mathbb{E}[X]^2\]
+
+\section{Inequação de Markov}
+\label{ap:markov}
+
+Sejam $X$ uma variável aleatória e $\alpha > 0$ um número real. Então,
+
+\[ \mathbb{P}(X \geq \alpha) \leq \frac{\mathbb{E}[X]}{\alpha^2}\]
+
+
+\section{Inequação de Chebyshev}
+\label{ap:chebyshev}
+
+Seja $X$ uma variável aleatória com valor esperado $\mu$ finito e variância $\sigma^2$ finita e diferente de zero. 
+Assim, para todo número real $k > 0$, 
+
+\[ \mathbb{P}(| X - \mu| \geq k\sigma) \leq \frac{1}{k^2}\]
+
+Outro modo de se escrever a inequação acima é 
+
+\[ \mathbb{P}(| X - \mu| \geq k) \leq \frac{\sigma^2}{k^2} \]
