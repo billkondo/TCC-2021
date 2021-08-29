@@ -4,39 +4,37 @@
 
 \section{O Problema}
 
-O problema de contagem aproximada consiste em contar um grande número de eventos usando pouca memória.  
+O problema da \textbf{contagem aproximada} consiste em contar um grande número de elementos usando pouca memória.  
 Esse problema foi abordado pela primeira vez por Robert  Morris no artigo ~\citep{morris:78}, 
-em que o autor descreve a tentativa de se contar eventos cujas frequências podiam chegar até 130.000, mas só usando contadores de 8 bits.
+em que o autor descreve a tentativa de se contar eventos cujas frequências podiam chegar até 130 mil, mas usando apenas contadores de 8 bits.
 
-Um registrador de n bits pode guardar valores até $2^n-1$. Dessa forma, em uma máquina que possui registradores de 8 bits, pode-se contar até 255.
-Assim, o autor não conseguia manter as frequências exatas dos eventos devido à limitação de máquina. 
-Contudo, ele podia armazenar contagens aproximadas.
-
-
-\section{Ideias para solução}
-
-Para se manter um contador exato até $n$, precisa-se de $O(\log n)$ bits. Para se conseguir contar até $n$ usando menos bits, 
-deve-se abrir mão da exatidão da contagem. 
-
-Uma das primeiras ideias é manter no contador o valor de $\log_2 n$ e assim, utilizar $O(\log \log n)$ bits de memória. 
-A estimativa da contagem seria $2^x$, em que, $x$ é o valor armazenado no contador.
-
-Outra ideia é como deve ser feita o incremento desse contador. 
-A solução proposta por Morris é aumentar o contador com base em um método probabilístico, como pode ser visto no Programa \ref{prog:morris}. 
+Um registrador de n bits pode armazenar inteiros entre $0$ e $2^n-1$. Dessa forma, em um computador que possui registradores de 8 bits, pode-se contar até 255.
+Assim, o autor não conseguia manter as frequências \textit{exatas} dos eventos devido à limitação de máquina. 
+Contudo, ele podia armazenar contagens \textit{aproximadas}.
 
 
-\section{Pseudocódigo}
+\section{Algoritmo de Morris}
 
-Morris propôs originalmente manter um contador $X$ que poderia ser aumentado com probabilidade $2^{-X}$ a cada novo item que precisasse ser contado.
+Para se contar \textit{exatamente} um valor entre $0$ e $n$, são necessários $\Omega(\log n)$ bits. Então, para que seja possível contar até $n$ usando 
+menos bits, deve-se abandonar a \textit{exatidão} da contagem.
+
+Uma das primeiras ideias é manter o valor de $\log_2 n$ ao invés de $n$. 
+Neste caso, se $x$ fosse o valor armazenado em um contador, $2^x$ seria utilizado como estimador \textit{aproximado} de $n$
+e seriam utilizados $O(\log \log n)$ bits.
+Dessa forma, a política de incremento desse contador passa a ser a questão central.
+Morris propôs um método probabilístico para resolver esse problema.
+
+Morris sugeriu originalmente utilizar um contador $X$ para armazenar a contagem do número de elementos em um dado conjunto $\mathbb{M}$.
+A cada novo elemento de $\mathbb{M}$, o contador $X$ seria incrementado com probabilidade $2^{-X}$.
 Assim, a estimativa do total de itens seria $2^{X} - 1$, sendo que o $-1$ é para que essa aproximação funcionasse quando não houvessem itens.
 
-No entanto, o pseudocódigo abaixo é também baseado em uma ideia da seção \textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm} (~\cite{ApproximateCountingAlgorithm}), 
+No entanto, o pseudocódigo \ref{prog:morris} é também, baseado em uma ideia da seção \textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm}~\citep{ApproximateCountingAlgorithm}, 
 em que, é exposta a noção de expressar a condição de incremento do contador como um experimento de lançamento de moedas. 
 Se um novo item precisa ser contado e o contador guarda o valor $X$, então será feito o lançamento de $X$ moedas. Se todas as jogadas resultarem em cara, então o contadador é incrementado.
-E a probabilidade deste evento ocorrer é $2^{-X}$. 
+E a probabilidade deste evento ocorrer é $2^{-X}$. Na prática, um número aleatório $r$ de $X$ bits é gerado, e $X$ é incrementado apenas se $r = 0$.
 
 Segue o pseudocódigo:
-\begin{programruledcaption}{Contagem aproximada: algoritmo de Morris\label{prog:morris}}
+\begin{programruledcaption}{Algoritmo de Morris\label{prog:morris}}
   \begin{lstlisting}[
     language={[brazilian]pseudocode},
     style=pseudocode,
@@ -44,12 +42,12 @@ Segue o pseudocódigo:
     functions={},
     specialidentifiers={},
   ]
-      funcao Morris(M)  // Estima o tamanho de um conjunto de dados M
+      funcao Morris(M)  // \textbf{Recebe} conjunto $\mathbb{M}$ e \textbf{devolve} estimativa para $|\mathbb{M}|$
         X := 0  // Inicia o contador que guarda o logarítmo na base 2 do tamanho do conjunto M
-        para cada dado do conjunto M faça
+        para cada elemento de $\mathbb{M}$ \kw{faça}
           jogue uma moeda X vezes
 
-          se X = 0 ou todas as jogadas forem cara faça
+          se X = 0 ou todas as jogadas forem cara \kw{faça}
             X := X + 1
           fim
         fim
@@ -61,12 +59,12 @@ Segue o pseudocódigo:
 \section{Análise do Algoritmo}
 \label{sec:morris:analysis}
 
-Esta seção busca esclarecer o quanto a estimativa do Programa \ref{prog:morris} se distância do tamanho real do conjunto estimado, e as provas
+Esta seção busca esclarecer o quanto a estimativa do Algoritmo \ref{prog:morris} se distância do tamanho real do conjunto estimado, e as provas
 serão baseadas nas notas de aula de \citep{LectureNotesAndoni}.
-Considere que $X_n$ é a saída deste programa para uma entrada de tamanho $n$.
+Considere que $X_n$ é a saída deste algoritmo para uma entrada de tamanho $n$.
 
 \begin{lemma} \label{morris:expected_value}
-A estimativa do Programa \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E}[2^{X_n} - 1] = n$.
+A estimativa do Algoritmo \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E}[2^{X_n} - 1] = n$.
 \end{lemma}
 
 \begin{proof}
@@ -190,14 +188,14 @@ Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algorit
 
 \section{Melhorando a precisão do algoritmo}
 
-Pela análise \ref{sec:morris:analysis} do Algoritmo \ref{prog:morris}, nota-se que este programa apresenta uma grande variabilidade. 
-Esta seção busca abordar uma técnica para diminuir este problema e também é baseada nas notas de aula de \citep{LectureNotesAndoni}.
+Pela análise \ref{sec:morris:analysis} do Algoritmo \ref{prog:morris}, nota-se que esta solução apresenta uma grande variabilidade. 
+Esta seção busca abordar uma técnica para diminuir este problema e, também, é baseada nas notas de aula de \citep{LectureNotesAndoni}.
 
 A ideia principal é executar $k$ vezes o Algoritmo \ref{prog:morris} e a nova estimativa será a média aritmética dos resultados
-dos programas. Será visto que isso diminuirá a variância da estimativa.
+de cada execução. Será visto que isso diminuirá a variância da estimativa.
 
 Segue o pseudocódigo do algoritmo adaptado:
-\begin{programruledcaption}{Contagem aproximada: algoritmo de Morris adaptado\label{prog:morris:plus}}
+\begin{programruledcaption}{Algoritmo de Morris adaptado\label{prog:morris:plus}}
   \begin{lstlisting}[
     language={[brazilian]pseudocode},
     style=pseudocode,
@@ -205,9 +203,9 @@ Segue o pseudocódigo do algoritmo adaptado:
     functions={},
     specialidentifiers={},
   ]
-      funcao Morris+(M, K)  // Estima o tamanho de um conjunto de dados M
+      funcao Morris+(M, K)  // \textbf{Recebe} conjunto $\mathbb{M}$ e \textbf{devolve} estimativa para $|\mathbb{M}|$
         Y := 0
-        para k de 1 até K faça
+        para k de 1 até K \kw{faça}
           $X_k$ := Morris(M)
           Y := Y + $X_k$
         fim
