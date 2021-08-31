@@ -7,6 +7,9 @@ inputs:
   password:
     description: "Rede Linux password"
     required: true
+  target_folder:
+    description: "Target folder"
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -20,5 +23,5 @@ runs:
         username: ${{ inputs.username }}
         password: ${{ inputs.password }}
         source: "monografia.pdf"
-        target: "~/www/mac0499"
+        target: "~/www/mac0499/${{ inputs.target_folder }}"
         overwrite: true
