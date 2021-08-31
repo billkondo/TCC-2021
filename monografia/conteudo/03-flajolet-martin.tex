@@ -20,8 +20,6 @@ que se deseja encontrar quantos usuários distintos visualizararm um publicaçã
 que o consumo de memória seja muito menor que a quantidade de elementos distintos. Portanto, deve-se abandonar
 a exatidão da contagem dos elementos distintos para se possa diminuir o consumo de espaço.
 
-\section{Algoritmo de Flajolet-Martin}
-
 \begin{quote}
   \textbf{Contagem Distinta Aproximada:} dado um conjunto $\mathbb{M}$, \textbf{estimar} o número de elementos \textit{distintos}
   nesse conjunto.
@@ -31,3 +29,18 @@ Uma das primeiras soluções para a \textbf{contagem distinta aproximada} foi ap
 \textit{Nigel Martin} no artigo ~\citep{flajolet:martin:85}.
 A motivação para o desenvolvimento desse algoritmo foi a otimização de pesquisas em bancos de dados relacionais.
 E a identificação do número de elementos distintos em uma coluna era a principal dificuldade nesse processo.
+
+\section{Algoritmo de Flajolet-Martin}
+
+O \textbf{algoritmo de Flajolet-Martin} utiliza uma função de hash $h$ que mapeia uniformemente cada elemento do conjunto $\mathbb{M}$
+para um número inteiro entre $0$ e $2^L-1$, em que $L$ é a quantidade necessária de bits para mapear todas as entradas de $\mathbb{M}$
+(na prática, este valor é $32$ ou $64$).
+Assim, para cada $x_i \in \mathbb{M}$, será calculado um inteiro $y_i \coloneqq h(x_i)$. Note que $y_i$ pode ser visto como 
+uma palavra binária aleatória de $L$ bits em que cada bit é gerado independentemente com probabilidade $\frac{1}{2}$.
+E o algoritmo é baseado na frequência das aparições dos prefixos dessas palavras aleatórias.
+
+Então, suponha que palavras binárias aleatórias de $L$ bits estejam sendo geradas. Espera-se que a cada \textbf{2} palavras, pelo menos uma comece
+com \textbf{1}. E que a cada \textbf{4} palavras, pelo menos uma deva ter o prefixo \textbf{01}. Assim, a cada $\mathbf{2^k}$ palavras, espera-se
+que pelo menos uma palavra comece com $\mathbf{0^{k-1}1}$. Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ 
+items já devam ter sido gerados. Dessa forma, o algoritmo está interessado em encontrar a posição do primeiro 1 à esquerda nessas palavras binárias.
+E para isso, defini-se a função $\rho$ que recebe um inteiro e devolve a posição do 1 menos significativo deste inteiro.
