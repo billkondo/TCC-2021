@@ -1,0 +1,24 @@
+name: Deploy Preview on pull request
+'on':
+  pull_request:
+    branches:
+      - master
+    types: [opened, synchronize]
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Build"
+        uses: xu-cheng/texlive-action/full@v1
+        with:
+          run: |
+            apk add make
+            ./.github/scripts/build.sh
+      - name: "Deploy Preview"
+        uses: ./.github/actions/deploy
+        with:
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          target_folder: ${{ github.head_ref }}
+          
