@@ -8,7 +8,7 @@
   $\mathbb{M}$ possui.
 \end{quote}
 
-Uma solução para esse problema é inserir cada elemento de $\mathbb{M}$ em uma tabela hash. 
+Uma solução para a \textbf{contagem distinta} é inserir cada elemento de $\mathbb{M}$ em uma tabela hash. 
 E assim, a quantidade de itens distintos nesse conjunto será o número de elementos nessa tabela.
 
 Note que esse algoritmo consome $O(n)$ de memória, uma vez que, deve-se armazenar cada elemento 
@@ -27,6 +27,7 @@ a exatidão da contagem dos elementos distintos para se possa diminuir o consumo
   nesse conjunto.
 \end{quote}
 
-Uma das primeiras soluções para a \textbf{contagem distinta aproximada} foi apresentada no artigo ~\citep{flajolet:martin:85}.
-A motivação para o desenvolvimento desse algoritmo foi a otimização de pesquisas nos bancos de dados relacionais, 
-em que a identificação do número de elementos distintos em uma coluna era a principal dificuldade no processo de otimização.
+Uma das primeiras soluções para a \textbf{contagem distinta aproximada} foi apresentada por \textit{Philippe Flajolet} e 
+\textit{Nigel Martin} no artigo ~\citep{flajolet:martin:85}.
+A motivação para o desenvolvimento desse algoritmo foi a otimização de pesquisas em bancos de dados relacionais.
+E a identificação do número de elementos distintos em uma coluna era a principal dificuldade nesse processo.
