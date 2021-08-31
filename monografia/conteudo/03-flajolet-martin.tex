@@ -3,4 +3,30 @@
 
 \section{O Problema}
 
-Descrever o problema
+\begin{quote}
+  \textbf{Contagem Distinta:} Dado um conjunto $\mathbb{M}$, \textbf{encontrar} quantos elementos \textit{distintos}
+  $\mathbb{M}$ possui.
+\end{quote}
+
+Uma solução para esse problema é inserir cada elemento de $\mathbb{M}$ em uma tabela hash. 
+E assim, a quantidade de itens distintos nesse conjunto será o número de elementos nessa tabela.
+
+Note que esse algoritmo consome $O(n)$ de memória, uma vez que, deve-se armazenar cada elemento 
+\textbf{pelo menos uma vez} para que seja possível verificar se um item está no conjunto.
+
+Este consumo linear de espaço pode ser um problema quando a quantidade de elementos que precisam ser armazenados é muito grande.
+E podem existir aplicações nas quais é necessário manter \textbf{várias} dessas estruturas, como no caso do \textit{Redis}, em
+que se deseja encontrar quantos usuários distintos visualizararm um publicação ~\citep{Redis}. E para essas situações, é interessante
+que o consumo de memória seja muito menor que a quantidade de elementos distintos. Portanto, deve-se abandonar
+a exatidão da contagem dos elementos distintos para se possa diminuir o consumo de espaço.
+
+\section{Algoritmo de Flajolet-Martin}
+
+\begin{quote}
+  \textbf{Contagem Distinta Aproximada:} dado um conjunto $\mathbb{M}$, \textbf{estimar} o número de elementos \textit{distintos}
+  nesse conjunto.
+\end{quote}
+
+Uma das primeiras soluções para a \textbf{contagem distinta aproximada} foi apresentada no artigo ~\citep{flajolet:martin:85}.
+A motivação para o desenvolvimento desse algoritmo foi a otimização de pesquisas nos bancos de dados relacionais, 
+em que a identificação do número de elementos distintos em uma coluna era a principal dificuldade no processo de otimização.
