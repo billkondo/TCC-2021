@@ -42,5 +42,55 @@ E o algoritmo é baseado na frequência das aparições dos prefixos dessas pala
 Então, suponha que palavras binárias aleatórias de $L$ bits estejam sendo geradas. Espera-se que a cada \textbf{2} palavras, pelo menos uma comece
 com \textbf{1}. E que a cada \textbf{4} palavras, pelo menos uma deva ter o prefixo \textbf{01}. Assim, a cada $\mathbf{2^k}$ palavras, espera-se
 que pelo menos uma palavra comece com $\mathbf{0^{k-1}1}$. Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ 
-items já devam ter sido gerados. Dessa forma, o algoritmo está interessado em encontrar a posição do primeiro 1 à esquerda nessas palavras binárias.
-E para isso, defini-se a função $\rho$ que recebe um inteiro e devolve a posição do 1 menos significativo deste inteiro.
+items já devam ter sido gerados. 
+
+Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor $BITMAP[0 \dots L-1]$, de modo que $BITMAP[i] = 1$,
+se e somente se, o prefixo $0^i1$ apareceu entre os \textit{hashes} dos elementos de $\mathbb{M}$. 
+
+Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $L - 1$. E para isso, defini-se a função $\rho$ 
+que recebe um inteiro e devolve a posição do 1 menos significativo deste inteiro. Então, para um \textit{hash} $y$, suponha que $\rho(y) = k$. Assim, 
+o prefixo da representação binária de $y$ é $0^k1$, e $BITMAP[k] = 1$. Um caso especial para essa função é quando o \textit{hash} é zero. Nesta situação,
+$\rho(0) = L$.
+
+Por fim, seja $R$ o menor índice tal que $BITMAP[R] = 0$. A estimativa para o número de elementos distintos de $\mathbb{M}$ será $2^R/\phi$, em que, 
+$\phi$ é um fator de correção que será discutido em \refeq{sec:flajolet-martin-analysis}.
+
+Segue o pseudocódigo:
+\begin{programruledcaption}{
+Algoritmo de Flajolet-Martin \\
+\\ \textbf{Entrada:} \\
+\hspace*{1cm} Conjunto $\mathbb{M}$ \\
+\hspace*{1cm} Função de hash $h$ \\
+\hspace*{1cm} Tamanho $L$ do vetor $BITMAP$ \\
+\\ \textbf{Saída:} \\
+\hspace*{1cm} Quantidade de elementos distintos de $\mathbb{M}$
+}\label{prog:flajolet-martin}
+  \begin{lstlisting}[
+    language={[brazilian]pseudocode},
+    style=pseudocode,
+    style=wider,
+    functions={},
+    specialidentifiers={},
+  ]
+      funcao FlajoletMartin(M, h, L)
+        para i de 0 até L \kw{faça}:
+          BITMAP[i] := 0
+        fim
+
+        para x $\in$ $\mathbb{M}$ \kw{faça}:
+          y := h(x)
+          BITMAP[$\rho(y)$] := 1
+        fim
+
+        R := 0
+        enquanto BITMAP[R] = 1 \kw{faça}:
+          R := R + 1
+        fim
+
+        devolva $2^R/\phi$
+      fim
+  \end{lstlisting}
+\end{programruledcaption}
+
+\section{Análise do algoritmo}
+\label{sec:flajolet-martin-analysis}
