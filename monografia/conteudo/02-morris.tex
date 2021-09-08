@@ -39,7 +39,15 @@ E a probabilidade deste evento ocorrer é $2^{-X}$. Na prática, para mimetizar 
 um número aleatório $r$ de $X$ bits é gerado, e $X$ é incrementado apenas se $r = 0$.
 
 Segue o pseudocódigo:
-\begin{programruledcaption}{Algoritmo de Morris\label{prog:morris}}
+\begin{programruledcaption}{
+Algoritmo de Morris\label{prog:morris}\\
+\\ \textbf{Entrada:} \\
+\hspace*{1cm} Conjunto $\mathbb{M}$ \\
+\\ \textbf{Saída:} \\
+\hspace*{1cm} Estimativa de $|M|$
+\\
+\label{prog:flajolet-martin}
+}
   \begin{lstlisting}[
     language={[brazilian]pseudocode},
     style=pseudocode,
@@ -48,7 +56,7 @@ Segue o pseudocódigo:
     specialidentifiers={},
     deletekeywords={de}
   ]
-      funcao Morris($\mathbb{M}$)  // \textbf{Recebe} conjunto $\mathbb{M}$ e \textbf{devolve} estimativa para $|\mathbb{M}|$
+      funcao Morris($\mathbb{M}$) 
         X := 0
         para cada elemento de $\mathbb{M}$ \kw{faça}
           jogue uma moeda X vezes
@@ -200,18 +208,28 @@ A ideia principal é executar $k$ vezes o Algoritmo \ref{prog:morris} e a nova e
 de cada execução. Será visto que isso diminuirá a variância da estimativa.
 
 Segue o pseudocódigo do algoritmo adaptado:
-\begin{programruledcaption}{Algoritmo de Morris adaptado\label{prog:morris:plus}}
+\begin{programruledcaption}{
+Algoritmo de Morris adaptado\label{prog:morris:plus}\\
+\\ \textbf{Entrada:} \\
+\hspace*{1cm} Conjunto $\mathbb{M}$ \\
+\hspace*{1cm} Quantidade $K$ de iterações do Algoritmo \ref{prog:morris} \\
+\\ \textbf{Saída:} \\
+\hspace*{1cm} Estimativa de $|M|$
+\\
+\label{prog:flajolet-martin}
+}
   \begin{lstlisting}[
     language={[brazilian]pseudocode},
     style=pseudocode,
     style=wider,
     functions={},
     specialidentifiers={},
+    deletekeywords={de}
   ]
-      funcao Morris+(M, K)  // \textbf{Recebe} conjunto $\mathbb{M}$ e \textbf{devolve} estimativa para $|\mathbb{M}|$
+      funcao Morris+($\mathbb{M}$, K)
         Y := 0
         para k de 1 até K \kw{faça}
-          $X_k$ := Morris(M)
+          $X_k$ := Morris($\mathbb{M}$)
           Y := Y + $X_k$
         fim
         devolva $\frac{Y}{K}$
