@@ -8,10 +8,10 @@ O problema da \textbf{contagem aproximada} consiste em contar um grande número 
 Esse problema foi abordado pela primeira vez por Robert  Morris no artigo ~\citep{morris:78}, 
 em que o autor descreve a tentativa de se contar eventos cujas frequências podiam chegar até 130 mil, mas usando apenas contadores de 8 bits.
 
-Um registrador de $n$ bits pode armazenar inteiros entre $0$ e $2^n-1$. Dessa forma, em um computador que possui registradores de 8 bits, pode-se contar até 255.
-Assim, Morris projetou um algoritmo para armazenar contagens \textit{aproximadas}, uma vez que, não era possível manter as frequências \textit{exatas} dos eventos 
-em sua máquina.
-
+Um registrador de $n$ bits pode armazenar inteiros entre $0$ e $2^n-1$. 
+Dessa forma, em um computador que possui registradores de 8 bits, pode-se contar até 255.
+Assim, Morris projetou um algoritmo para armazenar contagens \textit{aproximadas}, 
+uma vez que, não era possível manter as frequências \textit{exatas} dos eventos em sua máquina.
 
 \section{Algoritmo de Morris}
 
@@ -25,27 +25,24 @@ Para isto, seriam utilizados $O(\log \log n)$ bits.
 Dessa forma, a política de incremento desse contador passa a ser a questão central.
 Morris propôs um método probabilístico para resolver esse incremento.
 
-Morris sugeriu originalmente utilizar um contador $X$ para armazenar a contagem do número de elementos em um dado conjunto $\mathbb{M}$.
-A cada novo elemento examinado de $\mathbb{M}$, o contador $X$ seria incrementado com probabilidade $2^{-X}$.
+Morris sugeriu originalmente utilizar um contador $X$ para armazenar a contagem do número de elementos em um dado conjunto $\Mbb$.
+A cada novo elemento examinado de $\Mbb$, o contador $X$ seria incrementado com probabilidade $2^{-X}$.
 Assim, o valor $2^{X} - 1$ passaria a ser adotado como a estimativa do total de elementos, 
-sendo que o $-1$ é para que essa aproximação se ajustasse à situação em que não houvessem itens, ou seja, $M = \emptyset$.
+sendo que o $-1$ é para que essa aproximação se ajustasse à situação em que não houvessem itens, ou seja, $\Mbb = \emptyset$.
 
 A versão da estratégia de Morris que pode ser vista no Algoritmo \ref{prog:morris}
 é baseada em uma ideia da seção \textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm}~\citep{ApproximateCountingAlgorithm}.
 Essa versão expressa a condição de incremento do contador como um experimento de lançamento de moedas. 
-Sempre que um novo elemento do conjunto $\mathbb{M}$ é examinado, o lançamento de $X$ moedas é simulado. 
+Sempre que um novo elemento do conjunto $\Mbb$ é examinado, o lançamento de $X$ moedas é simulado. 
 O contador é incrementado somente quando os resultados de todos os lançamentos forem cara.
 E a probabilidade deste evento ocorrer é $2^{-X}$. Na prática, para mimetizar o jogar de moedas, 
 um número aleatório $r$ de $X$ bits é gerado, e $X$ é incrementado apenas se $r = 0$.
 
 Segue o pseudocódigo:
 \begin{programruledcaption}{
-Algoritmo de Morris\label{prog:morris}\\
-\\ \textbf{Entrada:} \\
-\hspace*{1cm} Conjunto $\mathbb{M}$ \\
-\\ \textbf{Saída:} \\
-\hspace*{1cm} Estimativa de $|M|$
-\\
+Algoritmo de Morris\label{prog:morris}
+\\ \textbf{Entrada:} conjunto $\Mbb$
+\\ \textbf{Saída:} estimativa de $|\Mbb|$
 \label{prog:flajolet-martin}
 }
   \begin{lstlisting}[
@@ -56,10 +53,10 @@ Algoritmo de Morris\label{prog:morris}\\
     specialidentifiers={},
     deletekeywords={de}
   ]
-      funcao Morris($\mathbb{M}$) 
+      funcao Morris($\Mbb$) 
         X := 0
-        para cada elemento de $\mathbb{M}$ \kw{faça}
-          jogue uma moeda X vezes
+        para cada elemento de $\Mbb$ \kw{faça}
+          faça o lançamento de X moedas
           se X = 0 ou os resultados de todos os lançamentos forem cara \kw{faça}
             X := X + 1
           fim
@@ -72,9 +69,9 @@ Algoritmo de Morris\label{prog:morris}\\
 \section{Análise da aproximação}
 \label{sec:morris:analysis}
 
-Esta seção busca esclarecer o quanto a estimativa do Algoritmo \ref{prog:morris} se distância do tamanho real do conjunto $\mathbb{M}$ dado. As provas
+Esta seção busca esclarecer o quanto a estimativa do Algoritmo \ref{prog:morris} se distância do tamanho real do conjunto $\Mbb$ dado. As provas
 serão baseadas nas notas de aula de \citep{LectureNotesAndoni}.
-Considere que $X_n$ é a estimativa devolvida por este algoritmo tendo como entrada um conjunto $\mathbb{M}$ com $n$ elementos.
+Considere que $X_n$ é a estimativa devolvida por este algoritmo tendo como entrada um conjunto $\Mbb$ com $n$ elementos.
 
 \begin{lemma} \label{morris:expected_value}
 A estimativa do Algoritmo \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E}[2^{X_n} - 1] = n$.
@@ -83,17 +80,18 @@ A estimativa do Algoritmo \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E
 \begin{proof}
 A prova será por indução em $n$. 
 
-\textbf{Caso base:} Para $n = 0$, $X_n$ = 0. Logo, $\mathbb{E}[2^0 - 1] = 0$.
+Para $n = 0$, $X_n$ = 0. Logo, $\mathbb{E}[2^0 - 1] = 0$.
 
-\textbf{Passo indutivo:} Suponha que $n > 0$ e que $\mathbb{E}[2^{X_{n-1}} - 1] = n-1$.
+Suponha que para $n > 0$, $\mathbb{E}[2^{X_{n-1}} - 1] = n-1$.
 
 \begin{align*}
   \mathbb{E}[2^{X_n} - 1] 
+    &= \sum_{x} \mathbb{P} (X_n = x) (2^x - 1) \\
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) \mathbb{E}[2^{X_n} - 1 | X_{n-1} = x] \\
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) \Big[ (2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x}) \Big] \\
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) 2^x \\
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) (2^x - 1) + \sum_{x} \mathbb{P} (X_{n-1} = x) \\
-    &= \mathbb{E}[2^{X_n-1} - 1] + 1 \\
+    &= \mathbb{E}[2^{X_{n-1}} - 1] + 1 \\
     &= n - 1 + 1 \\
     &= n
 \end{align*}
@@ -109,7 +107,7 @@ Primeiro, aplica-se a definição de \hyperref[ap:variance]{variância} em $2^{X
 
 \begin{align*}
   \mathbb{V}[2^{X_n} - 1] 
-    &= \mathbb{E}[(2^{X_n} - 1) ^ 2] - \mathbb{E}[X_n]^2  \\
+    &= \mathbb{E}[(2^{X_n} - 1) ^ 2] - \mathbb{E}[2^{X_n} - 1]^2  \\
     &= \mathbb{E}[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
     &= \mathbb{E}[2^{2X_n}] \underbrace{-2 \mathbb{E} [2^{X_n}] + 1 - n^2}_{\leq 0} \\ 
     &\leq \mathbb{E}[2^{2X_n}]
@@ -133,9 +131,9 @@ Note que $\mathbb{E}[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
 \begin{align*}
   \mathbb{E}[2^{2X_{n}}] 
     &= 3n + 3(n-1) + 3(n-2) + \dots + E[2^{2X_2}] \\
-    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 \ 2 + E[2^{2X_1}] \\
-    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 \ 2 + 3 \ 1 + E[2^{2X_0}] \\
-    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 \ 2 + 3 \ 1 + 1 \\
+    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + E[2^{2X_1}] \\
+    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + 3 (1) + E[2^{2X_0}] \\
+    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + 3 (1) + 1 \\
     &= \frac{3n(n+1)}{2} + 1
 \end{align*}
 
@@ -146,7 +144,7 @@ Portanto,
 
 
 \begin{lemma}
-  O Algoritmo \ref{prog:morris} consome $O(\log \log n)$ de memória com probabilidade acima de $90\%$.
+  O Algoritmo \ref{prog:morris} consome $O(\log \log n)$ bits de memória com probabilidade acima de $90\%$.
 \end{lemma}
 
 \begin{proof}
@@ -167,7 +165,7 @@ Para armazenar $X_n$, gasta-se $\log_2(X_n)$ bits. Assim,
     &= O(\log \log n)
 \end{align*} 
 
-Portanto, o Algoritmo \ref{prog:morris} consome $O(\log \log n)$ de memória com probabilidade acima de $90\%$.
+Portanto, o Algoritmo \ref{prog:morris} consome $O(\log \log n)$ bits de memória com probabilidade acima de $90\%$.
 
 \end{proof}
 
@@ -209,13 +207,9 @@ de cada execução. Será visto que isso diminuirá a variância da estimativa.
 
 Segue o pseudocódigo do algoritmo adaptado:
 \begin{programruledcaption}{
-Algoritmo de Morris adaptado\label{prog:morris:plus}\\
-\\ \textbf{Entrada:} \\
-\hspace*{1cm} Conjunto $\mathbb{M}$ \\
-\hspace*{1cm} Quantidade $K$ de iterações do Algoritmo \ref{prog:morris} \\
-\\ \textbf{Saída:} \\
-\hspace*{1cm} Estimativa de $|M|$
-\\
+Algoritmo de Morris adaptado\label{prog:morris:plus}
+\\ \textbf{Entrada:} conjunto $\Mbb$, quantidade $K$ de iterações do Algoritmo \ref{prog:morris} 
+\\ \textbf{Saída:} estimativa de $|\Mbb|$
 \label{prog:flajolet-martin}
 }
   \begin{lstlisting}[
@@ -226,11 +220,11 @@ Algoritmo de Morris adaptado\label{prog:morris:plus}\\
     specialidentifiers={},
     deletekeywords={de}
   ]
-      funcao Morris+($\mathbb{M}$, K)
+      função Morris++($\Mbb$, $K$)
         Y := 0
         para k de 1 até K \kw{faça}
-          $X_k$ := Morris($\mathbb{M}$)
-          Y := Y + $X_k$
+          $\tilde{X}_k$ := Morris($\Mbb$)
+          Y := Y + $\tilde{X}_k$
         fim
         devolva $\frac{Y}{K}$
       fim
