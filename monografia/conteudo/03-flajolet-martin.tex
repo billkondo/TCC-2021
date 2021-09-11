@@ -1,5 +1,5 @@
 \chapter{Contagem distinta aproximada: Flajolet-Martin(1985)}
-\label{lab:flajolet:martin}
+\label{lab:flajolet-martin}
 
 \section{O Problema}
 
@@ -31,6 +31,7 @@ A motivação para o desenvolvimento desse algoritmo foi a otimização de pesqu
 E a identificação do número de elementos distintos em uma coluna era a principal dificuldade nesse processo.
 
 \section{Algoritmo de Flajolet-Martin}
+\label{sec:flajolet-martin:algorithm}
 
 O \textbf{algoritmo de Flajolet-Martin} utiliza uma função de hash $h$ que mapeia uniformemente cada elemento do conjunto $\mathbb{M}$
 para um número inteiro entre $0$ e $2^L-1$, em que $L$ é a quantidade necessária de bits para mapear todas as entradas de $\mathbb{M}$
@@ -53,18 +54,15 @@ o prefixo da representação binária de $y$ é $0^k1$, e $BITMAP[k] = 1$. Um ca
 $\rho(0) = L$.
 
 Por fim, seja $R$ o menor índice tal que $BITMAP[R] = 0$. A estimativa para o número de elementos distintos de $\mathbb{M}$ será $2^R/\phi$, em que, 
-$\phi$ é um fator de correção que será discutido em \refeq{sec:flajolet-martin-analysis}.
+$\phi$ é um fator de correção que será discutido em \refeq{sec:flajolet-martin:analysis}.
 
 Segue o pseudocódigo:
 \begin{programruledcaption}{
-Algoritmo de Flajolet-Martin \\
-\\ \textbf{Entrada:} \\
-\hspace*{1cm} Conjunto $\mathbb{M}$ \\
-\hspace*{1cm} Função de hash $h$ \\
-\hspace*{1cm} Tamanho $L$ do vetor $BITMAP$ \\
-\\ \textbf{Saída:} \\
-\hspace*{1cm} Quantidade de elementos distintos de $\mathbb{M}$
-}\label{prog:flajolet-martin}
+Algoritmo de Flajolet-Martin 
+\\ \textbf{Entrada:} conjunto $\mathbb{M}$, função de hash $h$, tamanho $L$ do vetor $BITMAP$ 
+\\ \textbf{Saída:} quantidade de elementos distintos de $\mathbb{M}$
+\label{prog:flajolet-martin}
+}
   \begin{lstlisting}[
     language={[brazilian]pseudocode},
     style=pseudocode,
@@ -72,7 +70,7 @@ Algoritmo de Flajolet-Martin \\
     functions={},
     specialidentifiers={},
   ]
-      funcao FlajoletMartin(M, h, L)
+      funcao FlajoletMartin($\mathbb{M}$, h, L)
         para i de 0 até L \kw{faça}:
           BITMAP[i] := 0
         fim
@@ -93,4 +91,29 @@ Algoritmo de Flajolet-Martin \\
 \end{programruledcaption}
 
 \section{Análise do algoritmo}
-\label{sec:flajolet-martin-analysis}
+\label{sec:flajolet-martin:analysis}
+
+Suponha que a quantidade de elementos distintos de $\mathbb{M}$ seja $n$. 
+O valor esperado de $R$ definido na seção \refeq{sec:flajolet-martin:algorithm} é aproximadamente $\log_2(\phi n)$,
+em que $\phi = 0.77351\dots$ e o desvio padrão de $R$ é em torno de $1.12$. 
+Essa seção busca mostrar as etapas da análise do Algoritmo \ref{prog:flajolet-martin} feita por Flajolet e Martin.
+Os detalhes da prova podem ser vistos em ~\citep{flajolet:martin:85}.
+
+O primeiro passo é entender que $R$ é uma estimativa para $\lfloor \log_2(n) \rfloor$.
+Pelo padrão das aparições dos prefixos dos hashes dos elementos de $\mathbb{M}$, 
+espera-se que $BITMAP[0]$ seja acessado aproximadamente $\lfloor \frac{n}{2} \rfloor$ vezes, 
+$BITMAP[1]$ aproximadamente $\lfloor \frac{n}{4} \rfloor$ vezes $\dots$
+Agora, para $k = \lfloor \log_2(n) \rfloor$, $BITMAP[k]$ deve ser acessado em torno de 
+$\lfloor \frac{n}{2^{k+1}} \rfloor = 0$ vezes. Assim, o menor índice $R$ tal que o valor de $BITMAP$ seja zero
+é aproximadamente $\lfloor \log_2(n) \rfloor$.
+
+Então, defini-se $R_n$ como sendo a saída do Algoritmo \ref{prog:flajolet-martin} para uma entrada $\mathbb{M}$
+com $n$ elementos distintos. Dessa forma, o interesse principal da demonstração é encontrar fórmulas ou estimativas
+para:
+\begin{itemize}
+  \item $p_{n,k} = \mathbb{P}(R_n = k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} ser igual a $k$
+  \item $q_{n,k} = \mathbb{P}(R_n \geq k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} 
+  ser maior ou igual a $k$
+  \item $E[R_n]$: valor esperado de $R_n$
+  \item $V[R_n]$: variância de $R_n$
+\end{itemize}
