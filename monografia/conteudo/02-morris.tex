@@ -132,15 +132,19 @@ Suponha que para $n > 0$, $\Ebb[2^{X_{n-1}} - 1] = n-1$.
 
 \end{proof}
 
+Somente calcular $\Ebb[2^{X_n} - 1]$ não é suficiente para saber se a aproximação devolvida pelo Algoritmo \ref{prog:morris} é razoável.
+Assim, o objetivo agora, é estimar o valor de $\Vbb[2^{X_n} - 1]$ e entender como as saídas do algoritmo estão distribuídas. 
+O próximo Lema mostra uma possível estimativa para essa variância.
+
 \begin{lemma} \label{morris:variance}
-$\mathbb{V}[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$
+$\Vbb[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$
 \end{lemma}
 
 \begin{proof}
 Primeiro, aplica-se a definição de \hyperref[ap:variance]{variância} em $2^{X_n} - 1$, de modo que
 
 \begin{align*}
-  \mathbb{V}[2^{X_n} - 1] 
+  \Vbb[2^{X_n} - 1] 
     &= \Ebb[(2^{X_n} - 1) ^ 2] - \Ebb[2^{X_n} - 1]^2  \\
     &= \Ebb[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
     &= \Ebb[2^{2X_n}] \underbrace{-2 \Ebb [2^{X_n}] + 1 - n^2}_{\leq 0} \\ 
@@ -172,9 +176,13 @@ Note que $\Ebb[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
 \end{align*}
 
 Portanto, 
-\[ \mathbb{V}[2^{X_n} - 1] \leq \Ebb[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \]
+\[ \Vbb[2^{X_n} - 1] \leq \Ebb[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \]
 
 \end{proof}
+
+Por fim, note que o consumo de memória do Algoritmo \ref{prog:morris} é também uma variável aleatória, uma vez que,
+$X_n$ é uma variável aleatória e o consumo de espaço da função depende deste valor. O seguinte Lema mostra que na maior 
+parte dos casos, o programa consome em torno de $O(\lg\lg n)$ bits.
 
 
 \begin{lemma}
@@ -284,15 +292,15 @@ Considere que $Y_n$ é a saída do Algoritmo \ref{prog:morris:plus} para uma ent
 \end{proof}
 
 \begin{lemma}\label{morris:plus:variance}
-  $\mathbb{V}[Y_n] \leq \frac{1}{k} ( \frac{3n(n+1)}{2} + 1 )$
+  $\Vbb[Y_n] \leq \frac{1}{k} ( \frac{3n(n+1)}{2} + 1 )$
 \end{lemma}
 
 \begin{proof}
   
 \begin{align*}
-  \mathbb{V}[Y_n] 
-    &= \mathbb{V}[\frac{1}{k} \sum_{i=1}^{k} X_n] \\
-    &= \frac{1}{k^2} \sum_{i=1}^{k}\mathbb{V}[X_n]  \\
+  \Vbb[Y_n] 
+    &= \Vbb[\frac{1}{k} \sum_{i=1}^{k} X_n] \\
+    &= \frac{1}{k^2} \sum_{i=1}^{k}\Vbb[X_n]  \\
     &\leq \frac{1}{k^2} \sum_{i=1}^{k} \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
     &= \frac{1}{k^2} k \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
     &= \frac{1}{k} \Big( \frac{3n(n+1)}{2} + 1 \Big)
