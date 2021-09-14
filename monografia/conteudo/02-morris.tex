@@ -15,13 +15,13 @@ uma vez que, não era possível manter as frequências \textit{exatas} dos event
 
 \section{Algoritmo de Morris}
 
-Para se armazenar \textit{exatamente} um valor entre $0$ e $n$, são necessários registradores com $\Omega(\log n)$ bits. 
+Para se armazenar \textit{exatamente} um valor entre $0$ e $n$, são necessários registradores com $\Omega(\lg n)$ bits. 
 Então, para que seja possível contar o número de elementos em um conjunto com até $n$ elementos usando menos bits, 
 deve-se abandonar a \textit{exatidão} da contagem e buscar alternativas aceitáveis.
 
-Uma das primeiras ideias é manter o valor de $\log_2 n$ ao invés de $n$. 
+Uma das primeiras ideias é manter o valor de $\lg n$ ao invés de $n$. 
 Neste caso, se $X$ fosse o valor armazenado em um contador, $2^X$ seria utilizado como estimador \textit{aproximado} de $n$.
-Para isto, seriam utilizados $O(\log \log n)$ bits.
+Para isto, seriam utilizados $O(\lg \lg n)$ bits.
 Dessa forma, a política de incremento desse contador passa a ser a questão central.
 Morris propôs um método probabilístico para resolver esse incremento.
 
@@ -71,27 +71,61 @@ Algoritmo de Morris\label{prog:morris}
 
 Esta seção busca esclarecer o quanto a estimativa do Algoritmo \ref{prog:morris} se distância do tamanho real do conjunto $\Mbb$ dado. As provas
 serão baseadas nas notas de aula de \citep{LectureNotesAndoni}.
-Considere que $X_n$ é a estimativa devolvida por este algoritmo tendo como entrada um conjunto $\Mbb$ com $n$ elementos.
+
+Considere que $2^{X_n} - 1$ é a estimativa devolvida pela função Morris($\Mbb$) tendo como entrada um conjunto $\Mbb$ com $n$ elementos.
+Neste caso, $X_n$ é o valor do contador $X$ antes do término da execução da função.
+Evidentemente, $X_n$ é uma variável aleatória que depende de $n$ e dos resultados dos lançamentos de moedas feitos durante a execução do algoritmo.
+Dessa forma, $2^{X_n} - 1$ é também uma variável aleatória.
+
+Agora, determinar $\Ebb[2^{X_n} - 1]$ passa a ser a questão central.
+
+Para $n = 0$, $X_0 = 0$ e portanto,
+\[ \Ebb[2^{X_0} - 1] = \Ebb[2^0 - 1] = E[0] = 0\]. 
+
+Para $n = 1$, $X_1 = 1$ devido à condição $X = 0$ na linha $5$ da função \ref{prog:morris}. E assim, 
+\[ \Ebb[2^{X_1} - 1] = \Ebb[2^1 - 1] = E[1] = 1\].
+
+A determinação de $E[2^{X_3} - 1]$ está ilustrada na árvore da Figura \ref{fig:morris-tree}.
+Nessa árvore, encontram-se os possíveis resultados do contador $X$ durantes as iterações da função de Morris.
+A setas da cor verde indicam que o contador foi incrementado e as da cor vermelha, que o contador permaneceu com o mesmo valor.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.50]{figuras/morris-tree.png}
+	\caption{Árvore de decisão para quando $|\Mbb| = 3$ no Algoritmo \ref{prog:morris}}\label{fig:morris-tree}
+\end{figure}
+
+Segue que
+\begin{align*}
+  \Ebb[2^{X_3} - 1] 
+    &= \frac{2}{8} \Big(2^1 - 1\Big) + \frac{2}{8} \Big(2^2 - 1\Big) + \frac{3}{8}\Big(2^2 - 1\Big) + \frac{1}{8} \Big(2^3 - 1\Big) \\
+    &= \frac{2}{8} \Big(1\Big) + \frac{2}{8} \Big(3\Big) + \frac{3}{8} \Big(3\Big) + \frac{1}{8} \Big(7\Big) \\
+    &= \frac{24}{8} \\
+    &= 3
+\end{align*}
+
+Em todos os exemplos calculados, $\Ebb[2^{X_n} - 1] = n$. O Lema a seguir mostra que isso não é coincidência.
+
 
 \begin{lemma} \label{morris:expected_value}
-A estimativa do Algoritmo \ref{prog:morris} é não-viesada, ou seja, $\mathbb{E}[2^{X_n} - 1] = n$.
+A estimativa do Algoritmo \ref{prog:morris} é não-viesada, ou seja, $\Ebb[2^{X_n} - 1] = n$.
 \end{lemma}
 
 \begin{proof}
 A prova será por indução em $n$. 
 
-Para $n = 0$, $X_n$ = 0. Logo, $\mathbb{E}[2^0 - 1] = 0$.
+Para $n = 0$, $X_n$ = 0. Logo, $\Ebb[2^0 - 1] = 0$.
 
-Suponha que para $n > 0$, $\mathbb{E}[2^{X_{n-1}} - 1] = n-1$.
+Suponha que para $n > 0$, $\Ebb[2^{X_{n-1}} - 1] = n-1$.
 
 \begin{align*}
-  \mathbb{E}[2^{X_n} - 1] 
+  \Ebb[2^{X_n} - 1] 
     &= \sum_{x} \mathbb{P} (X_n = x) (2^x - 1) \\
-    &= \sum_{x} \mathbb{P} (X_{n-1} = x) \mathbb{E}[2^{X_n} - 1 | X_{n-1} = x] \\
+    &= \sum_{x} \mathbb{P} (X_{n-1} = x) \Ebb[2^{X_n} - 1 | X_{n-1} = x] \\
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) \Big[ (2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x}) \Big] \\
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) 2^x \\
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) (2^x - 1) + \sum_{x} \mathbb{P} (X_{n-1} = x) \\
-    &= \mathbb{E}[2^{X_{n-1}} - 1] + 1 \\
+    &= \Ebb[2^{X_{n-1}} - 1] + 1 \\
     &= n - 1 + 1 \\
     &= n
 \end{align*}
@@ -107,29 +141,29 @@ Primeiro, aplica-se a definição de \hyperref[ap:variance]{variância} em $2^{X
 
 \begin{align*}
   \mathbb{V}[2^{X_n} - 1] 
-    &= \mathbb{E}[(2^{X_n} - 1) ^ 2] - \mathbb{E}[2^{X_n} - 1]^2  \\
-    &= \mathbb{E}[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
-    &= \mathbb{E}[2^{2X_n}] \underbrace{-2 \mathbb{E} [2^{X_n}] + 1 - n^2}_{\leq 0} \\ 
-    &\leq \mathbb{E}[2^{2X_n}]
+    &= \Ebb[(2^{X_n} - 1) ^ 2] - \Ebb[2^{X_n} - 1]^2  \\
+    &= \Ebb[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
+    &= \Ebb[2^{2X_n}] \underbrace{-2 \Ebb [2^{X_n}] + 1 - n^2}_{\leq 0} \\ 
+    &\leq \Ebb[2^{2X_n}]
 \end{align*}
 
-Agora, deve-se calcular $\mathbb{E}[2^{2X_n}]$.
+Agora, deve-se calcular $\Ebb[2^{2X_n}]$.
 
 \begin{align*}
-  \mathbb{E}[2^{2X_n}]  
+  \Ebb[2^{2X_n}]  
     &=  \sum_{x} 2^{2x} \mathbb{P}(X_n = x) \\
     &=  \sum_{x} 2^{2x} \Big[ 2^{-(x-1)} \mathbb{P}(X_{n-1} = x-1) + (1 - 2^{-x}) \mathbb{P}(X_{n-1} = x) \Big] \\
     &=  \sum_{x} 2^{x+1} \mathbb{P}(X_{n-1} = x-1) + \sum_{x} 2^{2x} \mathbb{P}(X_{n-1} = x) - \sum_{x} 2^{x} \mathbb{P}(X_{n-1} = x) \\
     &=  \sum_{x} 4 \ 2^{x-1} \mathbb{P}(X_{n-1} = x-1) + \sum_{x} 2^{2x} \mathbb{P}(X_{n-1} = x) - \sum_{x} 2^{x} \mathbb{P}(X_{n-1} = x)  \\
-    &=  4 \mathbb{E}[2^{X_{n-1}}] + \mathbb{E}[2^{2X_{n-1}}] - \mathbb{E}[2^{X_{n-1}}]  \\
-    &=  3 \mathbb{E}[2^{X_{n-1}}] + \mathbb{E}[2^{2X_{n-1}}]  \\
-    &=  3 n + \mathbb{E}[2^{2X_{n-1}}]  \\
+    &=  4 \Ebb[2^{X_{n-1}}] + \Ebb[2^{2X_{n-1}}] - \Ebb[2^{X_{n-1}}]  \\
+    &=  3 \Ebb[2^{X_{n-1}}] + \Ebb[2^{2X_{n-1}}]  \\
+    &=  3 n + \Ebb[2^{2X_{n-1}}]  \\
 \end{align*}
 
-Note que $\mathbb{E}[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
+Note que $\Ebb[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
 
 \begin{align*}
-  \mathbb{E}[2^{2X_{n}}] 
+  \Ebb[2^{2X_{n}}] 
     &= 3n + 3(n-1) + 3(n-2) + \dots + E[2^{2X_2}] \\
     &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + E[2^{2X_1}] \\
     &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + 3 (1) + E[2^{2X_0}] \\
@@ -138,34 +172,34 @@ Note que $\mathbb{E}[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
 \end{align*}
 
 Portanto, 
-\[ \mathbb{V}[2^{X_n} - 1] \leq \mathbb{E}[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \]
+\[ \mathbb{V}[2^{X_n} - 1] \leq \Ebb[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \]
 
 \end{proof}
 
 
 \begin{lemma}
-  O Algoritmo \ref{prog:morris} consome $O(\log \log n)$ bits de memória com probabilidade acima de $90\%$.
+  O Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ bits de memória com probabilidade acima de $90\%$.
 \end{lemma}
 
 \begin{proof}
   Usando a \nameref{ap:markov} com $X = 2^{X_n} - 1$ e $\alpha = 10n$, segue que
 
-\[ \mathbb{P}(2^{X_n} - 1 \geq 10n)  \leq \frac{\mathbb{E}[2^X_n - 1]}{(10n)^2} = \frac{n}{100n^2} = \frac{1}{100n} \leq \frac{1}{10} \]
+\[ \mathbb{P}(2^{X_n} - 1 \geq 10n)  \leq \frac{\Ebb[2^X_n - 1]}{(10n)^2} = \frac{n}{100n^2} = \frac{1}{100n} \leq \frac{1}{10} \]
 
 Assim, com probabilidade maior que $\frac{9}{10} = 90\%$, $2^{X_n} - 1 \leq 10n$. Logo, 
 
 \[ 2^{X_n} - 1 \leq 10n  \]
-\[ X_n \leq \log_2(10n + 1)\]
+\[ X_n \leq \lg(10n + 1)\]
 
-Para armazenar $X_n$, gasta-se $\log_2(X_n)$ bits. Assim,
+Para armazenar $X_n$, gasta-se $\lg(X_n)$ bits. Assim,
 
 \begin{align*}
-  \log_2(X_n) 
-    &\leq \log_2\log_2(10n + 1) \\ 
-    &= O(\log \log n)
+  \lg(X_n) 
+    &\leq \lg\lg(10n + 1) \\ 
+    &= O(\lg \lg n)
 \end{align*} 
 
-Portanto, o Algoritmo \ref{prog:morris} consome $O(\log \log n)$ bits de memória com probabilidade acima de $90\%$.
+Portanto, o Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ bits de memória com probabilidade acima de $90\%$.
 
 \end{proof}
 
@@ -173,7 +207,7 @@ Agora, pode-se usar os Lemas \ref{morris:expected_value} e \ref{morris:variance}
 erro do Algoritmo \ref{prog:morris}.
 Usando a \nameref{ap:chebyshev} com $X = 2^{X_n} - 1$, segue que
 
-\[ \mathbb{P}(|2^{X_n} - 1 - \mathbb{E}[2^{X_n} - 1]| \geq \sigma ) \leq \frac{Var[2^{X_n} - 1]}{\sigma^2}\]
+\[ \mathbb{P}(|2^{X_n} - 1 - \Ebb[2^{X_n} - 1]| \geq \sigma ) \leq \frac{Var[2^{X_n} - 1]}{\sigma^2}\]
 
 \begin{align*}
   \mathbb{P}(|2^{X_n} - 1 - n| \geq \sigma ) 
@@ -234,15 +268,15 @@ Algoritmo de Morris adaptado\label{prog:morris:plus}
 Considere que $Y_n$ é a saída do Algoritmo \ref{prog:morris:plus} para uma entrada de tamanho $n$.
 
 \begin{lemma}\label{morris:plus:expected_value}
-  $\mathbb{E}[Y_n] = n$
+  $\Ebb[Y_n] = n$
 \end{lemma}
 
 \begin{proof}
 
 \begin{align*}
-  \mathbb{E}[Y_n] 
-    &= \mathbb{E} \Big[ \frac{1}{k} \sum_{i=1}^{k} X_n \Big]  \\
-    &= \frac{1}{k} \sum_{i=1}^{k} \mathbb{E}[X_n] \\
+  \Ebb[Y_n] 
+    &= \Ebb \Big[ \frac{1}{k} \sum_{i=1}^{k} X_n \Big]  \\
+    &= \frac{1}{k} \sum_{i=1}^{k} \Ebb[X_n] \\
     &= \frac{1}{k} k n  \\
     &= n
 \end{align*}
