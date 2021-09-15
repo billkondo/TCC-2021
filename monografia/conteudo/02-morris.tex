@@ -80,10 +80,10 @@ Dessa forma, $2^{X_n} - 1$ é também uma variável aleatória.
 Agora, determinar $\Ebb[2^{X_n} - 1]$ passa a ser a questão central.
 
 Para $n = 0$, $X_0 = 0$ e portanto,
-\[ \Ebb[2^{X_0} - 1] = \Ebb[2^0 - 1] = E[0] = 0\]. 
+\[ \Ebb[2^{X_0} - 1] = \Ebb[2^0 - 1] = E[0] = 0 \ .\]
 
 Para $n = 1$, $X_1 = 1$ devido à condição $X = 0$ na linha $5$ da função \ref{prog:morris}. E assim, 
-\[ \Ebb[2^{X_1} - 1] = \Ebb[2^1 - 1] = E[1] = 1\].
+\[ \Ebb[2^{X_1} - 1] = \Ebb[2^1 - 1] = E[1] = 1 \ .\]
 
 A determinação de $E[2^{X_3} - 1]$ está ilustrada na árvore da Figura \ref{fig:morris-tree}.
 Nessa árvore, encontram-se os possíveis resultados do contador $X$ durantes as iterações da função de Morris.
@@ -101,7 +101,7 @@ Segue que
     &= \frac{2}{8} \Big(2^1 - 1\Big) + \frac{2}{8} \Big(2^2 - 1\Big) + \frac{3}{8}\Big(2^2 - 1\Big) + \frac{1}{8} \Big(2^3 - 1\Big) \\
     &= \frac{2}{8} \Big(1\Big) + \frac{2}{8} \Big(3\Big) + \frac{3}{8} \Big(3\Big) + \frac{1}{8} \Big(7\Big) \\
     &= \frac{24}{8} \\
-    &= 3
+    &= 3 \ .
 \end{align*}
 
 Em todos os exemplos calculados, $\Ebb[2^{X_n} - 1] = n$. O Lema a seguir mostra que isso não é coincidência.
@@ -127,7 +127,7 @@ Suponha que para $n > 0$, $\Ebb[2^{X_{n-1}} - 1] = n-1$.
     &= \sum_{x} \mathbb{P} (X_{n-1} = x) (2^x - 1) + \sum_{x} \mathbb{P} (X_{n-1} = x) \\
     &= \Ebb[2^{X_{n-1}} - 1] + 1 \\
     &= n - 1 + 1 \\
-    &= n
+    &= n \ .
 \end{align*}
 
 \end{proof}
@@ -137,7 +137,7 @@ Assim, o objetivo agora, é estimar o valor de $\Vbb[2^{X_n} - 1]$ e entender co
 O próximo Lema mostra uma possível estimativa para essa variância.
 
 \begin{lemma} \label{morris:variance}
-$\Vbb[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$
+$\Vbb[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$.
 \end{lemma}
 
 \begin{proof}
@@ -148,7 +148,7 @@ Primeiro, aplica-se a definição de \hyperref[ap:variance]{variância} em $2^{X
     &= \Ebb[(2^{X_n} - 1) ^ 2] - \Ebb[2^{X_n} - 1]^2  \\
     &= \Ebb[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
     &= \Ebb[2^{2X_n}] \underbrace{-2 \Ebb [2^{X_n}] + 1 - n^2}_{\leq 0} \\ 
-    &\leq \Ebb[2^{2X_n}]
+    &\leq \Ebb[2^{2X_n}] \ .
 \end{align*}
 
 Agora, deve-se calcular $\Ebb[2^{2X_n}]$.
@@ -161,7 +161,7 @@ Agora, deve-se calcular $\Ebb[2^{2X_n}]$.
     &=  \sum_{x} 4 \ 2^{x-1} \mathbb{P}(X_{n-1} = x-1) + \sum_{x} 2^{2x} \mathbb{P}(X_{n-1} = x) - \sum_{x} 2^{x} \mathbb{P}(X_{n-1} = x)  \\
     &=  4 \Ebb[2^{X_{n-1}}] + \Ebb[2^{2X_{n-1}}] - \Ebb[2^{X_{n-1}}]  \\
     &=  3 \Ebb[2^{X_{n-1}}] + \Ebb[2^{2X_{n-1}}]  \\
-    &=  3 n + \Ebb[2^{2X_{n-1}}]  \\
+    &=  3 n + \Ebb[2^{2X_{n-1}}] \ . \\
 \end{align*}
 
 Note que $\Ebb[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
@@ -172,11 +172,11 @@ Note que $\Ebb[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
     &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + E[2^{2X_1}] \\
     &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + 3 (1) + E[2^{2X_0}] \\
     &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + 3 (1) + 1 \\
-    &= \frac{3n(n+1)}{2} + 1
+    &= \frac{3n(n+1)}{2} + 1 \ .
 \end{align*}
 
 Portanto, 
-\[ \Vbb[2^{X_n} - 1] \leq \Ebb[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \]
+\[ \Vbb[2^{X_n} - 1] \leq \Ebb[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \ .\]
 
 \end{proof}
 
@@ -192,19 +192,19 @@ parte dos casos, o programa consome em torno de $O(\lg\lg n)$ bits.
 \begin{proof}
   Usando a \nameref{ap:markov} com $X = 2^{X_n} - 1$ e $\alpha = 10n$, segue que
 
-\[ \mathbb{P}(2^{X_n} - 1 \geq 10n)  \leq \frac{\Ebb[2^X_n - 1]}{(10n)^2} = \frac{n}{100n^2} = \frac{1}{100n} \leq \frac{1}{10} \]
+\[ \mathbb{P}(2^{X_n} - 1 \geq 10n)  \leq \frac{\Ebb[2^X_n - 1]}{(10n)^2} = \frac{n}{100n^2} = \frac{1}{100n} \leq \frac{1}{10} \ . \]
 
 Assim, com probabilidade maior que $\frac{9}{10} = 90\%$, $2^{X_n} - 1 \leq 10n$. Logo, 
 
 \[ 2^{X_n} - 1 \leq 10n  \]
-\[ X_n \leq \lg(10n + 1)\]
+\[ X_n \leq \lg(10n + 1) \ .\]
 
 Para armazenar $X_n$, gasta-se $\lg(X_n)$ bits. Assim,
 
 \begin{align*}
   \lg(X_n) 
     &\leq \lg\lg(10n + 1) \\ 
-    &= O(\lg \lg n)
+    &= O(\lg \lg n) \ .
 \end{align*} 
 
 Portanto, o Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ bits de memória com probabilidade acima de $90\%$.
@@ -215,12 +215,14 @@ Agora, pode-se usar os Lemas \ref{morris:expected_value} e \ref{morris:variance}
 erro do Algoritmo \ref{prog:morris}.
 Usando a \nameref{ap:chebyshev} com $X = 2^{X_n} - 1$, segue que
 
-\[ \mathbb{P}(|2^{X_n} - 1 - \Ebb[2^{X_n} - 1]| \geq \sigma ) \leq \frac{Var[2^{X_n} - 1]}{\sigma^2}\]
+\[ \mathbb{P}(|2^{X_n} - 1 - \Ebb[2^{X_n} - 1]| \geq \sigma ) \leq \frac{Var[2^{X_n} - 1]}{\sigma^2} \ . \]
+
+Dessa forma, 
 
 \begin{align*}
   \mathbb{P}(|2^{X_n} - 1 - n| \geq \sigma ) 
     &\leq \frac{3\frac{n(n+1)}{2} + 1}{\sigma^2}  \\
-    &= \frac{3n^2 + 3n + 2}{2\sigma^2}
+    &= \frac{3n^2 + 3n + 2}{2\sigma^2} \ .
 \end{align*}
 
 
@@ -230,11 +232,11 @@ Tomando $\sigma = \epsilon n$, conclui-se
   \mathbb{P}(|2^{X_n} - 1 - n| \geq \epsilon n) 
     &\leq \frac{3n^2 + 3n + 2}{2 \epsilon^2 n^2}  \\
     &\leq \frac{4n^2}{2 \epsilon^2 n^2}  &&(\text{$3n + 2 \leq n^2$ para $n \geq 4$}) \\
-    &= \frac{2}{\epsilon^2}
+    &= \frac{2}{\epsilon^2} \ .
 \end{align*}
 
 Tome $\epsilon = \sqrt{40} \approx 6 $, de modo que 
-\[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sqrt{40} n)  \leq 0.05 \]
+\[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sqrt{40} n)  \leq 0.05 \ . \]
 
 Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algoritmo \ref{prog:morris} pode ser de até $6$ vezes o valor de $n$.
 
@@ -276,7 +278,7 @@ Algoritmo de Morris adaptado\label{prog:morris:plus}
 Considere que $Y_n$ é a saída do Algoritmo \ref{prog:morris:plus} para uma entrada de tamanho $n$.
 
 \begin{lemma}\label{morris:plus:expected_value}
-  $\Ebb[Y_n] = n$
+  $\Ebb[Y_n] = n$.
 \end{lemma}
 
 \begin{proof}
@@ -286,13 +288,13 @@ Considere que $Y_n$ é a saída do Algoritmo \ref{prog:morris:plus} para uma ent
     &= \Ebb \Big[ \frac{1}{k} \sum_{i=1}^{k} X_n \Big]  \\
     &= \frac{1}{k} \sum_{i=1}^{k} \Ebb[X_n] \\
     &= \frac{1}{k} k n  \\
-    &= n
+    &= n \ .
 \end{align*}
 
 \end{proof}
 
 \begin{lemma}\label{morris:plus:variance}
-  $\Vbb[Y_n] \leq \frac{1}{k} ( \frac{3n(n+1)}{2} + 1 )$
+  $\Vbb[Y_n] \leq \frac{1}{k} ( \frac{3n(n+1)}{2} + 1 )$.
 \end{lemma}
 
 \begin{proof}
@@ -303,7 +305,7 @@ Considere que $Y_n$ é a saída do Algoritmo \ref{prog:morris:plus} para uma ent
     &= \frac{1}{k^2} \sum_{i=1}^{k}\Vbb[X_n]  \\
     &\leq \frac{1}{k^2} \sum_{i=1}^{k} \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
     &= \frac{1}{k^2} k \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
-    &= \frac{1}{k} \Big( \frac{3n(n+1)}{2} + 1 \Big)
+    &= \frac{1}{k} \Big( \frac{3n(n+1)}{2} + 1 \Big) \ .
 \end{align*}
 
 \end{proof}
@@ -312,14 +314,14 @@ Agora, pode-se usar os Lemas \ref{morris:plus:expected_value} e \ref{morris:plus
 erro do Algoritmo \ref{prog:morris:plus}. De forma análoga ao que foi feito na conclusão da Análise \ref{sec:morris:analysis}, pode-se 
 concluir que
 
-\[ \mathbb{P}(|Y_n - n| \geq \epsilon n ) \leq \frac{2}{\epsilon^2 k}\]
+\[ \mathbb{P}(|Y_n - n| \geq \epsilon n ) \leq \frac{2}{\epsilon^2 k} \ . \]
 
 em que $\epsilon$ é o erro relativo do Algoritmo \ref{prog:morris:plus} e $k$, a quantidade de execuções do Algoritmo \ref{prog:morris}.
 Assim, para um intervalo de confiança de $\delta$, pode-se escrever $k$ em função de $\epsilon$ e $\delta$:
 
 \begin{align*}
       &\frac{2}{\epsilon^2 k^2} = 1 - \delta \\
-  \iff& k = \Bigg\lceil \frac{2}{(1 - \delta) \epsilon^2} \Bigg\rceil
+  \iff& k = \Bigg\lceil \frac{2}{(1 - \delta) \epsilon^2} \Bigg\rceil \ .
 \end{align*}
 
 Por fim, fixando um intervalo de confiança de $95\%$ e erro relativo de $10\%$ ($\epsilon = 0.1$), $k$ deve ser $4000$.  
