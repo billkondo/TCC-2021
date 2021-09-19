@@ -117,3 +117,14 @@ para:
   \item $E[R_n]$: valor esperado de $R_n$
   \item $V[R_n]$: variância de $R_n$
 \end{itemize}
+
+O primeiro teorema de ~\citep{flajolet:martin:85} mostra uma fórmula \textit{exata} para $q_{n,k}$. 
+A principal idea para encontrar essa fórmula é agrupar as palavras binárias por prefixos da forma $0^k1$.
+Assim, defini-se $E_k = \{ x  \ | \ \rho(x) = k \}$, ou seja, $E_k$ é o conjunto de todas as palavras aleatórias com prefixos
+iguais a $0^k1$. Da mesma forma, defini-se $K_k = \{ x \ | \ \rho(x) \geq k \}$. Em seguida, as diferentes entradas $\mathbb{M}$
+com $n$ elementos distintos são representadas por um polinômio:
+\[ P_k^{(n)} = (E_0 + E_1 + \dots + E_{k-1} + K_k)^n .\]
+
+O próximo passo é tentar expandir esse polinômio usando \textit{inclusão e exclusão}, 
+e associar uma medida probabilidade para $E_0, E_1, \dots, E_{k-1}, K_k$. E a prova deste teorema termina encontrando uma relação entre $q_{n,k}$
+e esta expansão de polinômio.
