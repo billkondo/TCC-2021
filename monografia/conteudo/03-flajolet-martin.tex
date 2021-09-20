@@ -114,8 +114,8 @@ para:
   \item $p_{n,k} = \mathbb{P}(R_n = k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} ser igual a $k$
   \item $q_{n,k} = \mathbb{P}(R_n \geq k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} 
   ser maior ou igual a $k$
-  \item $E[R_n]$: valor esperado de $R_n$
-  \item $V[R_n]$: variância de $R_n$
+  \item $\mathbb{E}[R_n]$: valor esperado de $R_n$
+  \item $\mathbb{V}[R_n]$: variância de $R_n$
 \end{itemize}
 
 O primeiro teorema de ~\citep{flajolet:martin:85} mostra uma fórmula \textit{exata} para $q_{n,k}$. 
@@ -128,3 +128,14 @@ com $n$ elementos distintos são representadas por um polinômio:
 O próximo passo é tentar expandir esse polinômio usando \textit{inclusão e exclusão}, 
 e associar uma medida probabilidade para $E_0, E_1, \dots, E_{k-1}, K_k$. E a prova deste teorema termina encontrando uma relação entre $q_{n,k}$
 e esta expansão de polinômio.
+
+Em seguida, o Teorema 2 apresenta aproximações de $q_{n,k}$ para diferentes intervalos de $k$.
+E a consequência deste teorema é a existência de uma distribuição limitante para a distribuição
+de probabilidade de $R_n$ conforme $n$ cresce. Dessa forma, obtém-se uma fórmula \textit{aproximada}
+para $q_{n,k}$:
+\[ q_{n,k} \approx \psi(\frac{n}{2^k}) \]
+
+em que, $\psi(x) = \prod_{j \geq 0} (1 - e^{-x2^j})$.
+
+Note que por definição, $p_{n,k} = q_{n,k} - q_{n,k+1}$. Assim, pode-se aproximar $p_{n,k}$:
+\[ p_{n,k} \approx \psi(\frac{n}{2^k}) - \psi(\frac{n}{2^{k+1}}) \ . \]
