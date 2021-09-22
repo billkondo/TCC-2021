@@ -139,3 +139,16 @@ em que, $\psi(x) = \prod_{j \geq 0} (1 - e^{-x2^j})$.
 
 Note que por definição, $p_{n,k} = q_{n,k} - q_{n,k+1}$. Assim, pode-se aproximar $p_{n,k}$:
 \[ p_{n,k} \approx \psi(\frac{n}{2^k}) - \psi(\frac{n}{2^{k+1}}) \ . \]
+
+O interesse passa a ser, portanto, estimar $\mathbb{E}[R_n]$ a partir dessa fórmula aproximada de $p_{n,k}$,
+de maneira que 
+\[\mathbb{E}[R_n] = \sum_{k \geq 1} k p_{n,k} \approx \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi \Big( \frac{n}{2^{k+1}} \Big) \Big] \ .\]
+
+Desse modo, defini-se a função real $F(x)$ como sendo
+\[ F(x) =  \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi \Big( \frac{n}{2^{k+1}} \Big) \Big] \ . \]
+
+E o Lema 1 do artigo, afirma que 
+\[ \mathbb{E}[R_n] = F(x) + O \Big( \frac{1}{n^{0.49}} \Big) \ , \]
+ou seja, que o valor esperado de $R_n$ se aproxima de $F(x)$ conforme $n$ cresce.
+
+Seguidamente, o Lema 2 apresenta o resultado da \hyperref[ap:mellin]{transformada de Mellin} de $F(X)$.
