@@ -151,4 +151,17 @@ E o Lema 1 do artigo, afirma que
 \[ \mathbb{E}[R_n] = F(x) + O \Big( \frac{1}{n^{0.49}} \Big) \ , \]
 ou seja, que o valor esperado de $R_n$ se aproxima de $F(x)$ conforme $n$ cresce.
 
-Seguidamente, o Lema 2 apresenta o resultado da \hyperref[ap:mellin]{transformada de Mellin} de $F(X)$.
+Em seguida, o Lema 2 apresenta o resultado da \hyperref[ap:mellin]{transformada de Mellin} de $F(X)$. 
+A principal razão para se calcular essa transformação é que se pode expressar a fórmula inversa da transformada de Mellin 
+como uma expansão assintótica cujos termos são resíduos da transformada. Assim, o Teorema $3A$ utiliza os Lemas 1 e 2, e o 
+Teorema dos Resíduos para afirmar que 
+\[ \mathbb{E}[R_n] = \lg (\phi n) + P(\lg n) + o(1) \ , \]
+em que, $P(x)$ é a expansão assintótica de $F(x)$ e $\phi = 0.77351\dots$, concluindo a prova que $\mathbb{E}[R_n] \approx \lg (\phi n)$.
+
+A prova para a estimativa de $\mathbb{V}[R_n]$ segue os mesmos passos da prova anterior. Pela definição de \hyperref[ap:variance]{variância},
+precisa-se estimar $\mathbb{E}[R_n ^ 2]$. Assim, 
+\[ \mathbb{E[R_n ^2]} = \sum_{k=1} k^2 p_{n,k} \approx G(x) \ , \]
+em que,
+\[ G(x) = \sum_{k=1} k^2 p_{n,k} \ . \]
+
+Dessa forma, encontra-se a transformada de Mellin de $G(x)$ e se analisa a inversa desta transformação para estimar $\mathbb{E}[R_n^2]$.
