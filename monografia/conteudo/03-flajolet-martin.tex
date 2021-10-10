@@ -1,3 +1,5 @@
+\newcommand{\bitmap}{\text{BITMAP}}
+
 \chapter{Contagem distinta aproximada: Flajolet-Martin(1985)}
 \label{lab:flajolet-martin}
 
@@ -46,23 +48,23 @@ palavras, pelo menos uma comece com \textbf{1}. E que a cada \textbf{4} palavras
 \textbf{01}. Assim, a cada $\mathbf{2^k}$ palavras, espera-se que pelo menos uma palavra comece com $\mathbf{0^{k-1}1}$. 
 Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ items já devam ter sido gerados. 
 
-Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor $BITMAP[0 \twodots L-1]$, 
-de modo que $BITMAP[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os \textit{hashes} dos elementos de 
+Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor $\bitmap[0 \twodots L-1]$, 
+de modo que $\bitmap[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os \textit{hashes} dos elementos de 
 $\Mbb$. 
 
 Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $L - 1$. E para isso, defini-se a função $\rho$ 
 que recebe um inteiro e devolve a posição do 1 menos significativo deste inteiro. Então, para um \textit{hash} $y$, 
-suponha que $\rho(y) = k$. Assim, o prefixo da representação binária de $y$ é $0^k1$, e $BITMAP[k] = 1$. Um caso 
+suponha que $\rho(y) = k$. Assim, o prefixo da representação binária de $y$ é $0^k1$, e $\bitmap[k] = 1$. Um caso 
 especial para essa função é quando o \textit{hash} é zero. Nesta situação, $\rho(0) = L$.
 
-Por fim, seja $R$ o menor índice tal que $BITMAP[R] = 0$. A estimativa para o número de elementos distintos de 
+Por fim, seja $R$ o menor índice tal que $\bitmap[R] = 0$. A estimativa para o número de elementos distintos de 
 $\Mbb$ será $2^R/\phi$, em que, $\phi$ é um fator de correção que será discutido em 
 \refeq{sec:flajolet-martin:analysis}.
 
 Segue o pseudocódigo:
 \begin{programruledcaption}{
 Algoritmo de Flajolet-Martin 
-\\ \textbf{Entrada:} conjunto $\Mbb$, função de hash $h$, tamanho $L$ do vetor $BITMAP$ 
+\\ \textbf{Entrada:} conjunto $\Mbb$, função de hash $h$, tamanho $L$ do vetor $\bitmap$ 
 \\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
 \label{prog:flajolet-martin}
 }
@@ -75,14 +77,14 @@ Algoritmo de Flajolet-Martin
   ]
       funcao FlajoletMartin($\Mbb$, h, L)
         para i de 0 até L \kw{faça}:
-          BITMAP[i] := 0
+          $\bitmap[i]$ := 0
         fim
         para x $\in$ $\Mbb$ \kw{faça}:
           y := h(x)
-          BITMAP[$\rho(y)$] := 1
+          $\bitmap[\rho(y)]$ := 1
         fim
         R := 0
-        enquanto BITMAP[R] = 1 \kw{faça}:
+        enquanto $\bitmap[R]$ = 1 \kw{faça}:
           R := R + 1
         fim
         devolva $2^R/\phi$
@@ -99,10 +101,10 @@ de $R$ é em torno de $1.12$. Essa seção busca mostrar as etapas da análise d
 por Flajolet e Martin. Os detalhes da prova podem ser vistos em ~\citep{flajolet:martin:85}.
 
 O primeiro passo é entender que $R$ é uma estimativa para $\lfloor \log_2(n) \rfloor$. Pelo padrão das aparições dos 
-prefixos dos hashes dos elementos de $\Mbb$, espera-se que $BITMAP[0]$ seja acessado aproximadamente $\lfloor 
-\frac{n}{2} \rfloor$ vezes, $BITMAP[1]$ aproximadamente $\lfloor \frac{n}{4} \rfloor$ vezes $\dots$ Agora, para 
-$k = \lfloor \log_2(n) \rfloor$, $BITMAP[k]$ deve ser acessado em torno de $\lfloor \frac{n}{2^{k+1}} \rfloor = 0$ 
-vezes. Assim, o menor índice $R$ tal que o valor de $BITMAP$ seja zero é aproximadamente $\lfloor \log_2(n) \rfloor$.
+prefixos dos hashes dos elementos de $\Mbb$, espera-se que $\bitmap[0]$ seja acessado aproximadamente $\lfloor 
+\frac{n}{2} \rfloor$ vezes, $\bitmap[1]$ aproximadamente $\lfloor \frac{n}{4} \rfloor$ vezes $\dots$ Agora, para 
+$k = \lfloor \log_2(n) \rfloor$, $\bitmap[k]$ deve ser acessado em torno de $\lfloor \frac{n}{2^{k+1}} \rfloor = 0$ 
+vezes. Assim, o menor índice $R$ tal que o valor de $\bitmap$ seja zero é aproximadamente $\lfloor \log_2(n) \rfloor$.
 
 Então, defini-se a variável aleatória $R_n$ como sendo o valor da variável $R$ ao final da execução do Algoritmo 
 \ref{prog:flajolet-martin} para uma entrada $\Mbb$ com $n$ elementos distintos. Dessa forma, o interesse principal 
@@ -204,7 +206,7 @@ estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o Algoritmo
 grande variabilidade.
 
 Assim como foi visto na Seção \ref{sec:morris:plus}, pode-se diminuir a variância da estimativa fazendo $k$ iterações 
-do Algoritmo \ref{prog:flajolet-martin}. Dessa forma, seria necessário manter $k$ vetores BITMAP, $k$ valores de $R$ e 
+do Algoritmo \ref{prog:flajolet-martin}. Dessa forma, seria necessário manter $k$ vetores \bitmap, $k$ valores de $R$ e 
 $k$ funções de hash $h$. Ao final de todas as $k$ iterações, seria calculado a média $\bar{R}$ dos valores de $R$, e a 
 estimativa do número de elementos distintos seria $(1 \slash \phi) 2^{\bar{R}}$.
 
@@ -212,7 +214,7 @@ O pseudocódigo a seguir codifica essa idea:
 
 \begin{programruledcaption}{
   Algoritmo de Flajolet-Martin+
-  \\ \textbf{Entrada:} conjunto $\Mbb$, $k$ funções de hash, tamanho $L$ do vetor $BITMAP$ 
+  \\ \textbf{Entrada:} conjunto $\Mbb$, $k$ funções de hash, tamanho $L$ do vetor $\bitmap$ 
   \\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
   \label{prog:flajolet-martin+}
   }
@@ -226,20 +228,20 @@ O pseudocódigo a seguir codifica essa idea:
         funcao FlajoletMartin($\Mbb$, k, h, L)
           para i de 0 até k \kw{faça}:
             para j de 0 até L \kw{faça}:
-              $BITMAP^{<i>}[j]$ := 0
+              $\bitmap^{<i>}[j]$ := 0
             fim
           fim
           para i de 0 até k \kw{faça}:
             para x $\in$ $\Mbb$ \kw{faça}:
               y := $h^{<i>}(x)$
-              $BITMAP^{<i>}[\rho(y)]$ := 1
+              $\bitmap^{<i>}[\rho(y)]$ := 1
             fim
           fim
           para i de 0 até k \kw{faça}:
             $R^{<i>}$ := 0
           fim
           para i de 0 até k \kw{faça}:
-            enquanto $BITMAP^{<i>}[R^{<i>}]$ = 1 \kw{faça}:
+            enquanto $\bitmap^{<i>}[R^{<i>}]$ = 1 \kw{faça}:
               $R^{<i>}$ := $R^{<i>}$ + 1
             fim
           fim
@@ -269,7 +271,7 @@ qual lote um elemento deve ir.
 As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão é feita:
 \begin{programruledcaption}{
   Algoritmo de Flajolet-Martin++
-  \\ \textbf{Entrada:} conjunto $\Mbb$, funções de hash $h$, tamanho $L$ do vetor $BITMAP$, 
+  \\ \textbf{Entrada:} conjunto $\Mbb$, funções de hash $h$, tamanho $L$ do vetor $\bitmap$, 
   quantidade $k$ de lotes
   \\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
   \label{prog:flajolet-martin++}
@@ -284,19 +286,19 @@ As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão 
         funcao FlajoletMartin($\Mbb$, k, h, L)
           para i de 0 até k \kw{faça}:
             para j de 0 até L \kw{faça}:
-              $BITMAP^{<i>}[j]$ := 0
+              $\bitmap^{<i>}[j]$ := 0
             fim
           fim
           para x $\in$ $\Mbb$ \kw{faça}:
             lote := $h(x) \mod k$
             y := $\lfloor h(x) / k \rfloor$
-            $BITMAP^{<lote>}[\rho(y)]$ := 1
+            $\bitmap^{<lote>}[\rho(y)]$ := 1
           fim
           para i de 0 até k \kw{faça}:
             $R^{<i>}$ := 0
           fim
           para i de 0 até k \kw{faça}:
-            enquanto $BITMAP^{<i>}[R^{<i>}]$ = 1 \kw{faça}:
+            enquanto $\bitmap^{<i>}[R^{<i>}]$ = 1 \kw{faça}:
               $R^{<i>}$ := $R^{<i>}$ + 1
             fim
           fim
