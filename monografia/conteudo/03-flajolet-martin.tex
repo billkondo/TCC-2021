@@ -228,26 +228,26 @@ O pseudocódigo a seguir codifica essa idea:
         funcao FlajoletMartin($\Mbb$, k, h, L)
           para i de 0 até k \kw{faça}:
             para j de 0 até L \kw{faça}:
-              $\bitmap^{<i>}[j]$ := 0
+              $\bitmap_i[j]$ := 0
             fim
           fim
           para i de 0 até k \kw{faça}:
             para x $\in$ $\Mbb$ \kw{faça}:
-              y := $h^{<i>}(x)$
-              $\bitmap^{<i>}[\rho(y)]$ := 1
+              y := $h_i(x)$
+              $\bitmap_i[\rho(y)]$ := 1
             fim
           fim
           para i de 0 até k \kw{faça}:
-            $R^{<i>}$ := 0
+            $R_i$ := 0
           fim
           para i de 0 até k \kw{faça}:
-            enquanto $\bitmap^{<i>}[R^{<i>}]$ = 1 \kw{faça}:
-              $R^{<i>}$ := $R^{<i>}$ + 1
+            enquanto $\bitmap_i[R_i]$ = 1 \kw{faça}:
+              $R_i$ := $R_i$ + 1
             fim
           fim
           $\bar{R}$ := 0
           para i de 0 até k \kw{faça}:
-            $\bar{R}$ := $\bar{R} + R^{<i>}$ 
+            $\bar{R}$ := $\bar{R} + R_i$ 
           fim
           $\bar{R}$ := $\bar{R} \slash k$
           devolva $2^{\bar{R}}/\phi$
@@ -286,7 +286,7 @@ As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão 
         funcao FlajoletMartin($\Mbb$, k, h, L)
           para i de 0 até k \kw{faça}:
             para j de 0 até L \kw{faça}:
-              $\bitmap^{<i>}[j]$ := 0
+              $\bitmap_i[j]$ := 0
             fim
           fim
           para x $\in$ $\Mbb$ \kw{faça}:
@@ -295,16 +295,16 @@ As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão 
             $\bitmap^{<lote>}[\rho(y)]$ := 1
           fim
           para i de 0 até k \kw{faça}:
-            $R^{<i>}$ := 0
+            $R_i$ := 0
           fim
           para i de 0 até k \kw{faça}:
-            enquanto $\bitmap^{<i>}[R^{<i>}]$ = 1 \kw{faça}:
-              $R^{<i>}$ := $R^{<i>}$ + 1
+            enquanto $\bitmap_i[R_i]$ = 1 \kw{faça}:
+              $R_i$ := $R_i$ + 1
             fim
           fim
           $\bar{R}$ := 0
           para i de 0 até k \kw{faça}:
-            $\bar{R}$ := $\bar{R} + R^{<i>}$ 
+            $\bar{R}$ := $\bar{R} + R_i$ 
           fim
           $\bar{R}$ := $\bar{R} \slash k$
           devolva $k2^{\bar{R}}/\phi$
