@@ -4,11 +4,11 @@
 \section{O Problema}
 
 \begin{quote}
-  \textbf{Contagem Distinta:} Dado um conjunto $\mathbb{M}$, \textbf{encontrar} quantos elementos \textit{distintos}
-  $\mathbb{M}$ possui.
+  \textbf{Contagem Distinta:} Dado um conjunto $\Mbb$, \textbf{encontrar} quantos elementos \textit{distintos}
+  $\Mbb$ possui.
 \end{quote}
 
-Uma solução para a \textbf{contagem distinta} é inserir cada elemento de $\mathbb{M}$ em uma tabela hash. 
+Uma solução para a \textbf{contagem distinta} é inserir cada elemento de $\Mbb$ em uma tabela hash. 
 E assim, a quantidade de itens distintos nesse conjunto será o número de elementos nessa tabela.
 
 Note que esse algoritmo consome $\Omega(n)$ de memória, uma vez que, deve-se armazenar cada elemento 
@@ -22,7 +22,7 @@ Portanto, deve-se abandonar a exatidão da contagem dos elementos distintos para
 espaço.
 
 \begin{quote}
-  \textbf{Contagem Distinta Aproximada:} dado um conjunto $\mathbb{M}$, \textbf{estimar} o número de elementos 
+  \textbf{Contagem Distinta Aproximada:} dado um conjunto $\Mbb$, \textbf{estimar} o número de elementos 
   \textit{distintos} nesse conjunto.
 \end{quote}
 
@@ -35,8 +35,8 @@ E a identificação do número de elementos distintos em uma coluna era a princi
 \label{sec:flajolet-martin:algorithm}
 
 O \textbf{algoritmo de Flajolet-Martin} utiliza uma função de hash $h$ que mapeia uniformemente cada elemento do 
-conjunto $\mathbb{M}$ para um número inteiro entre $0$ e $2^L-1$, em que $L$ é a quantidade necessária de bits para 
-mapear todas as entradas de $\mathbb{M}$ (na prática, este valor é $32$ ou $64$). Assim, para cada $x_i \in \mathbb{M}$, 
+conjunto $\Mbb$ para um número inteiro entre $0$ e $2^L-1$, em que $L$ é a quantidade necessária de bits para 
+mapear todas as entradas de $\Mbb$ (na prática, este valor é $32$ ou $64$). Assim, para cada $x_i \in \Mbb$, 
 será calculado um inteiro $y_i \coloneqq h(x_i)$. Note que $y_i$ pode ser visto como uma palavra binária aleatória de 
 $L$ bits em que cada bit é gerado independentemente com probabilidade $\frac{1}{2}$. E o algoritmo é baseado na 
 frequência das aparições dos prefixos dessas palavras aleatórias.
@@ -48,7 +48,7 @@ Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ it
 
 Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor $BITMAP[0 \twodots L-1]$, 
 de modo que $BITMAP[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os \textit{hashes} dos elementos de 
-$\mathbb{M}$. 
+$\Mbb$. 
 
 Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $L - 1$. E para isso, defini-se a função $\rho$ 
 que recebe um inteiro e devolve a posição do 1 menos significativo deste inteiro. Então, para um \textit{hash} $y$, 
@@ -56,14 +56,14 @@ suponha que $\rho(y) = k$. Assim, o prefixo da representação binária de $y$ �
 especial para essa função é quando o \textit{hash} é zero. Nesta situação, $\rho(0) = L$.
 
 Por fim, seja $R$ o menor índice tal que $BITMAP[R] = 0$. A estimativa para o número de elementos distintos de 
-$\mathbb{M}$ será $2^R/\phi$, em que, $\phi$ é um fator de correção que será discutido em 
+$\Mbb$ será $2^R/\phi$, em que, $\phi$ é um fator de correção que será discutido em 
 \refeq{sec:flajolet-martin:analysis}.
 
 Segue o pseudocódigo:
 \begin{programruledcaption}{
 Algoritmo de Flajolet-Martin 
-\\ \textbf{Entrada:} conjunto $\mathbb{M}$, função de hash $h$, tamanho $L$ do vetor $BITMAP$ 
-\\ \textbf{Saída:} quantidade de elementos distintos de $\mathbb{M}$
+\\ \textbf{Entrada:} conjunto $\Mbb$, função de hash $h$, tamanho $L$ do vetor $BITMAP$ 
+\\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
 \label{prog:flajolet-martin}
 }
   \begin{lstlisting}[
@@ -73,11 +73,11 @@ Algoritmo de Flajolet-Martin
     functions={},
     specialidentifiers={},
   ]
-      funcao FlajoletMartin($\mathbb{M}$, h, L)
+      funcao FlajoletMartin($\Mbb$, h, L)
         para i de 0 até L \kw{faça}:
           BITMAP[i] := 0
         fim
-        para x $\in$ $\mathbb{M}$ \kw{faça}:
+        para x $\in$ $\Mbb$ \kw{faça}:
           y := h(x)
           BITMAP[$\rho(y)$] := 1
         fim
@@ -93,33 +93,33 @@ Algoritmo de Flajolet-Martin
 \section{Análise do algoritmo}
 \label{sec:flajolet-martin:analysis}
 
-Suponha que a quantidade de elementos distintos de $\mathbb{M}$ seja $n$. O valor esperado de $R$ definido na seção 
+Suponha que a quantidade de elementos distintos de $\Mbb$ seja $n$. O valor esperado de $R$ definido na seção 
 \refeq{sec:flajolet-martin:algorithm} é aproximadamente $\log_2(\phi n)$, em que $\phi = 0.77351\dots$ e o desvio padrão 
 de $R$ é em torno de $1.12$. Essa seção busca mostrar as etapas da análise do Algoritmo~\ref{prog:flajolet-martin} feita 
 por Flajolet e Martin. Os detalhes da prova podem ser vistos em ~\citep{flajolet:martin:85}.
 
 O primeiro passo é entender que $R$ é uma estimativa para $\lfloor \log_2(n) \rfloor$. Pelo padrão das aparições dos 
-prefixos dos hashes dos elementos de $\mathbb{M}$, espera-se que $BITMAP[0]$ seja acessado aproximadamente $\lfloor 
+prefixos dos hashes dos elementos de $\Mbb$, espera-se que $BITMAP[0]$ seja acessado aproximadamente $\lfloor 
 \frac{n}{2} \rfloor$ vezes, $BITMAP[1]$ aproximadamente $\lfloor \frac{n}{4} \rfloor$ vezes $\dots$ Agora, para 
 $k = \lfloor \log_2(n) \rfloor$, $BITMAP[k]$ deve ser acessado em torno de $\lfloor \frac{n}{2^{k+1}} \rfloor = 0$ 
 vezes. Assim, o menor índice $R$ tal que o valor de $BITMAP$ seja zero é aproximadamente $\lfloor \log_2(n) \rfloor$.
 
 Então, defini-se a variável aleatória $R_n$ como sendo o valor da variável $R$ ao final da execução do Algoritmo 
-\ref{prog:flajolet-martin} para uma entrada $\mathbb{M}$ com $n$ elementos distintos. Dessa forma, o interesse principal 
+\ref{prog:flajolet-martin} para uma entrada $\Mbb$ com $n$ elementos distintos. Dessa forma, o interesse principal 
 da demonstração é encontrar fórmulas ou estimativas para:
 \begin{itemize}
   \item $p_{n,k} = \mathbb{P}(R_n = k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} ser igual a $k$
   \item $q_{n,k} = \mathbb{P}(R_n \geq k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} 
   ser maior ou igual a $k$
-  \item $\mathbb{E}[R_n]$: valor esperado de $R_n$
-  \item $\mathbb{V}[R_n]$: variância de $R_n$
+  \item $\Ebb[R_n]$: valor esperado de $R_n$
+  \item $\Vbb[R_n]$: variância de $R_n$
 \end{itemize}
 
 O primeiro teorema de ~\citep{flajolet:martin:85} mostra uma fórmula \textit{exata} e \textit{discreta} para $q_{n,k}$. 
 A principal idea para encontrar essa fórmula é agrupar as palavras binárias por prefixos da forma $0^k1$. Assim, 
 defini-se $E_k = \{ x  \ | \ \rho(x) = k \}$, ou seja, $E_k$ é o conjunto de todas as palavras aleatórias com prefixos
 iguais a $0^k1$. Da mesma forma, defini-se $K_k = \{ x \ | \ \rho(x) \geq k \}$. Em seguida, as diferentes entradas 
-$\mathbb{M}$ com $n$ elementos distintos são representadas por um polinômio:
+$\Mbb$ com $n$ elementos distintos são representadas por um polinômio:
 \[ P_k^{(n)} = (E_0 + E_1 + \twodots + E_{k-1} + K_k)^n .\]
 
 O próximo passo é tentar expandir esse polinômio usando \textit{inclusão e exclusão}, e associar uma medida 
@@ -136,38 +136,38 @@ em que, $\psi(x) = \prod_{j \geq 0} (1 - e^{-x2^j})$.
 Note que por definição, $p_{n,k} = q_{n,k} - q_{n,k+1}$. Assim, pode-se aproximar $p_{n,k}$:
 \[ p_{n,k} \approx \psi(\frac{n}{2^k}) - \psi(\frac{n}{2^{k+1}}) \ . \]
 
-O interesse passa a ser, portanto, estimar $\mathbb{E}[R_n]$ a partir dessa fórmula aproximada de $p_{n,k}$, de maneira 
+O interesse passa a ser, portanto, estimar $\Ebb[R_n]$ a partir dessa fórmula aproximada de $p_{n,k}$, de maneira 
 que 
-\[ \mathbb{E}[R_n] = \sum_{k \geq 1} k p_{n,k} \approx \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi 
+\[ \Ebb[R_n] = \sum_{k \geq 1} k p_{n,k} \approx \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi 
   \Big( \frac{n}{2^{k+1}} \Big) \Big] \ . \]
 
 Desse modo, defini-se a função real $F(x)$ como sendo
 \[ F(x) =  \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi \Big( \frac{n}{2^{k+1}} \Big) \Big] \ . \]
 
 E o Lema 1 do artigo, afirma que 
-\[ \mathbb{E}[R_n] = F(x) + O \Big( \frac{1}{n^{0.49}} \Big) \ , \]
+\[ \Ebb[R_n] = F(x) + O \Big( \frac{1}{n^{0.49}} \Big) \ , \]
 ou seja, que o valor esperado de $R_n$ se aproxima de $F(x)$ conforme $n$ cresce.
 
 Em seguida, o Lema 2 apresenta o resultado da \hyperref[ap:mellin]{transformada de Mellin} de $F(X)$. A principal razão 
 para se calcular essa transformação é que se pode expressar a fórmula inversa da transformada de Mellin como uma 
 expansão assintótica cujos termos são resíduos da transformada. Assim, o Teorema $3A$ utiliza os Lemas 1 e 2, e o 
 Teorema dos Resíduos para afirmar que 
-\[ \mathbb{E}[R_n] = \lg (\phi n) + P(\lg n) + o(1) \ , \]
+\[ \Ebb[R_n] = \lg (\phi n) + P(\lg n) + o(1) \ , \]
 em que, $P(x)$ é a expansão assintótica de $F(x)$ e $\phi = 0.77351\dots$, concluindo a prova que 
-$\mathbb{E}[R_n] \approx \lg (\phi n)$.
+$\Ebb[R_n] \approx \lg (\phi n)$.
 
-A prova para a estimativa de $\mathbb{V}[R_n]$ segue os mesmos passos da prova anterior. Pela definição de 
-\hyperref[ap:variance]{variância}, precisa-se estimar $\mathbb{E}[R_n ^ 2]$. Assim, 
+A prova para a estimativa de $\Vbb[R_n]$ segue os mesmos passos da prova anterior. Pela definição de 
+\hyperref[ap:variance]{variância}, precisa-se estimar $\Ebb[R_n ^ 2]$. Assim, 
 \[ \mathbb{E[R_n ^2]} = \sum_{k=1} k^2 p_{n,k} \approx G(x) \ , \]
 em que
 \[ G(x) = \sum_{k=1} k^2 p_{n,k} \ . \]
 
 Dessa forma, encontra-se a transformada de Mellin de $G(x)$ e se analisa a inversa desta transformação para estimar 
-$\mathbb{E}[R_n^2]$.
+$\Ebb[R_n^2]$.
 
 \section{Melhorando precisão do algoritmo}
 
-Na seção anterior, foi visto que $\mathbb{E}[R_n] \approx \lg(\phi n)$, em que $\phi \approx 0.77351$. Assim, se o valor 
+Na seção anterior, foi visto que $\Ebb[R_n] \approx \lg(\phi n)$, em que $\phi \approx 0.77351$. Assim, se o valor 
 do contador $R$ no final do Algoritmo \ref{prog:flajolet-martin} para uma entrada com $n$ elementos distintos for 
 aproximadamente igual a $\lg(\phi n)$, então a saída desse algoritmo é aproximadamente $n$. A tabela \ref{tab:flajolet} 
 mostra que, em alguns casos, a saída do programa é praticamente igual a $n$ quando $R_n \approx \lg(\phi n)$.
@@ -198,7 +198,7 @@ mostra que, em alguns casos, a saída do programa é praticamente igual a $n$ qu
   \end{table}
 \end{center}
 
-Contudo, $\mathbb{V}[R_n] \approx\nolinebreak 1.12$ e consequentemente, o desvio padrão de $R_n$ é aproximadamente~$1$. 
+Contudo, $\Vbb[R_n] \approx\nolinebreak 1.12$ e consequentemente, o desvio padrão de $R_n$ é aproximadamente~$1$. 
 Isto quer dizer que o valor de $R_n$ pode ser uma unidade maior ou menor que $\lg(\phi n)$, o que implica que a 
 estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o Algoritmo de Flajolet e Martin apresenta uma 
 grande variabilidade.
@@ -212,8 +212,8 @@ O pseudocódigo a seguir codifica essa idea:
 
 \begin{programruledcaption}{
   Algoritmo de Flajolet-Martin+
-  \\ \textbf{Entrada:} conjunto $\mathbb{M}$, $k$ funções de hash, tamanho $L$ do vetor $BITMAP$ 
-  \\ \textbf{Saída:} quantidade de elementos distintos de $\mathbb{M}$
+  \\ \textbf{Entrada:} conjunto $\Mbb$, $k$ funções de hash, tamanho $L$ do vetor $BITMAP$ 
+  \\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
   \label{prog:flajolet-martin+}
   }
     \begin{lstlisting}[
@@ -223,14 +223,14 @@ O pseudocódigo a seguir codifica essa idea:
       functions={},
       specialidentifiers={},
     ]
-        funcao FlajoletMartin($\mathbb{M}$, k, h, L)
+        funcao FlajoletMartin($\Mbb$, k, h, L)
           para i de 0 até k \kw{faça}:
             para j de 0 até L \kw{faça}:
               $BITMAP^{<i>}[j]$ := 0
             fim
           fim
           para i de 0 até k \kw{faça}:
-            para x $\in$ $\mathbb{M}$ \kw{faça}:
+            para x $\in$ $\Mbb$ \kw{faça}:
               y := $h^{<i>}(x)$
               $BITMAP^{<i>}[\rho(y)]$ := 1
             fim
@@ -256,11 +256,11 @@ O pseudocódigo a seguir codifica essa idea:
 Seja $\bar{R_n}$ o valor da variável $\bar{R}$ ao final da execução do Algoritmo \ref{prog:flajolet-martin+} para uma
 entrada com $n$ elementos distintos. De forma análoga aos resultados vistos na Seção \ref{sec:morris:plus}, pode-se
 concluir que:
-\[ \mathbb{E}[\bar{R_n}] \approx \lg(\phi n)  \; \; \text{e}  \; \; \mathbb{V}[\bar{R_n}] \approx \frac{1.12}{k} \ . \]
+\[ \Ebb[\bar{R_n}] \approx \lg(\phi n)  \; \; \text{e}  \; \; \Vbb[\bar{R_n}] \approx \frac{1.12}{k} \ . \]
 
 
 No entanto, o fato de se precisar de uma função de hash distinta para cada iteração torna a solução acima inviável, 
-uma vez que, encontrar funções de hash que mapeiem na prática os elementos de um conjunto $\mathbb{M}$ de maneira
+uma vez que, encontrar funções de hash que mapeiem na prática os elementos de um conjunto $\Mbb$ de maneira
 uniforme não é uma tarefa simples. Para contornar esse problema, os autores propuseram o uso da 
 \textit{média estocástica}.
 
@@ -269,9 +269,9 @@ qual lote um elemento deve ir.
 As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão é feita:
 \begin{programruledcaption}{
   Algoritmo de Flajolet-Martin++
-  \\ \textbf{Entrada:} conjunto $\mathbb{M}$, funções de hash $h$, tamanho $L$ do vetor $BITMAP$, 
+  \\ \textbf{Entrada:} conjunto $\Mbb$, funções de hash $h$, tamanho $L$ do vetor $BITMAP$, 
   quantidade $k$ de lotes
-  \\ \textbf{Saída:} quantidade de elementos distintos de $\mathbb{M}$
+  \\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
   \label{prog:flajolet-martin++}
   }
     \begin{lstlisting}[
@@ -281,13 +281,13 @@ As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão 
       functions={},
       specialidentifiers={},
     ]
-        funcao FlajoletMartin($\mathbb{M}$, k, h, L)
+        funcao FlajoletMartin($\Mbb$, k, h, L)
           para i de 0 até k \kw{faça}:
             para j de 0 até L \kw{faça}:
               $BITMAP^{<i>}[j]$ := 0
             fim
           fim
-          para x $\in$ $\mathbb{M}$ \kw{faça}:
+          para x $\in$ $\Mbb$ \kw{faça}:
             lote := $h(x) \mod k$
             y := $\lfloor h(x) / k \rfloor$
             $BITMAP^{<lote>}[\rho(y)]$ := 1
@@ -310,7 +310,7 @@ As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão 
     \end{lstlisting}
   \end{programruledcaption}
 
-Se a função de hash $h$ distribuir os $n$ elementos distintos do conjunto $\mathbb{M}$ uniformemente entre os 
+Se a função de hash $h$ distribuir os $n$ elementos distintos do conjunto $\Mbb$ uniformemente entre os 
 $k$ lotes, então espera-se que cada lote tenha aproximadament $\frac{n}{k}$ elementos. Dessa forma, 
 $(1 / \phi)2^{\bar{R_n}}$ seria uma aproximação para $\frac{n}{k}$. É devido a este fato que a saída do Algoritmo~
 \ref{prog:flajolet-martin++} é $\mathbf{k} (1 / \phi)2^{\bar{R_n}}$, pois este valor é uma estimativa para 
