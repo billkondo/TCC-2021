@@ -46,8 +46,8 @@ palavras, pelo menos uma comece com \textbf{1}. E que a cada \textbf{4} palavras
 \textbf{01}. Assim, a cada $\mathbf{2^k}$ palavras, espera-se que pelo menos uma palavra comece com $\mathbf{0^{k-1}1}$. 
 Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ items já devam ter sido gerados. 
 
-Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor $BITMAP[0 \dots L-1]$, de 
-modo que $BITMAP[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os \textit{hashes} dos elementos de 
+Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor $BITMAP[0 \twodots L-1]$, 
+de modo que $BITMAP[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os \textit{hashes} dos elementos de 
 $\mathbb{M}$. 
 
 Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $L - 1$. E para isso, defini-se a função $\rho$ 
@@ -95,7 +95,7 @@ Algoritmo de Flajolet-Martin
 
 Suponha que a quantidade de elementos distintos de $\mathbb{M}$ seja $n$. O valor esperado de $R$ definido na seção 
 \refeq{sec:flajolet-martin:algorithm} é aproximadamente $\log_2(\phi n)$, em que $\phi = 0.77351\dots$ e o desvio padrão 
-de $R$ é em torno de $1.12$. Essa seção busca mostrar as etapas da análise do Algoritmo \ref{prog:flajolet-martin} feita 
+de $R$ é em torno de $1.12$. Essa seção busca mostrar as etapas da análise do Algoritmo~\ref{prog:flajolet-martin} feita 
 por Flajolet e Martin. Os detalhes da prova podem ser vistos em ~\citep{flajolet:martin:85}.
 
 O primeiro passo é entender que $R$ é uma estimativa para $\lfloor \log_2(n) \rfloor$. Pelo padrão das aparições dos 
@@ -120,10 +120,10 @@ A principal idea para encontrar essa fórmula é agrupar as palavras binárias p
 defini-se $E_k = \{ x  \ | \ \rho(x) = k \}$, ou seja, $E_k$ é o conjunto de todas as palavras aleatórias com prefixos
 iguais a $0^k1$. Da mesma forma, defini-se $K_k = \{ x \ | \ \rho(x) \geq k \}$. Em seguida, as diferentes entradas 
 $\mathbb{M}$ com $n$ elementos distintos são representadas por um polinômio:
-\[ P_k^{(n)} = (E_0 + E_1 + \dots + E_{k-1} + K_k)^n .\]
+\[ P_k^{(n)} = (E_0 + E_1 + \twodots + E_{k-1} + K_k)^n .\]
 
 O próximo passo é tentar expandir esse polinômio usando \textit{inclusão e exclusão}, e associar uma medida 
-probabilidade para $E_0, E_1, \dots, E_{k-1}, K_k$. E a prova deste teorema termina encontrando uma relação entre 
+probabilidade para $E_0, E_1, \twodots, E_{k-1}, K_k$. E a prova deste teorema termina encontrando uma relação entre 
 $q_{n,k}$ e esta expansão de polinômio.
 
 Em seguida, o Teorema 2 apresenta aproximações de $q_{n,k}$ para diferentes intervalos de $k$. E a consequência deste 
@@ -198,7 +198,7 @@ mostra que, em alguns casos, a saída do programa é praticamente igual a $n$ qu
   \end{table}
 \end{center}
 
-Contudo, $\mathbb{V}[R_n] \approx\nolinebreak 1.12$ e consequentemente, o desvio padrão de $R_n$ é aproximadamente $1$. 
+Contudo, $\mathbb{V}[R_n] \approx\nolinebreak 1.12$ e consequentemente, o desvio padrão de $R_n$ é aproximadamente~$1$. 
 Isto quer dizer que o valor de $R_n$ pode ser uma unidade maior ou menor que $\lg(\phi n)$, o que implica que a 
 estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o Algoritmo de Flajolet e Martin apresenta uma 
 grande variabilidade.
@@ -312,7 +312,7 @@ As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão 
 
 Se a função de hash $h$ distribuir os $n$ elementos distintos do conjunto $\mathbb{M}$ uniformemente entre os 
 $k$ lotes, então espera-se que cada lote tenha aproximadament $\frac{n}{k}$ elementos. Dessa forma, 
-$(1 / \phi)2^{\bar{R_n}}$ seria uma aproximação para $\frac{n}{k}$. É devido a este fato que a saída do Algoritmo 
+$(1 / \phi)2^{\bar{R_n}}$ seria uma aproximação para $\frac{n}{k}$. É devido a este fato que a saída do Algoritmo~
 \ref{prog:flajolet-martin++} é $\mathbf{k} (1 / \phi)2^{\bar{R_n}}$, pois este valor é uma estimativa para 
 $\mathbf{k} \frac{n}{k} = n$.
 
