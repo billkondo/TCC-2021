@@ -1,8 +1,33 @@
-\chapter{Contagem distinta aproximada: adaptive sampling (1990)}
+\newcommand{\asampling}{\textit{adaptive sampling}}
+
+\chapter{Contagem distinta aproximada: $\asampling$ (1990)}
 
 Este capítulo aborda uma outra solução para o problema da \textit{contagem distinta aproximada}. O 
-Capítulo~\ref{lab:flajolet-martin} apresenta o Algoritmo de Flajolet e Martin, que estima o número de elementos 
+Capítulo~\ref{lab:flajolet-martin} apresentou o Algoritmo de Flajolet e Martin, que estima o número de elementos 
 distintos de um conjunto com erro relativo esperado em torno de $0.78 / \sqrt{m}$. 
 
-A solução publicada no artigo ~\citep{adptive:sampling:90} tem um erro relativo esperado em torno de $1.20 / \sqrt{m}$.
-As razões para estudar esse algoritmo mesmo que ele apresente um erro relativo maior ficarão claras nas próximas seções.
+O Algoritmo $\asampling$ publicado no artigo ~\citep{adptive:sampling:90} tem um erro relativo esperado de 
+aproximadamente $1.20 / \sqrt{m}$. As razões para estudarmos esse algoritmo mesmo que ele apresente um erro relativo 
+maior ficarão claras nas próximas seções.
+
+\section{Algoritmo $\asampling$}
+\label{lab:chapter:04:01}
+
+Assim como a solução do capítulo anterior, o algoritmo $\asampling$ também se baseia em padrões de bits dos hashes dos 
+elementos examinados. Podemos dessa forma, considerar que os elementos que estamos contando são palavras binárias de 
+tamanho infinito. 
+
+Enquanto que no Algoritmo \ref{prog:flajolet-martin++}, estávamos interessados na \textbf{aparição} de um elemento com 
+prefixo da forma $0^*1$, no Algoritmo $\asampling$, queremos saber a \textbf{quantidade} de elementos com um certo 
+prefixo $0^*1$.
+
+Nesse sentido, vamos manter um contador $\delta$ cujo valor inicialmente é zero, e uma lista que armazena elementos com 
+prefixo $0^{\delta}1$. Para cada elemento examinado, inserimos ele na lista se o prefixo dele for da forma $0^{\delta}$.
+Quando essa lista tiver mais que $m$ elementos, incrementamos $\delta$ em 1 e passamos a manter 
+somente elementos com prefixo $0^{\delta + 1}1$.
+
+Agora, suponha que em um dado momento do algoritmo, a lista tenha tamanho $l$ e estamos mantendo somente elementos com 
+prefixos $0^{\delta}1$. A probabilidade de um elemento ter um prefixo dessa forma é $1 / 2^{\delta}$ e consequentemente,
+esperamos que a cada $2^{\delta}$ itens, pelo menos um item tenha um prefixo desse formato. Assim, se nossa lista tem
+$l$ elementos com prefixo $0^{\delta}$, então devemos ter examinado pelo menos $2^{\delta} l$ itens, e este valor é 
+justamente a estimativa para a quantidade de valores distintos.
