@@ -31,3 +31,36 @@ prefixos $0^{\delta}1$. A probabilidade de um elemento ter um prefixo dessa form
 esperamos que a cada $2^{\delta}$ itens, pelo menos um item tenha um prefixo desse formato. Assim, se nossa lista tem
 $l$ elementos com prefixo $0^{\delta}$, então devemos ter examinado pelo menos $2^{\delta} l$ itens, e este valor é 
 justamente a estimativa para a quantidade de valores distintos.
+
+O Algoritmo \proc{AdaptiveSampling} recebe um conjunto $\Mbb$ com $n$ elementos distintos e um parâmetro $m$, que está 
+relacionado com o consumo de memória do algoritmo e sua precisão. O algoritmo usa uma função de hash $h$ para mapear os 
+elementos de $\Mbb$ no intervalo $[0, 2^L - 1]$, em que $L$ é a quantidade de bits necessária para se conseguir fazer 
+esse mapeamento sem colisões. E o algoritmo devolve um estimador~$\hat{n}$ para $n$ da forma $2^{\delta} l$, em que $l$ 
+e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem formato $0^{\delta}1$.
+
+\begin{codebox}
+  \Procname{$\proc{AdaptiveSampling}(\Mbb, m)$}
+  \li $LIST \gets \emptyset$
+  \li $\delta \gets 0$
+  \li \For cada $x$ em $\Mbb$ 
+  \li    \Do 
+         \If $0^{\delta}1$ é prefixo de $h(x)$ \textbf{e} $h(x) \not\in LIST$
+  \li             \Then $LIST \gets LIST \cup \{ h(x) \}$
+         \End
+  \li    \While $|LIST| > m$
+  \li    \Do
+         $\delta \gets \delta + 1$
+  \li    $TEMPLIST \gets \emptyset$
+  \li    \For cada $y$ em $LIST$
+  \li    \Do
+            \If $0^{\delta}1$ é prefixo de $h(y)$
+  \li       \Then $TEMPLIST \gets TEMPLIST \cup \{ h(y) \}$
+            \End
+         \End
+  \li    $LIST \gets TEMPLIST$
+         \End 
+      \End
+  \li
+  \Return $2^{\delta} |LIST|$   
+  \End
+\end{codebox}
