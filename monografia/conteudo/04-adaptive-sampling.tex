@@ -17,17 +17,17 @@ Assim como a solução do capítulo anterior, o algoritmo $\asampling$ também s
 elementos examinados. Podemos dessa forma, considerar que os elementos que estamos contando são palavras binárias de 
 tamanho infinito. 
 
-Enquanto que no Algoritmo \ref{prog:flajolet-martin++}, estávamos interessados na \textbf{aparição} de um elemento com 
+Enquanto que no algoritmo $\pcounting$, estávamos interessados na \textbf{aparição} de um elemento com 
 prefixo da forma $0^*1$, no Algoritmo $\asampling$, queremos saber a \textbf{quantidade} de elementos com um certo 
-prefixo $0^*1$.
+prefixo $0^*$.
 
 Nesse sentido, vamos manter um contador $\delta$ cujo valor inicialmente é zero, e uma lista que armazena elementos com 
-prefixo $0^{\delta}1$. Para cada elemento examinado, inserimos ele na lista se o prefixo dele for da forma $0^{\delta}$.
+prefixo $0^{\delta}$. Para cada elemento examinado, inserimos ele na lista se o prefixo dele for da forma $0^{\delta}$.
 Quando essa lista tiver mais que $m$ elementos, incrementamos $\delta$ em 1 e passamos a manter 
 somente elementos com prefixo $0^{\delta + 1}1$.
 
 Agora, suponha que em um dado momento do algoritmo, a lista tenha tamanho $l$ e estamos mantendo somente elementos com 
-prefixos $0^{\delta}1$. A probabilidade de um elemento ter um prefixo dessa forma é $1 / 2^{\delta}$ e consequentemente,
+prefixos $0^{\delta}$. A probabilidade de um elemento ter um prefixo dessa forma é $1 / 2^{\delta}$ e consequentemente,
 esperamos que a cada $2^{\delta}$ itens, pelo menos um item tenha um prefixo desse formato. Assim, se nossa lista tem
 $l$ elementos com prefixo $0^{\delta}$, então devemos ter examinado pelo menos $2^{\delta} l$ itens, e este valor é 
 justamente a estimativa para a quantidade de valores distintos.
@@ -36,7 +36,7 @@ O Algoritmo \proc{AdaptiveSampling} recebe um conjunto $\Mbb$ com $n$ elementos 
 relacionado com o consumo de memória do algoritmo e sua precisão. O algoritmo usa uma função de hash $h$ para mapear os 
 elementos de $\Mbb$ no intervalo $[0, 2^L - 1]$, em que $L$ é a quantidade de bits necessária para se conseguir fazer 
 esse mapeamento sem colisões. E o algoritmo devolve um estimador~$\hat{n}$ para $n$ da forma $2^{\delta} l$, em que $l$ 
-e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem formato $0^{\delta}1$.
+e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem formato $0^{\delta}$.
 
 \begin{codebox}
   \Procname{$\proc{AdaptiveSampling}(\Mbb, m)$}
@@ -44,7 +44,7 @@ e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem
   \li $\delta \gets 0$
   \li \For cada $x$ em $\Mbb$ 
   \li    \Do 
-         \If $0^{\delta}1$ é prefixo de $h(x)$ \textbf{e} $h(x) \not\in LIST$
+         \If $0^{\delta}$ é prefixo de $h(x)$ \textbf{e} $h(x) \not\in LIST$
   \li             \Then $LIST \gets LIST \cup \{ h(x) \}$
          \End
   \li    \While $|LIST| > m$
@@ -53,7 +53,7 @@ e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem
   \li    $TEMPLIST \gets \emptyset$
   \li    \For cada $y$ em $LIST$
   \li    \Do
-            \If $0^{\delta}1$ é prefixo de $h(y)$
+            \If $0^{\delta}$ é prefixo de $h(y)$
   \li       \Then $TEMPLIST \gets TEMPLIST \cup \{ h(y) \}$
             \End
          \End
@@ -64,3 +64,8 @@ e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem
   \Return $2^{\delta} |LIST|$   
   \End
 \end{codebox}
+
+
+\section{Vantagens do algoritmo $\asampling$}
+\label{lab:chapter:04:02}
+
