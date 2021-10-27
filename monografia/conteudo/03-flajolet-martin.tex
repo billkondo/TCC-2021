@@ -319,3 +319,54 @@ $(1 / \phi)2^{\bar{R_n}}$ seria uma aproximação para $\frac{n}{k}$. É devido 
 \ref{prog:flajolet-martin++} é $\mathbf{k} (1 / \phi)2^{\bar{R_n}}$, pois este valor é uma estimativa para 
 $\mathbf{k} \frac{n}{k} = n$.
 
+Por fim, o erro relativo esperado do algoritmo \proc{ProbabilisticCounting++} é em torno de $0.78 / \sqrt{m}$. Isto quer 
+dizer que para $m = 64$, o desvio esperado é em torno de $10\%$. Dessa forma, a escolha de $m$ depende das exigências do 
+problema. Se precisarmos de uma precisão maior, escolheremos um valor de $m$  maior, mas teremos um algoritmo mais 
+custoso em termos de tempo e espaço. Por outro lado, se a exigência é, por exemplo, decidir qual de dois conjuntos tem a 
+menor quantidade de elementos distintos, podemos escolher um valor menor de $m$ para fazer essa comparação, mas teríamos 
+um risco maior de escolher o conjunto errado.
+
+\section{Limitações do algoritmo $\pcounting$}
+
+Uma das principais razões para escolhermos algoritmos \textit{probabilísticos} ao invés de algoritmos \textit{exatos} é 
+o \textbf{consumo de memória reduzido}. Por exemplo, para resolver o problema da contagem distinta de forma 
+\textit{exata}, podemos manter uma tabela de hash e conforme os elementos forem processados, adicionar a esta tabela 
+somente aqueles elementos que não apareceram ainda. Assim,  quantidade de elementos distintos processados será o tamanho 
+da tabela. Suponha que cada hash seja um inteiro de 4 bytes (32 bits) e que existam um milhão de itens distintos 
+percorridos. Para armazenar essa tabela, gastaríamos pelos menos 4 MB. Por outro lado, se usarmos o algoritmo 
+$\pcounting$ para resolver esse problema, o consumo de memória seria proporcional ao valor $m$ e não dependeria da 
+quantidade de itens distintos. Logo, se o vetor $\bitmap$ for um vetor de inteiros de 4 bytes de tamanho $m$, e 
+$m$ for igual a 1024, então a memória consumida por esse algoritmo seria em torno de 4 KB, que é um consumo de espaço
+\textbf{1000 vezes menor} que a solução exata.
+
+O erro relativo esperado do $\pcounting$ para $m = 1024$ é em torno de $2{,}5\%$. Assim, para um conjunto de milhões de 
+itens distintos, o erro seria em torno das dezenas ou centenas de milhares. Com esse tipo de desvio, teríamos como 
+mensurar a ordem de grandeza do número de itens distintos de um conjunto com bastante confiança. Contudo, para utilizar
+o $\pcounting$, o viés desse algoritmo deve ser entendido.
+
+O \textbf{viés} de um estimador é a diferença entre seu valor esperado e o valor real do parâmetro estimado. Nesse sentido, a 
+estimativa da quantidade de elementos em um conjunto devolvida pelo algoritmo de \proc{Morris} é \textit{não-viesada}, 
+uma vez que, o Lema \ref{morris:expected_value} afirma que o valor esperado deste estimador é igual ao tamanho do 
+conjunto estimado.
+
+Na prova descrita em ~\citep{flajolet:martin:85}, o estimador de $\lg(n)$ é $R_n$, que representa o valor da variável 
+$R$ ao final da execução de \proc{ProbabilisticCounting}, tendo como entrada um conjunto com $n$ elementos distintos. 
+Vimos que o valor esperado de $R_n$ é aproximadamente $\lg(\phi n)$, que é diferente de $\lg(n)$. Portanto, $R_n$ é um 
+estimador \textit{viesado} de $\lg(n)$. E analogamente, o estimador devolvido por \proc{ProbabilisticCounting++} também 
+é \textit{viesado}.  
+
+Então, além do erro padrão, existe também o viés do algoritmo $\pcounting$, cujo valor é $1 + 0{,}31/m$. Contudo, para 
+valores de $m$ maiores que $32$, o viés se torna desprezíval se comparado ao erro padrão. Dessa forma, uma pessoa pode 
+ser induzida a concluir que a escolha de $m$ é o único cuidado que ela deve tomar ao utilizar esse algoritmo. No 
+entanto, ainda existe o problema de estimar \textit{baixas cardinalidades} com essa estrutura.
+
+Suponha, portanto, que $m = 64$ e que o hash do único elemento de um conjunto $\Mbb$ comece com $1$. Logo, se passarmos 
+$\Mbb$ para \proc{ProbabilisticCounting++}, existiria um vetor $\bitmap$ cuja primeira posição teria o valor $1$, e o 
+restante dos vetores $\bitmap$ teriam todos valores zero. Assim, $\bar{R}$ será igual a $1/64$, e o estimador de $n$ 
+terá o valor de $64 \ 2^{\frac{1}{64}}/\phi \approx 83.64$. Esta estimativa está muito distante do valor real, que é 
+$n = 1$.
+
+Em vista disso, um tratamento especial deve ser dado para situações em que a cardinalidade do número de elementos 
+distintos de um conjunto for baixa. Poderíamos, por exemplo, manter os elementos percorridos em uma tabela de hash, e 
+quando essa tabela atingisse um certo tamanho, passaríamos a usar a estratégia original do $\pcounting$, que é preencher
+os vetores $\bitmap$.  
