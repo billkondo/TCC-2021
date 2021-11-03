@@ -49,11 +49,11 @@ palavras, pelo menos uma comece com \textbf{1}. E que a cada \textbf{4} palavras
 \textbf{01}. Assim, a cada $\mathbf{2^k}$ palavras, espera-se que pelo menos uma palavra comece com $\mathbf{0^{k-1}1}$. 
 Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ items já devam ter sido gerados. 
 
-Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor $\bitmap[0 \twodots L-1]$, 
-de modo que $\bitmap[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os \textit{hashes} dos elementos de 
-$\Mbb$. 
+Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor 
+$\bitmap[0 \twodots L{-}1]$, de modo que $\bitmap[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os 
+\textit{hashes} dos elementos de $\Mbb$. 
 
-Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $L - 1$. E para isso, defini-se a função $\rho$ 
+Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $2^{L} - 1$. E para isso, defini-se a função $\rho$ 
 que recebe um inteiro e devolve a posição do 1 menos significativo deste inteiro. Então, para um \textit{hash} $y$, 
 suponha que $\rho(y) = k$. Assim, o prefixo da representação binária de $y$ é $0^k1$, e $\bitmap[k] = 1$. Um caso 
 especial para essa função é quando o \textit{hash} é zero. Nesta situação, $\rho(0) = L$.
@@ -344,10 +344,10 @@ itens distintos, o erro seria em torno das dezenas ou centenas de milhares. Com 
 mensurar a ordem de grandeza do número de itens distintos de um conjunto com bastante confiança. Contudo, para utilizar
 o $\pcounting$, o viés desse algoritmo deve ser entendido.
 
-O \textbf{viés} de um estimador é a diferença entre seu valor esperado e o valor real do parâmetro estimado. Nesse sentido, a 
-estimativa da quantidade de elementos em um conjunto devolvida pelo algoritmo de \proc{Morris} é \textit{não-viesada}, 
-uma vez que, o Lema \ref{morris:expected_value} afirma que o valor esperado deste estimador é igual ao tamanho do 
-conjunto estimado.
+O \textbf{viés} de um estimador é a diferença entre seu valor esperado e o valor real do parâmetro estimado. 
+Nesse sentido, a estimativa da quantidade de elementos em um conjunto devolvida pelo algoritmo de \proc{Morris} é 
+\textit{não-viesada}, uma vez que, o Lema \ref{morris:expected_value} afirma que o valor esperado deste estimador é 
+igual ao tamanho do conjunto estimado.
 
 Na prova descrita em ~\citep{flajolet:martin:85}, o estimador de $\lg(n)$ é $R_n$, que representa o valor da variável 
 $R$ ao final da execução de \proc{ProbabilisticCounting}, tendo como entrada um conjunto com $n$ elementos distintos. 
@@ -362,11 +362,101 @@ entanto, ainda existe o problema de estimar \textit{baixas cardinalidades} com e
 
 Suponha, portanto, que $m = 64$ e que o hash do único elemento de um conjunto $\Mbb$ comece com $1$. Logo, se passarmos 
 $\Mbb$ para \proc{ProbabilisticCounting++}, existiria um vetor $\bitmap$ cuja primeira posição teria o valor $1$, e o 
-restante dos vetores $\bitmap$ teriam todos valores zero. Assim, $\bar{R}$ será igual a $1/64$, e o estimador de $n$ 
-terá o valor de $64 \ 2^{\frac{1}{64}}/\phi \approx 83.64$. Esta estimativa está muito distante do valor real, que é 
+restante dos vetores $\bitmap$ teriam todos valores zero. Assim, $\bar{R}$ seria igual a $1/64$, e o estimador de $n$ 
+teria o valor de $64 \ 2^{\frac{1}{64}}/\phi \approx 83.64$. Esta estimativa está muito distante do valor real, que é 
 $n = 1$.
 
 Em vista disso, um tratamento especial deve ser dado para situações em que a cardinalidade do número de elementos 
 distintos de um conjunto for baixa. Poderíamos, por exemplo, manter os elementos percorridos em uma tabela de hash, e 
 quando essa tabela atingisse um certo tamanho, passaríamos a usar a estratégia original do $\pcounting$, que é preencher
 os vetores $\bitmap$.  
+
+\section{Simulação do algoritmo $\pcounting$}
+
+Nesta seção, vamos ver os resultados de simulações do $\pcounting$, em que, um milhão de inteiros gerados 
+aleatoriamente foram inseridos em uma implementação dessa estrutura. 
+
+Esta implementação é baseada no pseudocódigo do \proc{ProbabilisticCounting++}. Contudo, enquanto que 
+nesse pseudocódigo, o $\pcounting$ é descrito como uma função que recebe um conjunto e retorna o número de elementos 
+distintos deste conjunto, o código utilizado nas simulações utiliza uma abordagem voltada à orientação a objetos. Nesse 
+sentido, definimos uma classe \textit{ProbabilisticCounting}, cujo construtor recebe os parâmetros $m$ e $L$. E nesta 
+classe, existem os métodos \textit{add} e \textit{count}. O primeiro adiciona um elemento à estrutura, e o segundo 
+devolve a estimativa do valor de elementos distintos. Dessa forma, as simulações se baseiam em uma versão 
+\textit{online} do $\pcounting$ para que possamos observar como a estimativa evolui conforme novos itens são inseridos 
+nessa estrutura.
+
+O valor de $L$ utilizado nas simulações foi de $32$, uma vez que, nas linguagens de programação, um inteiro é geralmente 
+armazenado em $4$ bytes de memória. Já os valores de $m$ escolhidos foram 64 e 1024. Com estes valores, podemos ver 
+a evolução da precisão da estimativa conforme $m$ aumenta. Outro detalhe de implementação é que não estamos utilizando a 
+função de hash~$h$ durante a inserção dos elementos na estrutura, uma vez que, os elementos inseridos já são inteiros e 
+assim, não há a necessidade de mapeá-los para inteiros entre $0$ e $2^{32} - 1$.
+
+O gráfico a seguir exibe a evolução da estimativa conforme itens vão sendo inseridos na estrutura com $m = 64$. Observe 
+que até setecentos mil elementos, a estimativa se manteve dentro da faixa do erro relativo teórico esperado, que é em 
+torno de $5\%$. Mas a partir desse ponto, o erro passou a ser maior que o esperado, ultrapassando o valor de $10\%$. 
+Uma das possíveis razões para essa situação é que um inteiro $x$ com um grande valor de $\rho(x)$ pode ter aparecido 
+antes do esperado, o que faz com que a estimativa aumente drasticamente.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.50]{figuras/pcounting-estimate-64.png}
+	\caption{Evolução da estimativa do $\pcounting$ com $m = 64$}
+  \label{fig:pcounting:64}
+\end{figure}
+
+\newpage
+Os próximos gráficos mostram, respectivamente, a porção inicial do gráfico acima e a evolução do erro relativo nessa 
+faixa, que corresponde às 256 primeiras estimativas. É possível, dessa forma, notar que o $\pcounting$ é pouco preciso 
+para estimar cardinalidades baixas, podendo o erro relativo ser maior que $1000\%$ nessas situações.
+
+\begin{figure}
+  \centering
+  \subfloat[\centering Evolução da estimativa $(m=64)$]{{\includegraphics[width=7cm]{figuras/pcounting-estimate-64-first.png} }}
+  \qquad
+  \subfloat[\centering Evolução do erro relativo $(m=64)$]{{\includegraphics[width=7cm]{figuras/pcounting-error-64-first.png} }}
+  \caption{Resumo das primeiras 256 estimativas}
+  \label{fig:pcounting:64:first}
+\end{figure}
+
+Então, podemos aumentar o valor do parâmetro $m$ para tentar corrigir esses problemas de precisão. O gráfico seguinte 
+mostra uma simulação em que os mesmos elementos da primeira simulação foram inseridos em uma estrutura com $m = 1024$.
+Comparando o gráfico abaixo com a Figura \refeq{fig:pcounting:64}, nota-se que a precisão das estimativas de 
+cardinalidades maiores que setecentos mil melhoraram quando o valor de $m$ foi aumentado, e o erro para essas 
+cardinalidades altas ficou na faixa de $10\%$. Contudo, o erro ainda ficou acima do erro relativo esperado para 
+$m = 1024$, que é aproximadamente~$2{,}5\%$.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.50]{figuras/pcounting-estimate-1024.png}
+	\caption{Evolução da estimativa do $\pcounting$ com $m = 1024$}
+\end{figure}
+
+\newpage
+
+Os dois últimos gráficos resumem o comportamento do $\pcounting$ com $m = 1024$ para cardinalidades baixas. Novamente, a
+faixa escolhida para as construções desses gráficos foi as primeiras 256 estimativas. E o erro para estimar essas 
+cardinalidades aumentou se comparado com o erro da estrutura com $m = 64$.
+
+\begin{figure}
+  \centering
+  \subfloat[\centering Evolução da estimativa $(m=1024)$]{{\includegraphics[width=7cm]{figuras/pcounting-estimate-1024-first.png} }}
+  \qquad
+  \subfloat[\centering Evolução do erro relativo $(m=1024)$]{{\includegraphics[width=7cm]{figuras/pcounting-error-1024-first.png} }}
+\end{figure}
+
+A precisão do $\pcounting$, portanto, pode ser melhorada se aumentarmos o valor de $m$, mas essa ideia não se aplica 
+para cardinalidades baixas. O artigo ~\citep{flajolet:martin:85} nomeia esse problema como 
+\textit{não-lineariade inicial}, e os autores afirmam que a estimativa se aproxima do valor esperado do estimador assim 
+que a cardinalidade estimada atinge pelo menos os valores $10m{-}20m$. Assim, para $m = 64$, é esperado que essa 
+imprecisão inicial desapareça por volta de seiscentos itens, e pela Figura \ref{fig:pcounting:64:first}, vemos que esse 
+problema desapare por volta de cento e cinquenta itens.
+
+Vale lembrar, no entanto, que a proposta inicial para a adoção de estruturas de dados probabilísticas é o alto consumo 
+de memória conforme o volume dos dados cresce. Nesse sentido, esse problema da \textit{não-linearidade inicial} pode ser 
+desconsiderado dependendo da situação. 
+
+Por fim, o $\pcounting$ foi um dos primeiros algoritmos que surgiram para resolver o problema da 
+\textbf{Contagem Distinta Aproximada}, e até nos dias atuais, é uma das estruturas com o menor erro relativo esperado, 
+que é igual a $0.78 / \sqrt{m}$. Embora o $\pcounting$ não seja tão utilizado atualmente, o seu desenvolvimento serviu 
+de base para que outras estruturas com menor consumo de memória surgissem, e a análise delas é muito semelhante à 
+análise presente em ~\citep{flajolet:martin:85}. 
