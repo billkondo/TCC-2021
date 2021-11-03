@@ -3,7 +3,7 @@ from typing import List
 
 
 class ProbabilisticaCounting:
-    def __init__(self, m=64, L=64):
+    def __init__(self, m=64, L=32):
         self.m: int = m
         self.L: int = L
         self.magic = 0.77351
