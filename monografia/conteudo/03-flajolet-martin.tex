@@ -1,4 +1,4 @@
-\newcommand{\bitmap}{\text{BITMAP}}
+\newcommand{\bitmap}{\mathbb{BITMAP}}
 \newcommand{\pcounting}{\textit{probabilistic counting}}
 
 \chapter{Contagem distinta aproximada: Flajolet-Martin (1985)}
@@ -50,7 +50,7 @@ palavras, pelo menos uma comece com \textbf{1}. E que a cada \textbf{4} palavras
 Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ items já devam ter sido gerados. 
 
 Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor 
-$\bitmap[0 \twodots L{-}1]$, de modo que $\bitmap[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os 
+$\bitmap[0 \twodots L - 1]$, de modo que $\bitmap[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os 
 \textit{hashes} dos elementos de $\Mbb$. 
 
 Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $2^{L} - 1$. E para isso, defini-se a função $\rho$ 
@@ -199,54 +199,42 @@ estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o Algoritmo
 grande variabilidade.
 
 Assim como foi visto na Seção \ref{sec:morris:plus}, pode-se diminuir a variância da estimativa fazendo $k$ iterações 
-do Algoritmo \ref{prog:flajolet-martin}. Dessa forma, seria necessário manter $k$ vetores \bitmap, $k$ valores de $R$ e 
+do Algoritmo \ref{prog:flajolet-martin}. Dessa forma, seria necessário manter $k$ vetores $\bitmap$, $k$ valores de $R$ e 
 $k$ funções de hash $h$. Ao final de todas as $k$ iterações, seria calculado a média $\bar{R}$ dos valores de $R$, e a 
 estimativa do número de elementos distintos seria $(1 \slash \phi) 2^{\bar{R}}$.
 
 O pseudocódigo a seguir codifica essa idea:
-
-\begin{programruledcaption}{
-  Algoritmo de Flajolet-Martin+
-  \\ \textbf{Entrada:} conjunto $\Mbb$, $k$ funções de hash, tamanho $L$ do vetor $\bitmap$ 
-  \\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
-  \label{prog:flajolet-martin+}
-  }
-    \begin{lstlisting}[
-      language={[brazilian]pseudocode},
-      style=pseudocode,
-      style=wider,
-      functions={},
-      specialidentifiers={},
-    ]
-        funcao FlajoletMartin($\Mbb$, k, h, L)
-          para i de 0 até k \kw{faça}:
-            para j de 0 até L \kw{faça}:
-              $\bitmap_i[j]$ := 0
-            fim
-          fim
-          para i de 0 até k \kw{faça}:
-            para x $\in$ $\Mbb$ \kw{faça}:
-              y := $h_i(x)$
-              $\bitmap_i[\rho(y)]$ := 1
-            fim
-          fim
-          para i de 0 até k \kw{faça}:
-            $R_i$ := 0
-          fim
-          para i de 0 até k \kw{faça}:
-            enquanto $\bitmap_i[R_i]$ = 1 \kw{faça}:
-              $R_i$ := $R_i$ + 1
-            fim
-          fim
-          $\bar{R}$ := 0
-          para i de 0 até k \kw{faça}:
-            $\bar{R}$ := $\bar{R} + R_i$ 
-          fim
-          $\bar{R}$ := $\bar{R} \slash k$
-          devolva $2^{\bar{R}}/\phi$
-        fim
-    \end{lstlisting}
-  \end{programruledcaption}
+\begin{codebox}
+  \Procname{$\proc{ProbabilisticCounting+}(\Mbb, m, \mathbb{H}, L)$}
+  \li \For $i$ de $0$ até $m$
+      \Do
+  \li    \For $j$ de $0$ até $L$
+          \Do
+  \li       $\mathbb{BITMAP}_{i}[j] \gets 0$
+          \End
+      \End
+  \li \For $i$ de $0$ até $m$
+      \Do
+  \li    \For cada $x$ em $\Mbb$
+          \Do
+  \li       $y \gets \mathbb{H}_{i}(x)$
+  \li       $\bitmap_i[\rho(y)] = 1$
+          \End
+      \End
+  \li \For $i$ de $0$ até $m$
+      \Do
+  \li    $\mathbb{R}[i] = 0$
+      \End
+  \li $\bar{R} = 0$
+  \li \For de $i$ até $m$
+      \Do
+  \li $\bar{R} = \bar{R} + \mathbb{R}[i]$
+      \End
+  \li $\bar{R} = \bar{R} / m$
+  \li
+  \Return $2^{\bar{R}}/\phi$
+  \End
+\end{codebox}
 
 Seja $\bar{R_n}$ o valor da variável $\bar{R}$ ao final da execução do Algoritmo \ref{prog:flajolet-martin+} para uma
 entrada com $n$ elementos distintos. De forma análoga aos resultados vistos na Seção \ref{sec:morris:plus}, pode-se
