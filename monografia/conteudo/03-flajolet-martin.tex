@@ -63,36 +63,28 @@ $\Mbb$ será $2^R/\phi$, em que, $\phi$ é um fator de correção que será disc
 \refeq{sec:flajolet-martin:analysis}.
 
 Segue o pseudocódigo:
-\begin{programruledcaption}{
-Algoritmo de Flajolet-Martin 
-\\ \textbf{Entrada:} conjunto $\Mbb$, função de hash $h$, tamanho $L$ do vetor $\bitmap$ 
-\\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
-\label{prog:flajolet-martin}
-}
-  \begin{lstlisting}[
-    language={[brazilian]pseudocode},
-    style=pseudocode,
-    style=wider,
-    functions={},
-    specialidentifiers={},
-  ]
-      funcao FlajoletMartin($\Mbb$, h, L)
-        para i de 0 até L \kw{faça}:
-          $\bitmap[i]$ := 0
-        fim
-        para x $\in$ $\Mbb$ \kw{faça}:
-          y := h(x)
-          $\bitmap[\rho(y)]$ := 1
-        fim
-        R := 0
-        enquanto $\bitmap[R]$ = 1 \kw{faça}:
-          R := R + 1
-        fim
-        devolva $2^R/\phi$
-      fim
-  \end{lstlisting}
-\end{programruledcaption}
+\begin{codebox}
+  \Procname{$\proc{ProbabilisticCounting}(\Mbb, h, L)$}
+  \li \For i de $0$ até $L$
+      \Do
+  \li    $\bitmap[i] \gets 0$
+      \End
+  \li \For cada $x$ em $\Mbb$
+      \Do
+  \li   $y \gets h(x)$
+  \li   $\bitmap[\rho(y)] \gets 1$
+      \End
+  \li $R \gets 0$
+  \li \While $\bitmap[R] = 1$
+      \Do
+  \li   $R \gets R + 1$
+      \End
+  \li
+  \Return $2^R/\phi$
+  \End
+\end{codebox}
 
+\newpage
 \section{Análise do algoritmo}
 \label{sec:flajolet-martin:analysis}
 
