@@ -1,6 +1,45 @@
-\chapter{Contagem aproximada}
+\chapter{Contagens aproximadas}
 \label{chap:morris}
 
+
+Na década de 1970, Robert Morris ~\citep{morris:78} estudou o problema de contar rapidamente \textit{trigramas} cujas 
+frequências podiam chegar até 130 mil. Esses eventos eram trios de caracteres que ocorriam em textos.
+
+O objetivo, então, era utilizar as contagens de trigramas na implementação de corretores ortográficos estátisticos 
+~\citep{morris:lorinda:75} para editores de textos ~\citep{mcmahon:cherry:morris:78} que acompanhariam as distribuições 
+do sistema operacional Unix dos laboratórios da Bell ~\citep{lumbroso:2018}. Contagens similares têm aplicação no 
+projeto de compressores de textos estatísticos ~\citep{text:compression:1990}.
+
+Na época, Morris utilizava um computador PDP11 da DEC com memória de 8 bits para realizar as contagens. Com 8 bits, 
+somos capazes de representar ou \textit{contar} de 0 até 255. Em geral, uma memória de $n$ bits pode armazenar números 
+inteiros entre 0 e $2^{n} - 1$.
+
+Devido à limitação de espaço e ao desejo de eficiência, Morris projetou um algoritmo para realizar estimativas ou 
+\textit{contagens aproximadas}, uma vez que, não era possível manter as frequências \textit{exatas} dos trigramas. Com 
+seu algoritmo, Morris trouxe aleatorização e probabilidade para o centro da discussão. E para tornarmos essa discussão 
+mais precisa, consideraremos o problema de determinar o número de elementos de um dado \textbf{conjunto}~$\Mbb$. 
+
+\begin{quote}
+  \textbf{Problema} \proc{ContagemAproximada($\Mbb$)}: dado um conjunto $\Mbb~=~\{ e_1, e_2, \dots, e_n \}$, encontrar 
+  estimador $\hat{n}$ para o número $n$ de elementos em $\Mbb$.  
+\end{quote}
+
+Quando $\Mbb$ é conhecido de antemão, teremos um problema que é dito \textbf{estático} ou \textit{\textbf{offline}}. 
+Já em problemas \textbf{dinâmicos} ou \textit{\textbf{online}}, receberemos uma sequência de operações sobre~$\Mbb$ que 
+não são previamente conhecidas e devem ser realizadas uma após a outra. Entre essas operações, existirão as 
+\textbf{consultas} (\textit{queries}) que podem ser, por exemplo, encontrar o número de elementos em~$\Mbb$. Teremos, 
+também, as \textbf{atualizações} (\textit{updates}) que nesse capítulo, serão modificações de~$\Mbb$ somente por meio de 
+inserções de elementos.
+
+Nesse sentido, o problema estudado por Morris pode ser considerado \textbf{incremental} (não há remoções de elementos), 
+e dessa forma, o conjunto $\Mbb$ pode ser visto como sendo um \textbf{fluxo} $x_1, x_2, \dots, x_t, \dots$ de elementos, 
+e as consultas seriam ``Quantos elementos o conjunto $\Mbb$ possui \textbf{neste instante}~$?$`` ou 
+``Quantos elementos já passaram por este fluxo``.
+
+No entanto, estudaremos detalhadamente nesse texto, as versões estatícas dos problemas apresentados, uma vez que, as 
+análises dos algoritmos que resolvem esses problemas se baseiam nessas versões. E veremos que obter a versão 
+\textit{online} a partir da \textit{offline} é uma tarefa simples, e assim, as aplicações e simulações desses algoritmos 
+serão baseadas em versões dinâmicas.
 
 \section{O Problema}
 
