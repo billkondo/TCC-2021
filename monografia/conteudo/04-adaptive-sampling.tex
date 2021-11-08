@@ -24,19 +24,19 @@ prefixo $0^*$.
 Nesse sentido, vamos manter um contador $\delta$ cujo valor inicialmente é zero, e uma lista que armazena elementos com 
 prefixo $0^{\delta}$. Para cada elemento examinado, inserimos ele na lista se o prefixo dele for da forma $0^{\delta}$.
 Quando essa lista tiver mais que $m$ elementos, incrementamos $\delta$ em 1 e passamos a manter 
-somente elementos com prefixo $0^{\delta + 1}1$.
+somente elementos com prefixo $0^{\delta + 1}$.
 
 Agora, suponha que em um dado momento do algoritmo, a lista tenha tamanho $l$ e estamos mantendo somente elementos com 
-prefixos $0^{\delta}$. A probabilidade de um elemento ter um prefixo dessa forma é $1 / 2^{\delta}$ e consequentemente,
+prefixos $0^{\delta}$. A probabilidade de um elemento ter um prefixo dessa forma é $1 / 2^{\delta}$, e consequentemente,
 esperamos que a cada $2^{\delta}$ itens, pelo menos um item tenha um prefixo desse formato. Assim, se nossa lista tem
 $l$ elementos com prefixo $0^{\delta}$, então devemos ter examinado pelo menos $2^{\delta} l$ itens, e este valor é 
 justamente a estimativa para a quantidade de valores distintos.
 
 O Algoritmo \proc{AdaptiveSampling} recebe um conjunto $\Mbb$ com $n$ elementos distintos e um parâmetro $m$, que está 
-relacionado com o consumo de memória do algoritmo e sua precisão. O algoritmo usa uma função de hash $h$ para mapear os 
-elementos de $\Mbb$ no intervalo $[0, 2^L - 1]$, em que $L$ é a quantidade de bits necessária para se conseguir fazer 
-esse mapeamento sem colisões. E o algoritmo devolve um estimador~$\hat{n}$ para $n$ da forma $2^{\delta} l$, em que $l$ 
-e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem formato $0^{\delta}$.
+relacionado com o consumo de memória do algoritmo e sua precisão. O algoritmo usa uma função de hash $h$ para associar 
+os elementos de $\Mbb$ no intervalo $[0, 2^L - 1]$, em que $L$ é a quantidade de bits necessária para se conseguir fazer 
+essa associação sem colisões. E o valor devolvido é um estimador~$\hat{n}$ para $n$ da forma $2^{\delta} l$, em que $l$ 
+e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem formato~$0^{\delta}$.
 
 \begin{codebox}
   \Procname{$\proc{AdaptiveSampling}(\Mbb, m)$}
