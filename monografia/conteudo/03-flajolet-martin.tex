@@ -37,7 +37,7 @@ E a identificação do número de elementos distintos em uma coluna era a princi
 \section{Algoritmo de Flajolet-Martin}
 \label{sec:flajolet-martin:algorithm}
 
-O \textbf{algoritmo de Flajolet-Martin} utiliza uma função de hash $h$ que mapeia uniformemente cada elemento do 
+O \textbf{algoritmo de Flajolet-Martin} utiliza uma função de hash $h$ que associa uniformemente cada elemento do 
 conjunto $\Mbb$ para um número inteiro entre $0$ e $2^L-1$, em que $L$ é a quantidade necessária de bits para 
 mapear todas as entradas de $\Mbb$ (na prática, este valor é $32$ ou $64$). Assim, para cada $x_i \in \Mbb$, 
 será calculado um inteiro $y_i \coloneqq h(x_i)$. Note que $y_i$ pode ser visto como uma palavra binária aleatória de 
