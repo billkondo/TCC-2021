@@ -41,71 +41,89 @@ análises dos algoritmos que resolvem esses problemas se baseiam nessas versões
 \textit{online} a partir da \textit{offline} é uma tarefa simples, e assim, as aplicações e simulações desses algoritmos 
 serão baseadas em versões dinâmicas.
 
-\section{O Problema}
-
-O problema da \textbf{contagem aproximada} consiste em contar um grande número de elementos usando pouca memória.  
-Esse problema foi abordado pela primeira vez por Robert  Morris no artigo ~\citep{morris:78}, 
-em que o autor descreve a tentativa de se contar eventos cujas frequências podiam chegar até 130 mil, mas usando apenas contadores de 8 bits.
-
-Um registrador de $n$ bits pode armazenar inteiros entre $0$ e $2^n-1$. 
-Dessa forma, em um computador que possui registradores de 8 bits, pode-se contar até 255.
-Assim, Morris projetou um algoritmo para armazenar contagens \textit{aproximadas}, 
-uma vez que, não era possível manter as frequências \textit{exatas} dos eventos em sua máquina.
-
 \section{Algoritmo de Morris}
 
-Para se armazenar \textit{exatamente} um valor entre $0$ e $n$, são necessários registradores com $\Omega(\lg n)$ bits. 
-Então, para que seja possível contar o número de elementos em um conjunto com até $n$ elementos usando menos bits, 
-deve-se abandonar a \textit{exatidão} da contagem e buscar alternativas aceitáveis.
+Para armazenarmos \textit{exatamente} um valor entre $0$ e $n$, são necessários registradores com~$\Omega(\lg n)$ bits. 
+Então, para que seja possível contar o número de elementos em um conjunto~$\Mbb$ com até $n$ elementos usando menos 
+bits, devemos abandonar a \textit{exatidão} da contagem e buscar alternativas aceitáveis.
 
-Uma das primeiras ideias é manter o valor de $\lg n$ ao invés de $n$. 
-Neste caso, se $X$ fosse o valor armazenado em um contador, $2^X$ seria utilizado como estimador \textit{aproximado} de $n$.
-Para isto, seriam utilizados $O(\lg \lg n)$ bits.
-Dessa forma, a política de incremento desse contador passa a ser a questão central.
-Morris propôs um método probabilístico para resolver esse incremento.
+Morris sugeriu utilizar um contador $X$ para armazenar o valor de $\lg n$ ao invés de $n$. Neste caso, o estimador 
+\textit{aproximado} $\hat{n}$ de $n$ seria~$2^{X} - 1$. Este ``-1`` na expressão faz com que essa aproximação se ajuste 
+à situação em que $\Mbb = \emptyset$. E um contador como este pode ser armazenado em $O(\lg X) = O(\lg \lg n)$ bits.
 
-Morris sugeriu originalmente utilizar um contador $X$ para armazenar a contagem do número de elementos em um dado conjunto $\Mbb$.
-A cada novo elemento examinado de $\Mbb$, o contador $X$ seria incrementado com probabilidade $2^{-X}$.
-Assim, o valor $2^{X} - 1$ passaria a ser adotado como a estimativa do total de elementos, 
-sendo que o $-1$ é para que essa aproximação se ajustasse à situação em que não houvessem itens, ou seja, $\Mbb = \emptyset$.
+A política de incremento de $X$ passa a ser a questão central do algoritmo. Morris propôs uma estratégia simples para 
+realizar esse acréscimo: a cada novo elemento examinado de~$\Mbb$, o contador $X$ seria incrementado com probabilidade~ 
+$2^{-X}$.
 
-A versão da estratégia de Morris que pode ser vista no Algoritmo \ref{prog:morris}
-é baseada em uma ideia da seção \textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm}~\citep{ApproximateCountingAlgorithm}.
-Essa versão expressa a condição de incremento do contador como um experimento de lançamento de moedas. 
-Sempre que um novo elemento do conjunto $\Mbb$ é examinado, o lançamento de $X$ moedas é simulado. 
-O contador é incrementado somente quando os resultados de todos os lançamentos forem cara.
-E a probabilidade deste evento ocorrer é $2^{-X}$. Na prática, para mimetizar o jogar de moedas, 
-um número aleatório $r$ de $X$ bits é gerado, e $X$ é incrementado apenas se $r = 0$.
+Essa estratégia pode ser vista no Algoritmo $\proc{Morris}$ cuja implementação é baseada em uma ideia da seção 
+\textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm}~\citep{ApproximateCountingAlgorithm}.Essa versão 
+expressa a condição de incremento do contador como um experimento de lançamento de moedas. Sempre que um novo elemento 
+do conjunto $\Mbb$ é examinado, o lançamento de $X$ moedas é simulado. O contador é incrementado somente quando os 
+resultados de todos os lançamentos forem cara. E a probabilidade deste evento ocorrer é~$2^{-X}$.
 
-Segue o pseudocódigo:
-\begin{programruledcaption}{
-Algoritmo de Morris\label{prog:morris}
-\\ \textbf{Entrada:} conjunto $\Mbb$
-\\ \textbf{Saída:} estimativa de $|\Mbb|$
-\label{prog:flajolet-martin}
-}
-  \begin{lstlisting}[
-    language={[brazilian]pseudocode},
-    style=pseudocode,
-    style=wider,
-    functions={},
-    specialidentifiers={},
-    deletekeywords={de}
-  ]
-      funcao Morris($\Mbb$) 
-        X := 0
-        para cada elemento de $\Mbb$ \kw{faça}
-          faça o lançamento de X moedas
-          se X = 0 ou os resultados de todos os lançamentos forem cara \kw{faça}
-            X := X + 1
-          fim
-        fim
-        devolva $2^X - 1$
-      fim
-  \end{lstlisting}
-\end{programruledcaption}
+O Algoritmo $\proc{Morris}$ a seguir recebe um conjunto~$\Mbb = \{ e_1, e_2, \dots, e_n \}$ e devolve um estimador~
+$\hat{n}$ para $n$. Este estimador é da forma $2^{X} - 1$ em que $X$ é um número inteiro não negativo, e veremos mais 
+adiante que o seu valor esperado é $n$, ou seja, $\Ebb(\hat{n}) = \Ebb(2^{X} - 1) = n$.
 
-\section{Análise da aproximação}
+\begin{codebox}
+  \Procname{$\proc{Morris}(\Mbb)$}
+  \li $X \gets 0$
+  \li \For cada $e$ em $\Mbb$ 
+  \li \Do
+      $r \gets \text{número de caras resultantes dos lançamentos de $X$ moedas}$ 
+  \li   \If $r = 0$
+  \li   \Do
+          $X \gets X + 1$
+        \End
+      \End
+  \li
+  \Return $2^{X} - 1$   
+  \End
+\end{codebox}
+
+Na prática, para mimetizar o lançamento de moedas, utilizamos uma função de hash~$h_k$ que recebe um elemento $e$ de 
+$\Mbb$ e devolve um inteiro aleatório $r = h(e)$ entre 0 e $2^{k} - 1$. Este número $r$ pode ser visto como um inteiro 
+de $k$ bit em que cada bits representa o resultado do lançamento de uma moeda: 0 corresponde à cara e 1, à coroa. 
+
+\begin{codebox}
+  \Procname{$\proc{Morris}(\Mbb)$}
+  \li $X \gets 0$
+  \li \For cada $e$ em $\Mbb$ 
+  \li \Do
+      $r \gets h_{X}(e)$ 
+  \li   \If $r = 0$
+  \li   \Do
+          $X \gets X + 1$
+        \End
+      \End
+  \li
+  \Return $2^{X} - 1$   
+  \End
+\end{codebox}
+
+O parâmetro $k$ da função de hash $h_{k}$ é geralmente implícito e depende da linguagem de programação que estamos 
+usando para implementar esse algoritmo. Se escolhermos a linguagem $C{+}{+}$ para codificar o Algoritmo $\proc{Morris}$, 
+o valor de $k$ poderia ser igual a 32, caso o hash fosse do tipo \textit{int}, ou 64, se o hash fosse um 
+\textit{long long}. E nesses casos em que $k$ é implícito, ao invés de verificar se o valor do hash é zero para 
+incrementar $X$, deveríamos conferir se os primeiros $X$ bits do hash são zeros.
+
+\begin{codebox}
+  \Procname{$\proc{Morris}(\Mbb)$}
+  \li $X \gets 0$
+  \li \For cada $e$ em $\Mbb$ 
+  \li \Do
+      $r \gets h(e)$ 
+  \li   \If primeiros $X$ bits de $r$ são iguals a zero
+  \li   \Do
+          $X \gets X + 1$
+        \End
+      \End
+  \li
+  \Return $2^{X} - 1$   
+  \End
+\end{codebox}
+
+\section{Qualidade da aproximação}
 \label{sec:morris:analysis}
 
 Esta seção busca esclarecer o quanto a estimativa do Algoritmo \ref{prog:morris} se distância do tamanho real do conjunto $\Mbb$ dado. As provas
