@@ -35,6 +35,7 @@
 
 % Escrita de teoremas e lemas
 \usepackage{amsthm}
+\newtheorem*{theorem*}{Teorema}
 \newtheorem{theorem}{Teorema}
 \newtheorem{lemma}[theorem]{Lema}
 
@@ -89,6 +90,12 @@
 % Adiciona comando \twodots
 \usepackage{clrscode3e}
 
+\usepackage{chngcntr}
+% Adiciona numeração contínua a figuras
+\counterwithout{figure}{chapter}
+% Adiciona numeração contínua a equações
+\counterwithout{equation}{chapter}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACROS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +103,7 @@
 \newcommand{\Mbb}{\mathbb{M}}
 \newcommand{\Ebb}{\mathbb{E}}
 \newcommand{\Vbb}{\mathbb{V}}
+\newcommand{\Pbb}{\mathbb{Pr}}
 
 % Pseudocódigos
 \renewcommand{\For}{\textbf{para\ }}

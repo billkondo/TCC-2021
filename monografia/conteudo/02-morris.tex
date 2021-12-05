@@ -63,7 +63,7 @@ resultados de todos os lançamentos forem cara. E a probabilidade deste evento o
 
 O Algoritmo $\proc{Morris}$ a seguir recebe um conjunto~$\Mbb = \{ e_1, e_2, \dots, e_n \}$ e devolve um estimador~
 $\hat{n}$ para $n$. Este estimador é da forma $2^{X} - 1$ em que $X$ é um número inteiro não negativo, e veremos mais 
-adiante que o seu valor esperado é $n$, ou seja, $\Ebb(\hat{n}) = \Ebb(2^{X} - 1) = n$.
+adiante que o seu valor esperado é $n$, ou seja, $\Ebb\big(\hat{n}\big) = \Ebb\big(2^{X} - 1\big) = n$.
 
 \begin{codebox}
   \Procname{$\proc{Morris}(\Mbb)$}
@@ -81,224 +81,307 @@ adiante que o seu valor esperado é $n$, ou seja, $\Ebb(\hat{n}) = \Ebb(2^{X} - 
   \End
 \end{codebox}
 
-Na prática, para mimetizar o lançamento de moedas, utilizamos uma função de hash~$h_k$ que recebe um elemento $e$ de 
-$\Mbb$ e devolve um inteiro aleatório $r = h(e)$ entre 0 e $2^{k} - 1$. Este número $r$ pode ser visto como um inteiro 
-de $k$ bit em que cada bits representa o resultado do lançamento de uma moeda: 0 corresponde à cara e 1, à coroa. 
+Na prática, para mimetizar o lançamento de moedas, utilizamos uma função $g$ geradora de números aleatórios que recebe o
+valor de $X$ e devolve um inteiro aleatório $r = h(X)$ entre 0 e $2^{X} - 1$. Este número $r$ pode ser visto como um 
+inteiro de $X$ bits em que cada bit representa o resultado do lançamento de uma moeda: 0 corresponde à coroa e 1, 
+à~cara. 
 
 \begin{codebox}
   \Procname{$\proc{Morris}(\Mbb)$}
-  \li $X \gets 0$
-  \li \For cada $e$ em $\Mbb$ 
+  \li $X \gets 0$                                         \label{li:morris:init}
+  \li \For cada $e$ em $\Mbb$                             \label{li:morris:for:start}
   \li \Do
-      $r \gets h_{X}(e)$ 
-  \li   \If $r = 0$
+      $r \gets h(e)$                                      \label{li:morris:generator}
+  \li   \If primeiros $X$ bits de $r$ são iguals a zero   \label{li:morris:increment:condition}
   \li   \Do
           $X \gets X + 1$
         \End
-      \End
+      \End                                                \label{li:morris:end}
   \li
   \Return $2^{X} - 1$   
   \End
 \end{codebox}
-
-O parâmetro $k$ da função de hash $h_{k}$ é geralmente implícito e depende da linguagem de programação que estamos 
-usando para implementar esse algoritmo. Se escolhermos a linguagem $C{+}{+}$ para codificar o Algoritmo $\proc{Morris}$, 
-o valor de $k$ poderia ser igual a 32, caso o hash fosse do tipo \textit{int}, ou 64, se o hash fosse um 
-\textit{long long}. E nesses casos em que $k$ é implícito, ao invés de verificar se o valor do hash é zero para 
-incrementar $X$, deveríamos conferir se os primeiros $X$ bits do hash são zeros.
-
-\begin{codebox}
-  \Procname{$\proc{Morris}(\Mbb)$}
-  \li $X \gets 0$
-  \li \For cada $e$ em $\Mbb$ 
-  \li \Do
-      $r \gets h(e)$ 
-  \li   \If primeiros $X$ bits de $r$ são iguals a zero
-  \li   \Do
-          $X \gets X + 1$
-        \End
-      \End
-  \li
-  \Return $2^{X} - 1$   
-  \End
-\end{codebox}
+\newcommand{\morrisfor}{\ref{li:morris:for:start}--\ref{li:morris:end}}
 
 \section{Qualidade da aproximação}
 \label{sec:morris:analysis}
+\newcommand{\morrisestimator}{\proc{Morris}(\Mbb)}
 
-Esta seção busca esclarecer o quanto a estimativa do Algoritmo \ref{prog:morris} se distância do tamanho real do conjunto $\Mbb$ dado. As provas
-serão baseadas nas notas de aula de \citep{LectureNotesAndoni}.
+Esta seção busca investigar a qualidade do estimador devolvido pelo Algoritmo \proc{Morris} para o número $n$ de 
+elementos em um dado conjunto $\Mbb$. As demonstrações apresentadas aqui são baseadas nas notas de aula de 
+\citep{LectureNotesAndoni}.
 
-Considere que $2^{X_n} - 1$ é a estimativa devolvida pela função Morris($\Mbb$) tendo como entrada um conjunto $\Mbb$ com $n$ elementos.
-Neste caso, $X_n$ é o valor do contador $X$ antes do término da execução da função.
-Evidentemente, $X_n$ é uma variável aleatória que depende de $n$ e dos resultados dos lançamentos de moedas feitos durante a execução do algoritmo.
-Dessa forma, $2^{X_n} - 1$ é também uma variável aleatória.
+Primeiro, considere que $\morrisestimator$ é o estimador devolvido pelo algoritmo tendo o conjunto $\Mbb$ como entrada. 
+Note que devido às chamadas feitas ao gerador de números aleatórios $g$ na linha~$\ref{li:morris:generator}$, 
+$\morrisestimator$ é uma variável aleatória. Da mesma forma, a variável~$X$ criada na linha~\ref{li:morris:init} é 
+também uma variável aleatória. Esta variável é interessante para a demonstração, uma vez que, o algoritmo \proc{Morris} 
+mantém a seguinte relação invariante envolvendo $X$:
 
-Agora, determinar $\Ebb[2^{X_n} - 1]$ passa a ser a questão central.
+\begin{quote}
+  \textbf{Relação invariante} de \proc{Morris}: no início da linha~\ref{li:morris:for:start}, vale que 
+  $\Ebb\big(2^{X} - 1\big) = k$, em que, $k$ é o número de elementos de $\Mbb$ já examinados. 
+\end{quote}
 
-Para $n = 0$, $X_0 = 0$ e portanto,
-\[ \Ebb[2^{X_0} - 1] = \Ebb[2^0 - 1] = E[0] = 0 \ .\]
+Ao final do algoritmo, temos que $\Ebb(\morrisestimator)=\Ebb\big(2^{X}-1\big)$ e que o número de elementos de $\Mbb$ 
+examinados é $n$. Assim, o seguinte teorema segue como consequência dessa relação invariante:
 
-Para $n = 1$, $X_1 = 1$ devido à condição $X = 0$ na linha $5$ da função \ref{prog:morris}. E assim, 
-\[ \Ebb[2^{X_1} - 1] = \Ebb[2^1 - 1] = E[1] = 1 \ .\]
+\begin{theorem}[do valor esperado de $\morrisestimator$]
+  \label{morris:theorem:expected_value}
+  Se $\Mbb$ é um conjunto com $n$ elementos, então $\Ebb(\morrisestimator) = n$.
+\end{theorem}
 
-A determinação de $E[2^{X_3} - 1]$ está ilustrada na árvore da Figura \ref{fig:morris-tree}.
-Nessa árvore, encontram-se os possíveis resultados do contador $X$ durantes as iterações da função de Morris.
-A setas da cor verde indicam que o contador foi incrementado e as da cor vermelha, que o contador permaneceu com o mesmo valor.
+Denotemos por $X_k$ como sendo o valor da variável $X$ na linha~\ref{li:morris:for:start} após $k$ elementos de~$\Mbb$ 
+terem sido examinados no laço das linhas~\ref{li:morris:for:start}--\ref{li:morris:end}. Inspecionaremos o valor de 
+$\Ebb\big(2^{X_k} - 1\big)$ para alguns valores específicos de $k$ antes de passarmos para a demonstração da relação 
+invariante.
+
+Quando nenhum elemento de $\Mbb$ foi processado, o valor da variável $X$ é igual ao seu valor inicial e dessa maneira,
+$X_0 = 0$. Segue que
+\[ \Ebb\big(2^{X_0} - 1\big) = \Ebb\big(2^0 - 1\big) = E(0) = 0 \ .\]
+
+Na primeira iteração do laço das linhas~\ref{li:morris:for:start}--\ref{li:morris:end}, temos que $r = g(0) = 0$ e 
+consequentemente, $X_1 = 1$. Dessa forma, 
+\[ \Ebb\big(2^{X_1} - 1\big) = \Ebb\big(2^1 - 1\big) = E(1) = 1 \ .\]
+
+A determinação de $\Ebb(2^{X_2} - 1)$ é mais desafiadora. A partir deste ponto, é interessante explicitarmos a relação
+de recorrência geral de $X_k$:
+\begin{align}
+  \label{morris:rec:xk}
+X_k = \begin{cases} 
+  0                 & \mbox{se } k = 0 \\[2mm]
+  X_{k-1}           & \mbox{se } g(X_{k-1}) \neq 0 \\[2mm]
+  X_{k-1} + 1       & \mbox{se } g(X_{k-1}) =  0\ .  
+\end{cases}
+\end{align}
+A relação acima é decorrente das linhas~\ref{li:morris:for:start}--\ref{li:morris:end}. Na $k$-ésima iteração deste 
+laço, a condicional da linha~\ref{li:morris:increment:condition} garante que o valor de $X_k$ será $X_{k-1} + 1$ se o 
+número $r$ gerado na linha~\ref{li:morris:generator} for~zero. A probabilidade deste evento ocorrer é 
+$\Pbb(g(X_{k-1}) = 0) = 1/2^{X_{k-1}}$, uma vez que, $r$ é um número aleatório escolhido uniformemente 
+entre~$0$~e~$2^{X_{k-1}} - 1$, inclusive. Nesse sentido, a probabilidade de o valor de $X_k$ ser $X_{k - 1}$ é igual ao 
+\textit{complementar} de $\Pbb(g(X_{k-1}) = 0)$ e assim, 
+\[\Pbb(g(X_{k-1}) \not\eq 0) = 1 - \Pbb(g(X_{k-1}) = 0) = 1 - 1/2^{X_{k-1}} \ . \]
+
+Podemos, agora, obter a partir da recorrência~\eqref{morris:rec:xk}, uma expressão \textit{recursiva} para os valores de 
+$2^{X_k} - 1$ para $k = 0,1,2,\dots$.
+\begin{align}
+  \label{morris:rec:2xk}
+  2^{X_k}-1 = \begin{cases} 
+  0                     & \mbox{se } k = 0 \\[2mm]
+  2^{X_{k-1}} - 1       & \mbox{se } g(X_{k-1}) \neq 0 \\[2mm]
+  2^{X_{k-1} + 1} - 1   & \mbox{se } g(X_{k-1}) =  0\ .  
+\end{cases}
+\end{align}
+E com a recorrência~\eqref{morris:rec:2xk} e os valores de $\Pbb(g(X_{k-1}) = 0)$ e $\Pbb(g(X_{k-1}) \not\eq 0)$, 
+podemos encontrar uma expressão para $\Ebb\big(2^{X_k} - 1\big)$:
+\begin{align}
+  \label{morris:rec:e}
+  \Ebb\big(2^{X_k} - 1\big)
+  &= \Ebb \Big( \ \underbrace{\Big(1 - \frac{1}{2^{X_{k-1}}}\Big)}_{\Pbb( \ g(X_{k-1}) \ \not\eq \ 0 \ )} \ \times \
+  \Big( 2^{X_{k-1}}-1 \Big) + \underbrace{\frac{1}{2^{X_{k-1}}}}_{\Pbb( \ g(X_{k-1}) \ = \ 0 \ )} \ \times \
+  \Big(2^{X_{k-1} + 1} - 1 \Big) \ \Big) \nonumber \\[2mm]
+  &= \Ebb\Big(\ 2^{X_{k-1}} - 1 - \frac{2^{X_{k-1}}}{2^{X_{k-1}}} + \frac{1}{2^{X_{k-1}}}  + 
+  \frac{2^{X_{k-1} + 1}}{2^{X_{k-1}}}  - \frac{1}{2^{X_{k-1}}} \ \Big) \nonumber \\[2mm]
+  & = \Ebb\Big(\ 2^{X_{k-1}} - 1 - 1 + \frac{1}{2^{X_{k-1}}}  + 2  - \frac{1}{2^{X_{k-1}}} \ \Big) \nonumber \\[2mm]
+  & = \Ebb\big( 2^{X_{k-1}}  \big) \ .
+\end{align}
+E tomando $k = 2$ nesta expressão, obtemos
+\begin{align*}
+  \Ebb\big(2^{X_2}-1\big) & =  \Ebb\big(2^{X_{2-1}}\big) = \Ebb\big(2^{X_{1}}\big) = \Ebb\big(2^{{1}}\big) = 2 \ . 
+\end{align*}
+
+Os cálculos envolvidos na determinação de $\Ebb\big(2^{X_3} - 1\big)$ estão explicitados na árvore de decisão da 
+Figura~\ref{fig:morris-tree}. Nesta árvore, podemos encontrar os possíveis valores para as variáveis aleatórias $X_1$, 
+$X_2$ e $X_3$, além das probabilidades de cada variável assumir um certo valor. As setas da cor verde indicam que o 
+contador foi incrementado e as da cor vermelha, que o contador não sofreu mudanças. Assim, para que tenhamos, por 
+exemplo, $X_3 = 3$, é necessário que durante as iterações do algoritmo, obtenhamos $g(1) = 0$ e $g(2) = 0$. Este evento 
+ocorre com probabilidade $1/2 \times 1/4 = 1/8$. Na figura, este fato é indicado com a fração $1/8$ próxima à folha de 
+rótulo $X_3 = 3$.
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.50]{figuras/morris-tree.png}
-	\caption{Árvore de decisão para quando $|\Mbb| = 3$ no Algoritmo \ref{prog:morris}}\label{fig:morris-tree}
+	\caption{Árvore de decisão para determinar $\Ebb\big(2^{X_3} - 1\big)$ no algoritmo \proc{Morris}. A fração próxima de 
+  cada folha indica a probabilidade de $X_3$ assumir o valor em seu rótulo.}\label{fig:morris-tree}
+
 \end{figure}
 
-Segue que
+Inspecionando as folhas da árvore acima, vemos que
 \begin{align*}
-  \Ebb[2^{X_3} - 1] 
-    &= \frac{2}{8} \Big(2^1 - 1\Big) + \frac{2}{8} \Big(2^2 - 1\Big) + \frac{3}{8}\Big(2^2 - 1\Big) + \frac{1}{8} \Big(2^3 - 1\Big) \\
-    &= \frac{2}{8} \Big(1\Big) + \frac{2}{8} \Big(3\Big) + \frac{3}{8} \Big(3\Big) + \frac{1}{8} \Big(7\Big) \\
+  \Ebb\big(2^{X_3} - 1\big) 
+    &=  \frac{2}{8} \times \big(2^1 - 1\big) + \frac{2}{8} \times \big(2^2 - 1\big) + \frac{3}{8} \times 
+        \big(2^2 - 1\big) + \frac{1}{8} \times \big(2^3 - 1\big) \\
+    &= \frac{2}{8} \times 1 + \frac{2}{8} \times 3 + \frac{3}{8} \times 3 + \frac{1}{8} \times 7 \\
     &= \frac{24}{8} \\
     &= 3 \ .
 \end{align*}
 
-Em todos os exemplos calculados, $\Ebb[2^{X_n} - 1] = n$. O Lema a seguir mostra que isso não é coincidência.
+Em todos os exemplos calculados até agora, vimos que $\Ebb\big(2^{k} - 1\big) = k$. Após ganharmos intuição sobre
+$\Ebb\big(2^{k} - 1\big)$ com valores pequenos de $k$, estamos preparados para demonstrar a validade da relação 
+invariante.
 
+\begin{proof}[Demonstração \ (da relação invariante)]
+  A prova será por indução no número $k$ de elementos de $\Mbb$ já examinados. Vimos anteriormente que 
+  $\Ebb\big(2^0 - 1 \big) = 0$ e asssim, a relação vale para $k = 0$.
 
-\begin{lemma} \label{morris:expected_value}
-A estimativa do Algoritmo \ref{prog:morris} é não-viesada, ou seja, $\Ebb[2^{X_n} - 1] = n$.
-\end{lemma}
+  Suponhamos, agora, que a relação invariante vale para algum $k - 1$, $k \geq 1$. Mostraremos que isso implica que esta
+  relação vale para $k$. Dessa forma, temos que
 
-\begin{proof}
-A prova será por indução em $n$. 
+  \begin{align}
+      \Ebb\big(2^{X_k} - 1\big) 
+      &= \Ebb\big(2^{X_{k-1}}\big)  \label{proof:morris:01}  \\
+      &= \Ebb\big(2^{X_{k-1}}\big) - 1 + 1 \nonumber \\
+      &= \Ebb\big(2^{X_{k-1}} - 1\big) + 1 \nonumber \\
+      &= k - 1 + 1 \label{proof:morris:02} \\ 
+      &= k \nonumber,
+    \end{align}    
 
-Para $n = 0$, $X_n$ = 0. Logo, $\Ebb[2^0 - 1] = 0$.
+    em que a igualdade~\eqref{proof:morris:01} é decorrência da identidade~\eqref{morris:rec:e} e a 
+    igualdade~\eqref{proof:morris:02}, da hipótese de indução. Finalmente, a validade da relação invariante segue do 
+    princípio da indução finita.
+\end{proof}  
 
-Suponha que para $n > 0$, $\Ebb[2^{X_{n-1}} - 1] = n-1$.
+Saber que $\Ebb(\proc{Morris}(\Mbb)) = |\Mbb| = n$ não é suficiente para garantir a qualidade do estimador $2^{X} - 1$
+devolvido pelo algoritmo. É desejável que além do valor esperado ser próximo ou igual ao tamnho do conjunto $\Mbb$, que
+a variância da variável aleatória \proc{Morris}($\Mbb$) não seja \textit{muito grande}. Intuitivamente, isso nos diria 
+que a probabilidade do estimador calculado ser longe do valor esperado é pequena. Então, apresentaremos o valor da 
+variância de $\proc{Morris}(\Mbb)$ no próximo teorema.
 
-\begin{align*}
-  \Ebb[2^{X_n} - 1] 
-    &= \sum_{x} \mathbb{P} (X_n = x) (2^x - 1) \\
-    &= \sum_{x} \mathbb{P} (X_{n-1} = x) \Ebb[2^{X_n} - 1 | X_{n-1} = x] \\
-    &= \sum_{x} \mathbb{P} (X_{n-1} = x) \Big[ (2^{x+1} - 1) \frac{1}{2^x} +  (2^x - 1) (1 - \frac{1}{2^x}) \Big] \\
-    &= \sum_{x} \mathbb{P} (X_{n-1} = x) 2^x \\
-    &= \sum_{x} \mathbb{P} (X_{n-1} = x) (2^x - 1) + \sum_{x} \mathbb{P} (X_{n-1} = x) \\
-    &= \Ebb[2^{X_{n-1}} - 1] + 1 \\
-    &= n - 1 + 1 \\
-    &= n \ .
-\end{align*}
+\begin{theorem}[da variância]
+  \label{morris:theorem:variance}
+  Se $\Mbb$ é um conjunto com $n$ elementos, então $\Vbb(\Ebb(\morrisestimator)) = n(n - 1) / 2$.
+\end{theorem}
 
-\end{proof}
+\begin{proof}[Demonstração \ (da variância)]
+  Pela definição da \hyperref[ap:variance]{variância} de uma variável aleatória, temos que
 
-Somente calcular $\Ebb[2^{X_n} - 1]$ não é suficiente para saber se a aproximação devolvida pelo Algoritmo \ref{prog:morris} é razoável.
-Assim, o objetivo agora, é estimar o valor de $\Vbb[2^{X_n} - 1]$ e entender como as saídas do algoritmo estão distribuídas. 
-O próximo Lema mostra uma possível estimativa para essa variância.
+  \begin{align}
+    \Vbb(\proc{Morris}(\Mbb))
+    &= \Ebb(\proc{Morris}(\Mbb)^2) - \Ebb^2(\proc{Morris}(\Mbb)) \nonumber \\ 
+    &= \Ebb\big(\big(2^{X_n} - 1\big)^2\big) - n^2 \label{proof:morris:var:01} \\
+    &= \Ebb\big(2^{2X_n} - 2\big(2^{X_n}\big) + 1\big) - n^2 \nonumber \\
+    &= \Ebb\big(2^{2X_n}\big) - 2\Ebb\big(2^{X_n}\big) + 2 - 2 + 1 - n^2 \nonumber \\
+    &= \Ebb\big(2^{2X_n}\big) - 2\Ebb\big(2^{X_n} - 1\big) - 2 + 1 - n^2 \nonumber \\
+    &= \Ebb\big(2^{2X_n}\big) - 2n - 1 - n^2 \label{proof:morris:var:02} \ ,
+  \end{align}
 
-\begin{lemma} \label{morris:variance}
-$\Vbb[2^{X_n} - 1] \leq \frac{3n(n+1)}{2} + 1$.
-\end{lemma}
+  em que utilizamos a identidade $\Ebb(\proc{Morris}(\Mbb)) = \Ebb\big(2^{X_n} - 1\big) = n$ nas igualdades~
+  \eqref{proof:morris:var:01}~e~\eqref{proof:morris:var:02}.
 
-\begin{proof}
-Primeiro, aplica-se a definição de \hyperref[ap:variance]{variância} em $2^{X_n} - 1$, de modo que
+  Logo em seguida, passaremos a calcular $\Ebb\big(2^{2X_n}\big)$. Para isso, procederemos de maneira idêntica ao que 
+  foi feito na demonstração do Teorema~\hyperref[morris:theorem:expected_value]{do valor esperado} utilizando a 
+  recorrência~\eqref{morris:rec:xk}. Assim,
 
-\begin{align*}
-  \Vbb[2^{X_n} - 1] 
-    &= \Ebb[(2^{X_n} - 1) ^ 2] - \Ebb[2^{X_n} - 1]^2  \\
-    &= \Ebb[2^{2X_n} -2 \ 2^{X_n} + 1] - n^2 \\
-    &= \Ebb[2^{2X_n}] \underbrace{-2 \Ebb [2^{X_n}] + 1 - n^2}_{\leq 0} \\ 
-    &\leq \Ebb[2^{2X_n}] \ .
-\end{align*}
+  \begin{align}
+    \Ebb\big(2^{2X_n}\big)
+    &=  \Ebb\Big(\Big(1 - \frac{1}{2^{X_n}}\Big) \times 2^{2X_{n - 1}} + \frac{1}{2^{X_n}} \times 2^{2(X_{n-1} 
+        + 1)}\Big) \nonumber \\
+    &=  \Ebb\bigg(2^{2X_{n-1}} - \frac{2^{2X_{n-1}}}{2^{X_{n-1}}} + \frac{2^{2(X_{n-1}+1)}}{2^{X_{n-1}}}\bigg) 
+        \nonumber \\
+    &= \Ebb\big(2^{2X_{n-1}} -2^{X_{n-1}} + 2^{X_{n-1}+2}\big) \nonumber \\
+    &= \Ebb\big(2^{2X_{n-1}} + 3 \times 2^{X_{n-1}}\big) \nonumber \\
+    &= \Ebb\big(2^{2X_{n-1}}\big) + 3\Ebb\big(2^{X_{n-1}}\big) \label{proof:morris:var:03} \\
+    &= \Ebb\big(2^{2X_{n-1}}\big) + 3n  \ . \nonumber
+  \end{align}
 
-Agora, deve-se calcular $\Ebb[2^{2X_n}]$.
+  A igualdade~\eqref{proof:morris:var:03} segue da identidade~\eqref{morris:rec:e}. E o valor de 
+  $\Ebb\big(2^{2X_n}\big)$ pode ser obtido da expansão \textit{telescópica} da relação de recorrência
 
-\begin{align*}
-  \Ebb[2^{2X_n}]  
-    &=  \sum_{x} 2^{2x} \mathbb{P}(X_n = x) \\
-    &=  \sum_{x} 2^{2x} \Big[ 2^{-(x-1)} \mathbb{P}(X_{n-1} = x-1) + (1 - 2^{-x}) \mathbb{P}(X_{n-1} = x) \Big] \\
-    &=  \sum_{x} 2^{x+1} \mathbb{P}(X_{n-1} = x-1) + \sum_{x} 2^{2x} \mathbb{P}(X_{n-1} = x) - \sum_{x} 2^{x} \mathbb{P}(X_{n-1} = x) \\
-    &=  \sum_{x} 4 \ 2^{x-1} \mathbb{P}(X_{n-1} = x-1) + \sum_{x} 2^{2x} \mathbb{P}(X_{n-1} = x) - \sum_{x} 2^{x} \mathbb{P}(X_{n-1} = x)  \\
-    &=  4 \Ebb[2^{X_{n-1}}] + \Ebb[2^{2X_{n-1}}] - \Ebb[2^{X_{n-1}}]  \\
-    &=  3 \Ebb[2^{X_{n-1}}] + \Ebb[2^{2X_{n-1}}]  \\
-    &=  3 n + \Ebb[2^{2X_{n-1}}] \ . \\
-\end{align*}
+  \begin{align*}
+    \Ebb\big(2^{2X_n}\big)
+    &= \Ebb\big(2^{X_{n-1}}\big) + 3n \\
+    &=  \Ebb\big(2^{X_{n-2}}\big) + 3(n - 1) + 3n \\
+    &=  \Ebb\big(2^{X_{n-3}}\big) + 3(n - 2) + 3(n - 1) + 3n \\
+    &\hspace{5mm} \vdots\\
+    &=1 + 3 + \dots + 3(n-2) + 3(n-1) + 3n \\
+    &=\frac{3n(n+1)}{2} + 1 \ .
+  \end{align*}
 
-Note que $\Ebb[2^{2X_n}]$ pode ser calculado recursivamente. Assim,
+  Finalmente, utilizando esse valor para prosseguir com \eqref{proof:morris:var:02}, obtemos
 
-\begin{align*}
-  \Ebb[2^{2X_{n}}] 
-    &= 3n + 3(n-1) + 3(n-2) + \dots + E[2^{2X_2}] \\
-    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + E[2^{2X_1}] \\
-    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + 3 (1) + E[2^{2X_0}] \\
-    &= 3n + 3(n-1) + 3(n-2) + \dots + 3 (2) + 3 (1) + 1 \\
-    &= \frac{3n(n+1)}{2} + 1 \ .
-\end{align*}
-
-Portanto, 
-\[ \Vbb[2^{X_n} - 1] \leq \Ebb[2^{2X_n}] = \frac{3n(n+1)}{2} + 1 \ .\]
-
-\end{proof}
-
-Por fim, note que o consumo de memória do Algoritmo \ref{prog:morris} é também uma variável aleatória, uma vez que,
-$X_n$ é uma variável aleatória e o consumo de espaço da função depende deste valor. O seguinte Lema mostra que na maior 
-parte dos casos, o programa consome em torno de $O(\lg\lg n)$ bits.
-
-
-\begin{lemma}
-  O Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ bits de memória com probabilidade acima de $90\%$.
-\end{lemma}
-
-\begin{proof}
-  Usando a \nameref{ap:markov} com $X = 2^{X_n} - 1$ e $\alpha = 10n$, segue que
-
-\[ \mathbb{P}(2^{X_n} - 1 \geq 10n)  \leq \frac{\Ebb[2^X_n - 1]}{(10n)^2} = \frac{n}{100n^2} = \frac{1}{100n} \leq \frac{1}{10} \ . \]
-
-Assim, com probabilidade maior que $\frac{9}{10} = 90\%$, $2^{X_n} - 1 \leq 10n$. Logo, 
-
-\[ 2^{X_n} - 1 \leq 10n  \]
-\[ X_n \leq \lg(10n + 1) \ .\]
-
-Para armazenar $X_n$, gasta-se $\lg(X_n)$ bits. Assim,
-
-\begin{align*}
-  \lg(X_n) 
-    &\leq \lg\lg(10n + 1) \\ 
-    &= O(\lg \lg n) \ .
-\end{align*} 
-
-Portanto, o Algoritmo \ref{prog:morris} consome $O(\lg \lg n)$ bits de memória com probabilidade acima de $90\%$.
+  \begin{align*}
+    \Vbb(\proc{Morris}(\Mbb))
+    &= \Ebb\big(2^{2X_n}\big) - 2n - 1 - n^2 \\
+    &= \frac{3n(n+1)}{2} + 1 - 2n -1 -n^2 \\
+    &= \frac{3n(n+1) - 4n - 2n^2}{2} \\
+    &= \frac{n(n-1)}{2} \ .
+  \end{align*}
 
 \end{proof}
 
-Agora, pode-se usar os Lemas \ref{morris:expected_value} e \ref{morris:variance} para se conseguir uma estimativa para o 
-erro do Algoritmo \ref{prog:morris}.
-Usando a \nameref{ap:chebyshev} com $X = 2^{X_n} - 1$, segue que
+Dessa forma, podemos estimar o erro do algoritmo \proc{Morris} a partir dos Teoremas 
+\hyperref[morris:theorem:expected_value]{do valor esperado} e \hyperref[morris:theorem:variance]{da variância}. Seja
+$\sigma$ o desvio padrão de \proc{Morris}($\Mbb$). A \hyperref[ap:chebyshev]{desigualdade de Cherbyshev} nos diz que 
+para todo $c > 0$, 
+\begin{align}
+  \Pbb(|\proc{Morris}(\Mbb) - n| \geq c\sigma) \leq \frac{1}{c^2} \ .  \label{morris:error}
+\end{align}
 
-\[ \mathbb{P}(|2^{X_n} - 1 - \Ebb[2^{X_n} - 1]| \geq \sigma ) \leq \frac{Var[2^{X_n} - 1]}{\sigma^2} \ . \]
+Pondo $c = 4\sqrt{2}$ em \eqref{morris:error}, obtemos que 
+\begin{align}
+  \Pbb\big(|\proc{Morris}(\Mbb) - n| \geq 4\sqrt{2} \times \sigma\big) \leq \frac{1}{(4\sqrt{2})^2} = \frac{1}{32} \ .
+\end{align}
 
-Dessa forma, 
+Como pelo Teorema \hyperref[morris:theorem:variance]{da variância},
+\[ \sigma^2 = \Vbb(\proc{Morris}(\Mbb)) = \frac{n(n-1)}{2} \ , \] vale que
+\[ \sigma < \frac{n}{\sqrt{2}} \ . \]
 
-\begin{align*}
-  \mathbb{P}(|2^{X_n} - 1 - n| \geq \sigma ) 
-    &\leq \frac{3\frac{n(n+1)}{2} + 1}{\sigma^2}  \\
-    &= \frac{3n^2 + 3n + 2}{2\sigma^2} \ .
-\end{align*}
+Logo, temos que
+\[  \Pbb\bigg(|\proc{Morris}(\Mbb) - n| \geq 4\sqrt{2} \times \frac{2}{\sqrt{2}}\bigg) =  
+    \Pbb(|\proc{Morris}(\Mbb) - n| \geq 4n) \leq \frac{1}{32} \ . \]
+    
+Portando, podemos concluir que 
+\[ \Pbb(|\proc{Morris}(\Mbb) - n| \geq 4n) \leq \frac{1}{32} < 0,032 \ . \]
 
+Em palavras, isto nos diz que com probabilidade maior que $96,8\%$, o erro relativo cometido por \proc{Morris}($\Mbb$) é
+menor do que 4.
 
-Tomando $\sigma = \epsilon n$, conclui-se
+Por fim, voltemos nossa atenção para uma das motivações iniciais do trabalho de Morris: o espaço utilizado pelo 
+algoritmo. Por espaço, queremos dizer o número de bits que o algoritmo \proc{Morris} necessita para representar o 
+contador~$X$ definido na linha~\ref{li:morris:init}. Denotaremos por \proc{bits}($i$) como sendo o menor número de bits
+para representar um número inteiro não-negativo $i$. Temos que \proc{bits}(0) = 1 e para $i \geq 1$, \proc{bits}($i$) = 
+$\lfloor\lg i\rfloor + 1$.
 
-\begin{align*}
-  \mathbb{P}(|2^{X_n} - 1 - n| \geq \epsilon n) 
-    &\leq \frac{3n^2 + 3n + 2}{2 \epsilon^2 n^2}  \\
-    &\leq \frac{4n^2}{2 \epsilon^2 n^2}  &&(\text{$3n + 2 \leq n^2$ para $n \geq 4$}) \\
-    &= \frac{2}{\epsilon^2} \ .
-\end{align*}
+\begin{theorem}
+  \label{morris:theorem:space}
+  Sejam $\Mbb$ um conjunto com $n \geq 2$ elementos, $X$ a variável definida na linha~\ref{li:morris:init} do algoritmo
+  \proc{Morris} e $b$ um número inteiro positivo. Se $X_n$ é o valor da variável~$X$ ao final de \proc{Morris}($\Mbb$), 
+  então $\Pbb(\proc{bits}(X_n) \geq b + \lg\lg n + 1) \leq 1/(n^{2^b-1}-1)$.
+\end{theorem}
 
-Tome $\epsilon = \sqrt{40} \approx 6 $, de modo que 
-\[ \mathbb{P}(|2^{X_n} - 1 - n| \geq \sqrt{40} n)  \leq 0.05 \ . \]
+Consideremos um exemplo para decifrar o significado do Teorema~\ref{morris:theorem:space}. Suponhamos que $\Mbb$ é um 
+conjunto com $n = 2^{16} = 65536$ elementos. Neste caso, temos que $\lg \lg n = 4$. O teorema nos diz que para $b = 1$,
+a representação de $X = X_{65536}$ utilizará 6 bits com probabilidade menor ou igual a 
+$1/(65536^{2^1 - 1}) = 1/65536 < 1,53 \times 10^{-5}$. E para $b = 2$, seriam necessários 7 bits com probabilidade menor
+ou igual a $1/(65536^{2^2 - 1}) < 3,56 \times 10^{-15}$. Nesse sentido, o Teorema~\ref{morris:theorem:space} nos garante 
+que o algoritmo \proc{Morris} consome \textit{quase certamente} não mais que $\lceil\lg \lg n\rceil$ bits de espaço.
 
-Ou seja, com probabilidade de até $95\%$, o erro relativo cometido pelo Algoritmo \ref{prog:morris} pode ser de até $6$ vezes o valor de $n$.
+\begin{proof}[Demonstração \ (do Teorema~\ref{morris:theorem:space})]
+  A \hyperref[ap:markov]{desigualdade de Markov} nos diz que para todo número real positivo $c$ vale que
+  \begin{align}
+    \Pbb(\proc{Morris}(\Mbb) \geq c) \leq \frac{\proc{Morris}(\Mbb)}{c} = \frac{n}{c} \ . \label{morris:markov}
+  \end{align}
+  Pondo $c = n^{2^b} - 1$ em \eqref{morris:markov}, obtemos que
+  \begin{align}
+    \Pbb\big(\proc{Morris}(\Mbb) \geq n^{2^b} - 1\big) \leq \frac{1}{n^{2^b-1} - 1} \ . \label{morris:memory:step}
+  \end{align}
+  Como $\proc{Morris}(\Mbb) = 2^{X_n} - 1$, reescrevendo e desenvolvendo \eqref{morris:memory:step}, encontramos que
+  \begin{align*}
+    \Pbb\big(2^{X_n} - 1 \geq n^{2^b} - 1\big)
+    &=  \Pbb\big(2^{X_n} \geq n^{2^b}\big) \\
+    &=  \Pbb\big(X_n \geq \lg n^{2^b}\big) \\
+    &=  \Pbb\big(\lg X_n \geq \lg \lg n^{2^b}\big) \\
+    &\geq  \Pbb\big(\lfloor\lg X_n\rfloor \geq \lg \lg n^{2^b}\big) \\
+    &=  \Pbb\big(\lfloor\lg X_n\rfloor + 1 \geq \lg \lg n^{2^b} + 1\big) \\
+    &=  \Pbb\big(\proc{bits}(X_n) \geq \lg \lg n^{2^b} + 1\big) \\
+    &=  \Pbb\big(\proc{bits}(X_n) \geq \lg 2^{b} + \lg \lg n + 1\big) \\
+    &=  \Pbb(\proc{bits}(X_n) \geq b + \lg \lg n + 1) \ .
+  \end{align*}
+  Combinando a desigualdade acima com \eqref{morris:memory:step}, vemos que
+  \[  \Pbb(\proc{bits}(X_n) \geq b + \lg \lg n + 1) \leq \frac{1}{n^{2^b-1} - 1} \ . \]
+  Com isto, concluímos a prova do teorema.
+\end{proof}
 
-
-\section{Melhorando a precisão do algoritmo}
+\section{\proc{Morris} e a lei dos grandes números}
 \label{sec:morris:plus}
 
 Pela análise \ref{sec:morris:analysis} do Algoritmo \ref{prog:morris}, nota-se que esta solução apresenta uma grande variabilidade. 
