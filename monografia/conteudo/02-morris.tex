@@ -330,10 +330,12 @@ Logo, temos que
     \Pbb(|\proc{Morris}(\Mbb) - n| \geq 4n) \leq \frac{1}{32} \ . \]
     
 Portando, podemos concluir que 
-\[ \Pbb(|\proc{Morris}(\Mbb) - n| \geq 4n) \leq \frac{1}{32} < 0,032 \ . \]
+\begin{align}
+  \Pbb(|\proc{Morris}(\Mbb) - n| \geq 4n) \leq \frac{1}{32} < 0{,}032 \ .  \label{morris:error:result}
+\end{align}
 
-Em palavras, isto nos diz que com probabilidade maior que $96,8\%$, o erro relativo cometido por \proc{Morris}($\Mbb$) é
-menor do que 4.
+Em palavras, isto nos diz que com probabilidade maior que $96{,}8\%$, o erro relativo cometido por \proc{Morris}($\Mbb$) 
+é menor do que 4.
 
 Por fim, voltemos nossa atenção para uma das motivações iniciais do trabalho de Morris: o espaço utilizado pelo 
 algoritmo. Por espaço, queremos dizer o número de bits que o algoritmo \proc{Morris} necessita para representar o 
@@ -351,9 +353,10 @@ $\lfloor\lg i\rfloor + 1$.
 Consideremos um exemplo para decifrar o significado do Teorema~\ref{morris:theorem:space}. Suponhamos que $\Mbb$ é um 
 conjunto com $n = 2^{16} = 65536$ elementos. Neste caso, temos que $\lg \lg n = 4$. O teorema nos diz que para $b = 1$,
 a representação de $X = X_{65536}$ utilizará 6 bits com probabilidade menor ou igual a 
-$1/(65536^{2^1 - 1}) = 1/65536 < 1,53 \times 10^{-5}$. E para $b = 2$, seriam necessários 7 bits com probabilidade menor
-ou igual a $1/(65536^{2^2 - 1}) < 3,56 \times 10^{-15}$. Nesse sentido, o Teorema~\ref{morris:theorem:space} nos garante 
-que o algoritmo \proc{Morris} consome \textit{quase certamente} não mais que $\lceil\lg \lg n\rceil$ bits de espaço.
+$1/(65536^{2^1 - 1}) = 1/65536 < 1{,}53 \times 10^{-5}$. E para $b = 2$, seriam necessários 7 bits com probabilidade 
+menor ou igual a $1/(65536^{2^2 - 1}) < 3{,}56 \times 10^{-15}$. Nesse sentido, o Teorema~\ref{morris:theorem:space} nos 
+garante que o algoritmo \proc{Morris} consome \textit{quase certamente} não mais que $\lceil\lg \lg n\rceil$ bits de 
+espaço.
 
 \begin{proof}[Demonstração \ (do Teorema~\ref{morris:theorem:space})]
   A \hyperref[ap:markov]{desigualdade de Markov} nos diz que para todo número real positivo $c$ vale que
@@ -384,85 +387,164 @@ que o algoritmo \proc{Morris} consome \textit{quase certamente} não mais que $\
 \section{\proc{Morris} e a lei dos grandes números}
 \label{sec:morris:plus}
 
-Pela análise \ref{sec:morris:analysis} do Algoritmo \ref{prog:morris}, nota-se que esta solução apresenta uma grande variabilidade. 
-Esta seção busca abordar uma técnica para diminuir este problema e, também, é baseada nas notas de aula de \citep{LectureNotesAndoni}.
+Do teorema \hyperref[morris:theorem:variance]{da variância de \proc{Morris}($\Mbb$)}, notamos que o algoritmo apresenta
+uma grande variabilidade. Nesta seção, veremos uma técnica que a partir de um algoritmo probabilístico com uma certa 
+variância, obteremos um novo algoritmo com variância menor.
 
-A ideia principal é executar $k$ vezes o Algoritmo \ref{prog:morris} e a nova estimativa será a média aritmética dos resultados
-de cada execução. Será visto que isso diminuirá a variância da estimativa.
+Em nosso caso, nos apoiaremos no algoritmo \proc{Morris} para construir o algoritmo \proc{Morris++} que tem o mesmo 
+valor esperado e menor variância que \proc{Morris}. Como foi visto em \eqref{morris:error}, a desigualdade de Cherbyshev
+limita o erro em função da variância, e assim, o erro relativo de \proc{Morris++} também será menor que o de 
+\proc{Morris}. E as demonstrações apresentadas aqui serão também baseadas nas notas de aula 
+de~\citep{LectureNotesAndoni}.
 
-Segue o pseudocódigo do algoritmo adaptado:
-\begin{programruledcaption}{
-Algoritmo de Morris adaptado\label{prog:morris:plus}
-\\ \textbf{Entrada:} conjunto $\Mbb$, quantidade $K$ de iterações do Algoritmo \ref{prog:morris} 
-\\ \textbf{Saída:} estimativa de $|\Mbb|$
-\label{prog:flajolet-martin}
-}
-  \begin{lstlisting}[
-    language={[brazilian]pseudocode},
-    style=pseudocode,
-    style=wider,
-    functions={},
-    specialidentifiers={},
-    deletekeywords={de}
-  ]
-      função Morris++($\Mbb$, $K$)
-        Y := 0
-        para k de 1 até K \kw{faça}
-          $\tilde{X}_k$ := Morris($\Mbb$)
-          Y := Y + $\tilde{X}_k$
-        fim
-        devolva $\frac{Y}{K}$
-      fim
-  \end{lstlisting}
-\end{programruledcaption}
+O algoritmo \proc{Morris++} recebe um conjunto $\Mbb = \{ e_1, e_2, \dots, e_n \}$ e um número positivo~$t$, e devolve 
+um estimador~$\hat{n}$ para $n$. Este estimador será a média aritmética de $t$ execuções de \proc{Morris}($\Mbb$). Esta 
+estratégia é inspirada na \proc{Lei dos Grandes Números}, que diz que a média dos resultados obtidos de um grande número 
+de experimentos deve se aproximar do valor esperado à medida que mais experimentos são realizados.
 
-Considere que $Y_n$ é a saída do Algoritmo \ref{prog:morris:plus} para uma entrada de tamanho $n$.
+\begin{codebox}
+  \Procname{$\proc{Morris++}(\Mbb, t)$}
+  \li $N \gets 0$                       \label{prog:morris:plus:start}                
+  \li \For $i \gets 1$ até $t$                             
+  \li \Do
+      $n_i \gets \proc{Morris}(\Mbb)$   \label{prog:morris:plus:n}
+  \li $N \gets N + n_i$
+      \End
+  \li
+  \Return N/t
+  \End
+\end{codebox}
 
-\begin{lemma}\label{morris:plus:expected_value}
-  $\Ebb[Y_n] = n$.
-\end{lemma}
+As variáveis $n_1, n_2, \dots, n_t$ definidas na linha~\ref{prog:morris:plus:n} são aleatórias e tais que
+\begin{align}
+  \Ebb(n_i) &= \Ebb(\proc{Morris}(\Mbb)) = n                \label{morris:plus:n:exp} \\     
+  \Vbb(n_i) &= \Vbb(\proc{Morris}(\Mbb)) = n(n - 1)/2 \ ,   \label{morris:plus:n:var}
+\end{align}
 
-\begin{proof}
+para $i = 1, 2, \dots, t$. A igualdade~\eqref{morris:plus:n:exp} é decorrência do teorema 
+\hyperref[morris:theorem:expected_value]{do valor esperado de \proc{Morris}($\Mbb$)}, e a igualdade~
+\eqref{morris:plus:n:var}, do teorema \hyperref[morris:theorem:variance]{da variância de \proc{Morris}($\Mbb$)}.
 
-\begin{align*}
-  \Ebb[Y_n] 
-    &= \Ebb \Big[ \frac{1}{k} \sum_{i=1}^{k} X_n \Big]  \\
-    &= \frac{1}{k} \sum_{i=1}^{k} \Ebb[X_n] \\
-    &= \frac{1}{k} k n  \\
-    &= n \ .
-\end{align*}
+De maneira semelhante ao que já havíamos feito, denotaremos por $\proc{Morris++}(\Mbb, t)$ como sendo o estimador 
+devolvido pelo algoritmo tendo o conjunto $\Mbb$ e o número inteiro $t$ como entrada. É evidente que 
+$\proc{Morris}(\Mbb) = \proc{Morris++}(\Mbb, 1)$.
 
+\begin{theorem}[do valor esperado de $\proc{Morris++}$]
+  \label{morris:plus:expected_value}
+  Se $\Mbb$ é um conjunto com $n$ elementos e $t$, um número inteiro positivo, então 
+  $\Ebb(\proc{Morris++}(\Mbb, t)) = n \ .$
+\end{theorem}
+
+\begin{proof}[Demonstração]
+  \label{demo:morris:plus}
+  A variável aleatória $N$ é definida na linha~\ref{prog:morris:plus:start}. Seja $N_t$ o valor desta variável ao final 
+  da execução do algoritmo. Temos que
+
+  \begin{align}
+    \Ebb\big(\proc{Morris++}(\Mbb,t)\big)
+    &= \Ebb\bigg(\frac{N_t}{t} \bigg)  \nonumber\\
+    &= \Ebb\bigg(\frac{n_1 + n_2 + \dots + n_t}{t} \bigg)  \nonumber\\
+    &= \frac{\Ebb(n_1) + \Ebb(n_2) + \dots + \Ebb(n_t)}{t}  \nonumber\\
+    &= \frac{\Ebb(\proc{Morris}(\Mbb)) + \dots + \Ebb(\proc{Morris}(\Mbb))}{t}  \label{demo:morris:plus:exp:01} \\
+    &= \frac{1}{t} \times t \times \Ebb(\proc{Morris}(\Mbb)) \nonumber\\
+    &= \Ebb(\proc{Morris}(\Mbb)) \nonumber\\
+    &= n \ ,  \label{demo:morris:plus:exp:02}
+  \end{align}
+
+  em que as igualdades em \eqref{demo:morris:plus:exp:01} e \eqref{demo:morris:plus:exp:02} seguem das identidades 
+  em~\eqref{morris:plus:n:exp}.
 \end{proof}
 
-\begin{lemma}\label{morris:plus:variance}
-  $\Vbb[Y_n] \leq \frac{1}{k} ( \frac{3n(n+1)}{2} + 1 )$.
-\end{lemma}
+\begin{theorem}[da variância de $\proc{Morris++}$]
+  \label{morris:plus:variance}
+  Se $\Mbb$ é um conjunto com $n$ elementos e $t$ é um número inteiro positivo, então 
+  $\Vbb(\Morrispp(\Mbb,t)) = \Vbb(\Morris(\Mbb))/t = n(n-1)/2t\ . $
+\end{theorem}
 
 \begin{proof}
+  Retome a definição de $N_t$ na \hyperref[demo:morris:plus]{demonstração do valor esperado}. Temos que
+
+  \begin{align}
+    \Vbb\big(\Morrispp(\Mbb,t)\big) & = \Vbb\bigg(\frac{N_t}{t}\bigg) \nonumber\\
+    & = \Vbb\bigg(\frac{n_1 + n_2 + \dots +n_t}{t} \bigg) \nonumber\\
+    &= \frac{1}{t^2} \times \Vbb(n_1 + n_2 + \dots + n_t)  \nonumber\\
+    &= \frac{1}{t^2} \times \bigg(\sum_{i=1}^t\Vbb(n_i) + 2\times \sum_{i<j}\Cov(n_i,n_j)\bigg)\\
+    &= \frac{1}{t^2} \times \sum_{i=1}^t\Vbb(n_i) \label{demo:morrs:plus:var:01}\\
+    &= \frac{1}{t^2} \times \sum_{i=1}^t\Vbb(\Morris(\Mbb)) \label{demo:morris:plus:var:02} \\
+    &= \frac{1}{t^2} \times t \times \Vbb(\Morris(\Mbb)) \nonumber\\
+    &= \frac{1}{t} \times \frac{n(n-1)}{2} \label{demo:morris:plus:var:03}\\
+    &= \frac{n(n-1)}{2t}\ . \nonumber
+  \end{align}
   
-\begin{align*}
-  \Vbb[Y_n] 
-    &= \Vbb[\frac{1}{k} \sum_{i=1}^{k} X_n] \\
-    &= \frac{1}{k^2} \sum_{i=1}^{k}\Vbb[X_n]  \\
-    &\leq \frac{1}{k^2} \sum_{i=1}^{k} \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
-    &= \frac{1}{k^2} k \Big( \frac{3n(n+1)}{2} + 1 \Big)  \\
-    &= \frac{1}{k} \Big( \frac{3n(n+1)}{2} + 1 \Big) \ .
-\end{align*}
-
+  Para todo $i < j$ as variáveis aleatórias $n_i$ e $n_j$ são independentes e portanto não correlacionadas,
+  ou seja, $\Cov(n_i,n_j) = 0$. Isto implica a igualdade~\eqref{demo:morrs:plus:var:01}.
+  As igualdades~\eqref{demo:morris:plus:var:02} e~\eqref{demo:morris:plus:var:03} são devidas as identidades 
+  em~\eqref{morris:plus:n:var}.
 \end{proof}
 
-Agora, pode-se usar os Lemas \ref{morris:plus:expected_value} e \ref{morris:plus:variance} para se conseguir uma estimativa para o 
-erro do Algoritmo \ref{prog:morris:plus}. De forma análoga ao que foi feito na conclusão da Análise \ref{sec:morris:analysis}, pode-se 
-concluir que
+Passemos a explorar como o parâmetro~$t$ de $\Morrispp(\Mbb,t)$ pode nos ser útil para obtermos estimadores de interesse
+para o número de elementos em um dado conjunto~$\Mbb$ com~$n$ elementos.
 
-\[ \mathbb{P}(|Y_n - n| \geq \epsilon n ) \leq \frac{2}{\epsilon^2 k} \ . \]
+Sejam $\epsilon$ e $\gamma$ números reais tais que $0 < \gamma \leq 1$ e $\epsilon > 0$. Desejamos que
+\[ \Pbb(|\Morrispp(\Mbb,t)-n| \geq \epsilon n) \leq \gamma \ . \]
 
-em que $\epsilon$ é o erro relativo do Algoritmo \ref{prog:morris:plus} e $k$, a quantidade de execuções do Algoritmo \ref{prog:morris}.
-Assim, para um intervalo de confiança de $\delta$, pode-se escrever $k$ em função de $\epsilon$ e $\delta$:
+Seja $\sigma_t$ o desvio padrão de $\Morrispp(\Mbb,t)$. Do teorema 
+\hyperref[morris:plus:expected_value]{do valor esperado de $\Morrispp$} junto com a desigualdade de Cherbyshev, obtemos 
+que
+\[ \Pbb(|\Morrispp(\Mbb,t)-n| \geq c\sigma_t) \leq \frac{1}{c^2} \ . \]
 
-\begin{align*}
-      &\frac{2}{\epsilon^2 k^2} = 1 - \delta \\
-  \iff& k = \Bigg\lceil \frac{2}{(1 - \delta) \epsilon^2} \Bigg\rceil \ .
-\end{align*}
+O teorema \hyperref[morris:plus:variance]{da variância de $\Morrispp$} nos diz que 
+$\sigma^2_t = \Vbb(\Morrispp(\Mbb, t)) = n(n-1)/2t$ e portanto, $\sigma_t < \frac{n}{\sqrt{2t}}$. Logo, 
+\begin{align}
+  \Pbb\bigg(|\Morrispp(\Mbb,t)-n| \geq c \times \frac{n}{\sqrt{2t}}\bigg) \leq \frac{1}{c^2} \ . 
+  \label{morris:plus:prob:01}
+\end{align}
 
-Por fim, fixando um intervalo de confiança de $95\%$ e erro relativo de $10\%$ ($\epsilon = 0.1$), $k$ deve ser $4000$.  
+Pondo $c = \gamma^{-1/2}$ em \eqref{morris:plus:prob:01}, chegamos em
+\begin{align}
+  \Pbb\bigg(|\Morrispp(\Mbb,t)-n| \geq \frac{n}{\sqrt{2\gamma t}}\bigg) \leq \frac{1}{(\gamma^{-1/2})^2} = \gamma \ . 
+  \label{morris:plus:prob:02}
+\end{align}
+
+Tomando, agora, $t =\lceil (2\gamma\epsilon^2)^{-1} \rceil$, podemos concluir que
+\[ \frac{n}{\sqrt{2\gamma t}} = \frac{n}{\sqrt{2\gamma \lceil (2\gamma\epsilon^2)^{-1} \rceil}} \leq 
+\frac{n}{\sqrt{2\gamma(2\gamma\epsilon^2)^{-1}}} = \frac{n}{\sqrt{\epsilon^{-2}}} = \frac{n}{\epsilon^{-1}} = 
+\epsilon n \ . \] 
+
+Ao combinarmos a desigualdade anterior com a desigualdade em \eqref{morris:plus:prob:02}, encontramos a desigualdade
+desejada:
+\[ \Pbb(|\Morrispp(\Mbb,t)-n| \geq \epsilon n) \leq \gamma \ . \]
+
+A discussão acima pode ser resumida no teorema a seguir:
+\begin{theorem}[do erro de $\Morrispp$]
+  \label{morris:plus:error}
+  Sejam $\epsilon$ e $\gamma$ números reais tais que $\epsilon > 0$ e $0 < \gamma \leq 1$. Se $\Mbb$ é um conjunto com 
+  $n$ elementos, então
+  \[ \Pbb(|\Morrispp(\Mbb,t)-n| \geq \epsilon n) \leq \gamma \ , \]
+  em que $t =\lceil (2\gamma\epsilon^2)^{-1} \rceil$.
+\end{theorem}
+
+Vamos testar o Teorema~\eqref{morris:plus:error} para ganharmos intuição sobre seu significado. Suponha que desejamos
+que
+\[ \Pbb(|\Morrispp(\Mbb, t) - n| \geq 4n) \leq 0{,}032 \ . \]
+
+Ou seja, queremos que a probabilidade do erro relativo ser maior que 4 seja menor que $0{,}032$. Em outras palavras, 
+desejamos que o erro relativo seja menor que 4 em pelos menos $96{,}8\%$ das vezes que executarmos $\Morrispp(\Mbb, t)$.
+Como nesta situação, temos que $\epsilon = 4$ e $\gamma = 0{,}03$, o valor de $t$ para garantir esse desempenho é dado 
+por
+\[ t = \lceil (2\gamma\epsilon^2)^{-1}\rceil = \bigg\lceil \frac{1}{2 \times 0{,}032 \times 4^2}\bigg\rceil = 
+\bigg\lceil \frac{1}{1024} \bigg\rceil = \lceil 0{,}9765625 \rceil = 1 \ . \]
+
+Assim, para obtermos o desempenho acima, precisamos executar pelo menos uma vez a subrotina $\Morris$ dentro do 
+algoritmo $\Morrispp$. Este resultado bate com os cálculos desenvolvidos na seção anterior que nos levaram até a 
+desigualdade~\eqref{morris:error:result}.
+
+Vamos considerar outro exemplo em que desejamos que
+\[ \Pbb(|\Morrispp(\Mbb, t) - n| \geq 0{,}1n) \leq 0{,}05 \ . \]
+
+Ou seja, gostaríamos que o erro fosse menor que $10\%$ com probabilidade maior que $95\%$. Nesta nova situação, temos 
+que $\epsilon = 0{,}1$ e $\gamma = 0{,}05$. E o valor de $t$ para garantir esse desempenho é
+\[ t = \lceil (2\gamma\epsilon^2)^{-1}\rceil = \bigg\lceil \frac{1}{2 \times 0{,}05 \times 0,1^2}\bigg\rceil = 
+\bigg\lceil \frac{1}{0{,}001} \bigg\rceil = \lceil 1000 \rceil = 1000 \ . \]
+
+Portanto, o algoritmo $\Morrispp$ deve executar a subrotina $\Morris$ pelo menos 1000 vezes.
