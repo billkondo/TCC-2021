@@ -91,17 +91,16 @@ inteiro de $X$ bits em que cada bit representa o resultado do lançamento de uma
   \li $X \gets 0$                                         \label{li:morris:init}
   \li \For cada $e$ em $\Mbb$                             \label{li:morris:for:start}
   \li \Do
-      $r \gets h(e)$                                      \label{li:morris:generator}
-  \li   \If primeiros $X$ bits de $r$ são iguals a zero   \label{li:morris:increment:condition}
+      $r \gets g(e)$                                      \label{li:morris:generator}
+  \li   \If $r = 0$                                       \label{li:morris:increment:condition}
   \li   \Do
           $X \gets X + 1$
         \End
       \End                                                \label{li:morris:end}
   \li
-  \Return $2^{X} - 1$   
+  \Return $2^{X} - 1$                                     \label{li:morris:return}
   \End
 \end{codebox}
-\newcommand{\morrisfor}{\ref{li:morris:for:start}--\ref{li:morris:end}}
 
 \section{Qualidade da aproximação}
 \label{sec:morris:analysis}
@@ -548,3 +547,75 @@ que $\epsilon = 0{,}1$ e $\gamma = 0{,}05$. E o valor de $t$ para garantir esse 
 \bigg\lceil \frac{1}{0{,}001} \bigg\rceil = \lceil 1000 \rceil = 1000 \ . \]
 
 Portanto, o algoritmo $\Morrispp$ deve executar a subrotina $\Morris$ pelo menos 1000 vezes.
+
+\section{Um, dois, três, \dots}
+\label{chap:morris:experiments}
+
+Nesta seção, apresentaremos as implementações da \textbf{versão dinâmica} dos algoritmos $\Morris$ e $\Morrispp$, além
+de simulações dessas soluções com o objetivo de verificar se os resultados obtidos batem com os cálculos das seções 
+anteriores.
+
+Primeiramente, vamos lembrar as diferenças entre uma solução \textbf{estática} e \textbf{dinâmica} para o problema da 
+contagem aproximada: enquanto que na versão estática, passamos um conjunto $\Mbb$ para o \textit{algoritmo} que devolve 
+uma estimativa para a quantidade de elementos em $\Mbb$, na versão dinâmica, construíremos uma 
+\textit{estrutura de dados} que suportará as operações de adição e contagem de itens. Nesse sentido, consideraremos 
+que $\Mbb$ é um fluxo de dados $x_1, x_2, \dots, x_n, \dots$, e estaremos interessados em saber a estimativa da 
+quantidade de elementos que já foram adicionados na estrutura em um dado instante.
+
+Vamos, agora, elaborar uma estrutura de dados que resolve o problema da contagem aproximada tomando como base o 
+algoritmo $\Morris$. Como discutido anteriormente, essa estrutura precisa suportar as operações de adição e contagem de 
+elementos. Dessa forma, as linhas~\ref{li:morris:for:start}--\ref{li:morris:end} do algoritmo $\Morris$ constituirão a 
+adição, enquanto que a linha~\ref{li:morris:return}, a contagem. Note que essas duas operações utilizam a variável~$X$ 
+definida na linha~\ref{li:morris:init}.
+
+Apresentaremos, a seguir, uma implementação na linguagem \proc{Python} da estrutura de dados acima. Utilizaremos 
+orientação a objetos para resolver esse problema e por isso, criaremos uma classe $\Morris$ com os métodos 
+\textit{adiciona} e \textit{conta}. Essa classe possuirá a variável de instância~$X$ que será compartilhada pelos 
+métodos citados.
+
+\begin{lstlisting}[style=mypython,caption=Implementação do Algoritmo $\Morris$,captionpos=b, label=morris:code]
+class Morris:
+  def __init__(self):
+      self.X = 0
+
+  def adiciona(self):
+      r = randint(0, 2 ** self.X - 1)
+      if r == 0:
+          self.X = self.X + 1
+
+  def conta(self):
+      return 2 ** self.X - 1
+\end{lstlisting}
+
+Na implementação acima, a função \textit{randint} da biblioteca \hyperref[PythonRandom]{random do python} faz o papel do 
+gerador~$g$ de números aleatórios do Algoritmo $\Morris$. Essa função recebe inteiros $a$ e $b$, e retorna de modo 
+uniforme um inteiro aleatório entre $a$ e $b$ inclusive. Dessa forma, no Programa \ref{morris:code}, a probabilidade de 
+a variável $r$ receber o valor zero é $1/2^{X}$, que coincide com a chance do contador ser incrementado no Algoritmo 
+$\Morris$.
+
+Um comentário importante a se fazer sobre a implementação de geradores de números aleatórios, como a função 
+\textit{randint} é que na prática, funções deste tipo geram números \textbf{pseudo-aleatórios}. Isto quer dizer, na 
+maioria das vezes, que o programa define um ponto de partida e salta para outros pontos de maneira previsível. E a 
+aparente aleatoriedade deste processo é o desconhecimento do ponto inicial. Um exemplo simples de função geradora de 
+números pseudo-aleatórios é a seguinte: tome três primos $a, b, c$. Defina um inteiro inicial~$s$ e outro inteiro $t$ 
+cujo valor é igual a~$s$ inicialmente. Dessa forma, toda vez que pedirmos para essa função gerar um número aleatório, 
+retornaremos~$t$ e igualaremos~$t$ a $(t \times b + a) \mod q$, em que $x \mod y$ é o resto da divisão de $x$
+por $y$.
+
+Vamos ver um exemplo para deixar a ideia acima mais clara. Tomemos os primos $a = 101$, $b = 10^9 + 7 = 1000000007$ e 
+$m = 10^9 + 9 = 1000000009$. Seja $s = 35769$. Assim, $t = 35769$ inicialmente. Logo, o primeiro número a ser gerado é
+$35769$, e o valor de $t$ passa a ser $(35769 \times 1000000007 + 101) \mod 1000000009 = 999928572$. E o segundo número
+gerado é $999928572$, e $t$ passa a ser $(999928572 \times 1000000007 + 101) \mod 1000000009 = 142975$.
+
+Seja $t_i$ o i-ésimo número gerado no processo descrito anteriormente. Dessa forma, $t_0 = 35769$, $t_1 = 999928572$ e 
+$t_2 = 142975$. Geraremos mais alguns valores de $t$: $t_3 = 999714160$, $t_4 = 571799$, $t_5 = 998856512$, 
+$t_6 = 2287095$ e $t_7 = 995425920$. Os primeiros números gerados usando essa técnica são, portanto: 35769, 999928572, 
+142975, 999714160, 571799, 998856512, 2287095, 995425920. E se passarmos essa lista para qualquer pessoa, ela 
+provavelmente falaria que esses números foram gerados ao acaso.
+
+A justificativa para pararmos para entender esses geradores de números pseudo-aleatórios é que as demonstrações de 
+algoritmos probabilísticos utilizam geralmente funções que realmente geram números aleatórios. A prova do Algoritmo 
+$\Morris$, por exemplo, supõe a existência da função~$g$ que gera uniformente inteiros menores que $2^X$. Contudo, 
+podemos usar um gerador de inteiros pseudo-aleatórios no lugar de~$g$ sem necessariamente perder as garantias do erro
+do algoritmo. As simulações a serem exibidas a seguir devem mostrar indícios que de fato, a precisão do algoritmo de 
+$\Morris$ não fica comprometida com essa mudança.
