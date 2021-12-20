@@ -82,7 +82,7 @@ adiante que o seu valor esperado é $n$, ou seja, $\Ebb\big(\hat{n}\big) = \Ebb\
 \end{codebox}
 
 Na prática, para mimetizar o lançamento de moedas, utilizamos uma função $g$ geradora de números aleatórios que recebe o
-valor de $X$ e devolve um inteiro aleatório $r = h(X)$ entre 0 e $2^{X} - 1$. Este número $r$ pode ser visto como um 
+valor de $X$ e devolve um inteiro aleatório $r = g(X)$ entre 0 e $2^{X} - 1$. Este número $r$ pode ser visto como um 
 inteiro de $X$ bits em que cada bit representa o resultado do lançamento de uma moeda: 0 corresponde à coroa e 1, 
 à~cara. 
 
@@ -157,7 +157,7 @@ laço, a condicional da linha~\ref{li:morris:increment:condition} garante que o 
 número $r$ gerado na linha~\ref{li:morris:generator} for~zero. A probabilidade deste evento ocorrer é 
 $\Pbb(g(X_{k-1}) = 0) = 1/2^{X_{k-1}}$, uma vez que, $r$ é um número aleatório escolhido uniformemente 
 entre~$0$~e~$2^{X_{k-1}} - 1$, inclusive. Nesse sentido, a probabilidade de o valor de $X_k$ ser $X_{k - 1}$ é igual ao 
-\textit{complementar} de $\Pbb(g(X_{k-1}) = 0)$ e assim, 
+complementar de $\Pbb(g(X_{k-1}) = 0)$ e assim, 
 \[\Pbb(g(X_{k-1}) \not\eq 0) = 1 - \Pbb(g(X_{k-1}) = 0) = 1 - 1/2^{X_{k-1}} \ . \]
 
 Podemos, agora, obter a partir da recorrência~\eqref{morris:rec:xk}, uma expressão \textit{recursiva} para os valores de 
@@ -615,7 +615,68 @@ provavelmente falaria que esses números foram gerados ao acaso.
 
 A justificativa para pararmos para entender esses geradores de números pseudo-aleatórios é que as demonstrações de 
 algoritmos probabilísticos utilizam geralmente funções que realmente geram números aleatórios. A prova do Algoritmo 
-$\Morris$, por exemplo, supõe a existência da função~$g$ que gera uniformente inteiros menores que $2^X$. Contudo, 
+$\Morris$, por exemplo, supõe a existência da função~$g$ que gera uniformente inteiros menores que~$2^X$. Contudo, 
 podemos usar um gerador de inteiros pseudo-aleatórios no lugar de~$g$ sem necessariamente perder as garantias do erro
 do algoritmo. As simulações a serem exibidas a seguir devem mostrar indícios que de fato, a precisão do algoritmo de 
 $\Morris$ não fica comprometida com essa mudança.
+
+A primeira simulação a ser apresentada foi realizada chamando o método \textit{adiciona} do Programa~\ref{morris:code}
+um milhão de vezes. Para cada vez que chamamos esse método, calculamos o erro relativo do algoritmo, ou seja, na 
+$i$-ésima iteração da simulação, após chamarmos o método \textit{adiciona}, chamamos o método \textit{conta} e 
+armazenamos seu retorno em um variável temporária \proc{temp}. Assim, o erro relativo nesta iteração era 
+$(\proc{temp} - i) / i$, uma vez que, $i$ pode ser visto como a quantidade de itens já inseridos na estrutura, ou o 
+total de elementos do conjunto~$\Mbb$ já processados se lembrarmos do Algoritmo $\Morris$.
+
+Dessa forma, a Figura~\ref{fig:morris:100} exibe um gráfico cujo eixo x representa as iterações da simulação (ou a 
+quantidade de itens inseridos na estrutua) e o eixo y, o retorno do método \textit{conta}. A linha laranja do gráfico 
+ilustra a evolução da \textbf{estimativa} de itens inseridos ao longo das iterações e a linha azul, evolução da 
+quantidade \textbf{real} de itens inseridos ao longo das iterações. Assim, analisando essas duas linhas, podemos ter uma 
+ideia se a estimativa do algoritmo se aproxima ou se distância do valor correto conforme mais iterações acontecem.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=6cm, width=15cm]{figuras/morris_100.png}
+	\caption{Simulação do Algoritmo $\Morris$ (100 primeiras iterações)}
+  \label{fig:morris:100}
+\end{figure}
+
+No entanto, somente com o gráfico acima, pode ser difícil visualizar o erro relativo do algoritmo ao longo das 
+iterações. É por isso que construímos também, o gráfico da Figura~\ref{fig:morris:error:100}, em que o eixo x representa 
+novamente as iterações da simulação e o eixo y, o erro relativo.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=6cm, width=15cm]{figuras/morris_erro_100.png}
+	\caption{Erro relativo da simulação do Algoritmo $\Morris$ (100 primeiras iterações)}
+  \label{fig:morris:error:100}
+\end{figure}
+
+Para as primeiras cem iterações da simulação, é possível perceber pela Figura~\ref{fig:morris:error:100}, que o erro 
+relativo não é maior que $0.8$. Na seção sobre a 
+\hyperref[sec:morris:analysis]{qualidade da aproximação do Algoritmo $\Morris$}, chegamos à conclusão que o erro 
+relativo cometido por $\Morris(\Mbb)$ é quase certamente menor do que 4. Nesse sentido, o pedaço inicial da simulação 
+está dentro do esperado. Vamos agora, verificar se esse resultado esperado se mantém conforme mais iterações são 
+realizadas.
+
+\begin{figure}
+  \centering
+  \includegraphics[height=6cm, width=15cm]{figuras/morris_1000000.png}
+	\caption{Simulação do Algoritmo $\Morris$ (todas as iterações)}
+  \label{fig:morris:1000000}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=6cm, width=15cm]{figuras/morris_erro_1000000.png}
+	\caption{Erro relativo da simulação do Algoritmo $\Morris$ (todas as iterações)}
+  \label{fig:morris:error:1000000}
+\end{figure}
+
+A Figura~\ref{fig:morris:error:1000000}, que exibe um gráfico com erro relativo ao longo de toda a simulação, nos leva
+à conclusão que o erro relativo do algoritmo ficou dentro da faixa esperada (menor que~4). Já a 
+Figura~\ref{fig:morris:1000000}, que exibe um gráfico que destaca a evolução da estimativa da quantidade de itens 
+inseridos ao longo de toda a simulação, ressalta uma importante característa da estrutura: que quanto mais itens tiverem
+sido inseridos, mais demorado é para que a estimativa cresça. Isto está diretamente relacionado com a probabilidade do 
+contador~$X$ ser incrementado no Algoritmo~$\Morris$. Contudo, esse incremento demorado não é uma certeza absoluta, uma
+vez que, existem casos nesse experimento em que um crescimento da estimativa ocorreu em menos iterações que o 
+crescimento anterior.
