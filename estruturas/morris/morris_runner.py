@@ -13,23 +13,34 @@ def constroi_grafico(
     contadores_esperados: List[int],
     contadores_devolvidos_por_morris: List[int],
     tamanho: int,
+    inicio: int = 0,
+    vlines: List[int] = [],
+    hide_expected_line=False,
 ):
     _, ax = plt.subplots()
+    fim = inicio + tamanho
 
-    # Gráfico da saída esperada
-    ax.plot(
-        contadores_esperados[:tamanho],
-        contadores_esperados[:tamanho],
-        dashes=[2, 2, 10, 2],
-        label=r"$n$",
-    )
+    if not hide_expected_line:
+        # Gráfico da saída esperada
+        ax.plot(
+            contadores_esperados[inicio:fim],
+            contadores_esperados[inicio:fim],
+            dashes=[2, 2, 10, 2],
+            label=r"$n$",
+        )
 
     # Gráfico do Algoritmo Morris
     ax.plot(
-        contadores_esperados[:tamanho],
-        contadores_devolvidos_por_morris[:tamanho],
+        contadores_esperados[inicio:fim],
+        contadores_devolvidos_por_morris[inicio:fim],
         label=r"$\hat{n}$",
     )
+
+    if vlines:
+        ax.set_xticks(vlines)
+
+    for vline in vlines:
+        ax.axvline(x=vline, c="r", ls=":")
 
     ax.legend()
     plt.show()
@@ -67,6 +78,19 @@ if __name__ == "__main__":
         contadores_devolvidos_por_morris.append(morris.conta())
         contadores_esperados.append(i)
         erro_relativo.append((morris.conta() - i) / i)
+
+    constroi_grafico(
+        contadores_esperados,
+        contadores_devolvidos_por_morris,
+        250000,
+        inicio=50000,
+        vlines=[
+            75720,
+            176384,
+            241343,
+        ],
+        hide_expected_line=True,
+    )
 
     tamanhos = [100, 1000, 1000000]
     for tamanho in tamanhos:
