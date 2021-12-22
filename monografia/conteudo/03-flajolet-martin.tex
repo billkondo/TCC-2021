@@ -1,40 +1,49 @@
 \newcommand{\bitmap}{\mathbb{BITMAP}}
 \newcommand{\pcounting}{\textit{probabilistic counting}}
 
-\chapter{Contagem distinta aproximada: Flajolet-Martin (1985)}
+\chapter{Contagens Probabilísticas}
 \label{lab:flajolet-martin}
 
-\section{O Problema}
+Na seção anterior, abordamos a solução de Morris para o problema da contagem aproximada, que tinha como objetivo 
+principal, reduzir o espaço utilizado para se manter a quantidade de elementos de um conjunto dado. Os fatos de, no 
+contexto vivenciado por Morris, não ser possível armazenar o conjunto todo nem manter a contagem em uma variável por 
+conta de não existirem máquinas com registradores maiores que 8 bits tornam esse problema interessante. 
+
+Contudo, no contexo atual, em que os programas têm a disposição inteiros de 32 bits ou 64 bits, o problema da contagem
+aproximada parece não ser relevante. A razão disso é que o custo para mantermos um simples contador é praticamente nulo 
+nos dias atuais, de modo que, uma solução probabilística não seria tão benéfica do ponto de vista do consumo de memória.
+Mesmo que esse problema não tenha aplicações imediatas atualmente, a solução proposta por Morris contém aspectos que 
+inspiraram soluções de problemas mais desafiadores. Um desses problemas é descobrir o número aproximado de elementos 
+distintos em um fluxo de dados~$\Mbb$. 
 
 \begin{quote}
-  \textbf{Contagem Distinta:} Dado um conjunto $\Mbb$, \textbf{encontrar} quantos elementos \textit{distintos}
-  $\Mbb$ possui.
+  \textbf{Problema} da \proc{ContagemDistintaAproximada($\Mbb$, $k$):} Dado um fluxo de dados com repetições
+  $\Mbb = \{ x_1, x_2, \dots, x_s, \dots \}$, \textbf{encontrar} estimador $\hat{n}$ para o número~$n$ de elementos 
+  \textit{distintos} de $\Mbb$ usando não mais que $k$ bits.
 \end{quote}
 
-Uma solução para a \textbf{contagem distinta} é inserir cada elemento de $\Mbb$ em uma tabela hash. 
-E assim, a quantidade de itens distintos nesse conjunto será o número de elementos nessa tabela.
+Um modo de encontrarmos \textit{exatamente} a quantidade de elementos distintos de~$\Mbb$ é inserir cada item novo que 
+for aparecendo em um tabela e assim, o tamanho desta tabela será a resposta para o problema. A fragilidade dessa solução 
+é o consumo de memória proporcional ao número de elementos distintos, e isto pode ser uma grande limitação em situações 
+nas quais existam vários fluxos sendo monitorados. 
 
-Note que esse algoritmo consome $\Omega(n)$ de memória, uma vez que, deve-se armazenar cada elemento 
-\textbf{pelo menos uma vez} para que seja possível verificar se um item está no conjunto.
+\textit{Reddit} é um site que tem como principal funcionalidade a criação de grupos de discussões, nos quais usuários 
+podem expor suas opiniões sobre um dado tema. E um dos desafios enfrentados por esse site é manter o número de 
+visualizações distintas de cada grupo~\citep{Redis}. Nessa situação, em que existem milhões de grupos e cada um podendo 
+ter milhares ou milhões de visualizações, manter uma tabela para cada discussão armazenando um indentificador dos 
+usuários que a visualizaram seria uma solução muito custosa. Outro fato agravante é que a quantidade de visualizações 
+distintas é basicamente um número, mas teríamos que gastar espaço proporcional a este valor para mantermos esse número 
+corretamente.
 
-Este consumo linear de espaço pode ser um problema quando a quantidade de elementos que precisam ser armazenados é muito 
-grande. E podem existir aplicações nas quais é necessário manter \textbf{várias} dessas estruturas, como no caso do 
-\textit{Redis}, em que se deseja encontrar quantos usuários distintos visualizararm um publicação ~\citep{Redis}. E para 
-essas situações, é interessante que o consumo de memória seja muito menor que a quantidade de elementos distintos. 
-Portanto, deve-se abandonar a exatidão da contagem dos elementos distintos para que se possa diminuir o consumo de 
-espaço.
+Em muitos casos, não precisamos do valor \textit{exato} da quantidade de elementos distintos em $\Mbb$. Podemos assim, 
+tentar projetar algoritmos \textit{aproximados} e que consomem muito menos memória. Uma das primeiras soluções para a 
+\proc{ContagemDistintaAproximada($\Mbb$, $k$)} foi elaborada por \textit{Philippe Flajolet} e 
+\textit{Nigel Martin}~\citep{flajolet:martin:85}. A motivação inicial desses autores era otimizar pesquisas em banco de
+dados relacionais, e a principal dificuldade nesse processo era calcular o número de elementos distintos em uma coluna.
+Nas próximas seções, veremos o algoritmo desenvolvido por Flajolet e Martin, conhecido como 
+\proc{Contagem Probabilística}.
 
-\begin{quote}
-  \textbf{Contagem Distinta Aproximada:} dado um conjunto $\Mbb$, \textbf{estimar} o número de elementos 
-  \textit{distintos} nesse conjunto.
-\end{quote}
-
-Uma das primeiras soluções para a \textbf{contagem distinta aproximada} foi apresentada por \textit{Philippe Flajolet} e 
-\textit{Nigel Martin} no artigo ~\citep{flajolet:martin:85}.
-A motivação para o desenvolvimento desse algoritmo foi a otimização de pesquisas em bancos de dados relacionais.
-E a identificação do número de elementos distintos em uma coluna era a principal dificuldade nesse processo.
-
-\section{Algoritmo de Flajolet-Martin}
+\section{Algoritmo da \proc{Contagem Probabilística}}
 \label{sec:flajolet-martin:algorithm}
 
 O \textbf{algoritmo de Flajolet-Martin} utiliza uma função de hash $h$ que associa uniformemente cada elemento do 
@@ -85,7 +94,7 @@ Segue o pseudocódigo:
 \end{codebox}
 
 \newpage
-\section{Análise do algoritmo}
+\section{Qualidade da aproximação}
 \label{sec:flajolet-martin:analysis}
 
 Suponha que a quantidade de elementos distintos de $\Mbb$ seja $n$. O valor esperado de $R$ definido na seção 
@@ -160,7 +169,7 @@ em que
 Dessa forma, encontra-se a transformada de Mellin de $G(x)$ e se analisa a inversa desta transformação para estimar 
 $\Ebb[R_n^2]$.
 
-\section{Melhorando precisão do algoritmo}
+\section{\proc{Lei dos Grandes Números} novamente}
 
 Na seção anterior, foi visto que $\Ebb[R_n] \approx \lg(\phi n)$, em que $\phi \approx 0.77351$. Assim, se o valor 
 do contador $R$ no final do Algoritmo \ref{prog:flajolet-martin} para uma entrada com $n$ elementos distintos for 
@@ -306,7 +315,7 @@ custoso em termos de tempo e espaço. Por outro lado, se a exigência é, por ex
 menor quantidade de elementos distintos, podemos escolher um valor menor de $m$ para fazer essa comparação, mas teríamos 
 um risco maior de escolher o conjunto errado.
 
-\section{Limitações do algoritmo $\pcounting$}
+\section{Limitações da \proc{Contagem Probabilística}}
 
 Uma das principais razões para escolhermos algoritmos \textit{probabilísticos} ao invés de algoritmos \textit{exatos} é 
 o \textbf{consumo de memória reduzido}. Por exemplo, para resolver o problema da contagem distinta de forma 
@@ -351,7 +360,7 @@ distintos de um conjunto for baixa. Poderíamos, por exemplo, manter os elemento
 quando essa tabela atingisse um certo tamanho, passaríamos a usar a estratégia original do $\pcounting$, que é preencher
 os vetores $\bitmap$.  
 
-\section{Simulação do algoritmo $\pcounting$}
+\section{Um, dois, três, \dots, repetido, \dots}
 
 Nesta seção, vamos ver os resultados de simulações do $\pcounting$, em que, um milhão de inteiros gerados 
 aleatoriamente foram inseridos em uma implementação dessa estrutura. 

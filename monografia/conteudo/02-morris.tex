@@ -3,7 +3,7 @@
 
 
 Na década de 1970, Robert Morris ~\citep{morris:78} estudou o problema de contar rapidamente \textit{trigramas} cujas 
-frequências podiam chegar até 130 mil. Esses eventos eram trios de caracteres que ocorriam em textos.
+frequências podiam chegar até 130 mil. Esses trigramas eram trios de caracteres que ocorriam em textos.
 
 O objetivo, então, era utilizar as contagens de trigramas na implementação de corretores ortográficos estátisticos 
 ~\citep{morris:lorinda:75} para editores de textos ~\citep{mcmahon:cherry:morris:78} que acompanhariam as distribuições 
@@ -17,11 +17,12 @@ inteiros entre 0 e $2^{n} - 1$.
 Devido à limitação de espaço e ao desejo de eficiência, Morris projetou um algoritmo para realizar estimativas ou 
 \textit{contagens aproximadas}, uma vez que, não era possível manter as frequências \textit{exatas} dos trigramas. Com 
 seu algoritmo, Morris trouxe aleatorização e probabilidade para o centro da discussão. E para tornarmos essa discussão 
-mais precisa, consideraremos o problema de determinar o número de elementos de um dado \textbf{conjunto}~$\Mbb$. 
+mais precisa, consideraremos o problema de determinar o número \textbf{aproximado} de elementos de um dado 
+\textbf{conjunto}~$\Mbb$. 
 
 \begin{quote}
-  \textbf{Problema} \proc{ContagemAproximada($\Mbb$)}: dado um conjunto $\Mbb~=~\{ e_1, e_2, \dots, e_n \}$, encontrar 
-  estimador $\hat{n}$ para o número $n$ de elementos em $\Mbb$.  
+  \textbf{Problema} da \proc{ContagemAproximada($\Mbb$, $k$)}: dado um conjunto $\Mbb~=~\{ e_1, e_2, \dots, e_n \}$, 
+  encontrar estimador $\hat{n}$ para o número $n$ de elementos em $\Mbb$ usando não mais que $k$ bits.
 \end{quote}
 
 Quando $\Mbb$ é conhecido de antemão, teremos um problema que é dito \textbf{estático} ou \textit{\textbf{offline}}. 
@@ -33,15 +34,18 @@ inserções de elementos.
 
 Nesse sentido, o problema estudado por Morris pode ser considerado \textbf{incremental} (não há remoções de elementos), 
 e dessa forma, o conjunto $\Mbb$ pode ser visto como sendo um \textbf{fluxo} $x_1, x_2, \dots, x_t, \dots$ de elementos, 
-e as consultas seriam ``Quantos elementos o conjunto $\Mbb$ possui \textbf{neste instante}~$?$`` ou 
-``Quantos elementos já passaram por este fluxo``.
+e as consultas seriam "Quantos elementos o conjunto $\Mbb$ possui \textbf{neste instante}$?$" ou 
+"Quantos elementos já passaram por este fluxo".
 
 No entanto, estudaremos detalhadamente nesse texto, as versões estatícas dos problemas apresentados, uma vez que, as 
 análises dos algoritmos que resolvem esses problemas se baseiam nessas versões. E veremos que obter a versão 
 \textit{online} a partir da \textit{offline} é uma tarefa simples, e assim, as aplicações e simulações desses algoritmos 
 serão baseadas em versões dinâmicas.
 
-\section{Algoritmo de Morris}
+Na próxima seção, veremos com mais detalhes o algoritmo de Morris que fornece uma solução para o problema 
+\proc{ContagemAproximada($\Mbb$, $k$)}, em que $k$ é uma variável aleatória cujo valor é quase certamente $\lg \lg n$.
+
+\section{Algoritmo de \proc{Morris}}
 
 Para armazenarmos \textit{exatamente} um valor entre $0$ e $n$, são necessários registradores com~$\Omega(\lg n)$ bits. 
 Então, para que seja possível contar o número de elementos em um conjunto~$\Mbb$ com até $n$ elementos usando menos 
@@ -56,10 +60,10 @@ realizar esse acréscimo: a cada novo elemento examinado de~$\Mbb$, o contador $
 $2^{-X}$.
 
 Essa estratégia pode ser vista no Algoritmo $\proc{Morris}$ cuja implementação é baseada em uma ideia da seção 
-\textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm}~\citep{ApproximateCountingAlgorithm}.Essa versão 
-expressa a condição de incremento do contador como um experimento de lançamento de moedas. Sempre que um novo elemento 
-do conjunto $\Mbb$ é examinado, o lançamento de $X$ moedas é simulado. O contador é incrementado somente quando os 
-resultados de todos os lançamentos forem cara. E a probabilidade deste evento ocorrer é~$2^{-X}$.
+\textit{Algorithm} do artigo ~\citetitle*{ApproximateCountingAlgorithm}~\citep{ApproximateCountingAlgorithm}. Essa 
+versão expressa a condição de incremento do contador como um experimento de lançamento de moedas. Sempre que um novo 
+elemento do conjunto $\Mbb$ é examinado, o lançamento de $X$ moedas é simulado. O contador é incrementado somente quando 
+os resultados de todos os lançamentos forem cara. E a probabilidade deste evento ocorrer é~$2^{-X}$.
 
 O Algoritmo $\proc{Morris}$ a seguir recebe um conjunto~$\Mbb = \{ e_1, e_2, \dots, e_n \}$ e devolve um estimador~
 $\hat{n}$ para $n$. Este estimador é da forma $2^{X} - 1$ em que $X$ é um número inteiro não negativo, e veremos mais 
@@ -232,8 +236,7 @@ invariante.
       &= \Ebb\big(2^{X_{k-1}} - 1\big) + 1 \nonumber \\
       &= k - 1 + 1 \label{proof:morris:02} \\ 
       &= k \nonumber,
-    \end{align}    
-
+  \end{align}    
     em que a igualdade~\eqref{proof:morris:01} é decorrência da identidade~\eqref{morris:rec:e} e a 
     igualdade~\eqref{proof:morris:02}, da hipótese de indução. Finalmente, a validade da relação invariante segue do 
     princípio da indução finita.
@@ -383,7 +386,7 @@ espaço.
   Com isto, concluímos a prova do teorema.
 \end{proof}
 
-\section{\proc{Morris} e a lei dos grandes números}
+\section{\proc{Morris} e a \proc{Lei dos Grandes Números}}
 \label{sec:morris:plus}
 
 Do teorema \hyperref[morris:theorem:variance]{da variância de \proc{Morris}($\Mbb$)}, notamos que o algoritmo apresenta
@@ -552,13 +555,13 @@ Portanto, o algoritmo $\Morrispp$ deve executar a subrotina $\Morris$ pelo menos
 \label{chap:morris:experiments}
 
 Nesta seção, apresentaremos as implementações da \textbf{versão dinâmica} dos algoritmos $\Morris$ e $\Morrispp$, além
-de simulações dessas soluções com o objetivo de verificar se os resultados obtidos batem com os cálculos das seções 
+de simulações dessas soluções com o objetivo de verificar experimentalmente a acurácia dos cálculos das seções 
 anteriores.
 
 Primeiramente, vamos lembrar as diferenças entre uma solução \textbf{estática} e \textbf{dinâmica} para o problema da 
 contagem aproximada: enquanto que na versão estática, passamos um conjunto $\Mbb$ para o \textit{algoritmo} que devolve 
 uma estimativa para a quantidade de elementos em $\Mbb$, na versão dinâmica, construíremos uma 
-\textit{estrutura de dados} que suportará as operações de adição e contagem de itens. Nesse sentido, consideraremos 
+\textit{estrutura de dados} que realizará as operações de adição e contagem de itens. Nesse sentido, consideraremos 
 que $\Mbb$ é um fluxo de dados $x_1, x_2, \dots, x_n, \dots$, e estaremos interessados em saber a estimativa da 
 quantidade de elementos que já foram adicionados na estrutura em um dado instante.
 
@@ -570,7 +573,7 @@ definida na linha~\ref{li:morris:init}.
 
 Apresentaremos, a seguir, uma implementação na linguagem \proc{Python} da estrutura de dados acima. Utilizaremos 
 orientação a objetos para resolver esse problema e por isso, criaremos uma classe $\Morris$ com os métodos 
-\textit{adiciona} e \textit{conta}. Essa classe possuirá a variável de instância~$X$ que será compartilhada pelos 
+\texttt{adiciona} e \texttt{conta}. Essa classe possuirá a variável de instância~$X$ que será compartilhada pelos 
 métodos citados.
 
 \begin{lstlisting}[style=mypython,caption=Implementação do Algoritmo $\Morris$,captionpos=b, label=morris:code]
@@ -620,17 +623,17 @@ podemos usar um gerador de inteiros pseudo-aleatórios no lugar de~$g$ sem neces
 do algoritmo. As simulações a serem exibidas a seguir devem mostrar indícios que de fato, a precisão do algoritmo de 
 $\Morris$ não fica comprometida com essa mudança.
 
-A primeira simulação a ser apresentada foi realizada chamando o método \textit{adiciona} do Programa~\ref{morris:code}
+A primeira simulação a ser apresentada foi realizada chamando o método \texttt{adiciona} do Programa~\ref{morris:code}
 um milhão de vezes. Para cada vez que chamamos esse método, calculamos o erro relativo do algoritmo, ou seja, na 
-$i$-ésima iteração da simulação, após chamarmos o método \textit{adiciona}, chamamos o método \textit{conta} e 
-armazenamos seu retorno em um variável temporária \proc{temp}. Assim, o erro relativo naquela iteração era 
+$i$-ésima iteração da simulação, após chamarmos o método \texttt{adiciona}, chamamos o método \texttt{conta} e 
+armazenamos seu retorno em um variável temporária \proc{temp}. Assim, o erro relativo naquela iteração é 
 $(\proc{temp} - i) / i$, uma vez que, $i$ pode ser visto como a quantidade de itens já inseridos na estrutura.
 
-Dessa forma, a Figura~\ref{fig:morris:100} exibe um gráfico cujo eixo x representa as iterações da simulação (ou a 
-quantidade de itens inseridos na estrutua) e o eixo y, o retorno do método \textit{conta}. A linha laranja do gráfico 
-ilustra a evolução da \textbf{estimativa} de itens inseridos ao longo das iterações e a linha azul, evolução da 
-quantidade \textbf{real} de itens inseridos ao longo das iterações. Assim, analisando essas duas linhas, podemos ter uma 
-ideia se a estimativa do algoritmo se aproxima ou se distância do valor correto conforme mais iterações acontecem.
+Dessa forma, a Figura~\ref{fig:morris:100} exibe um gráfico cujo eixo $x$ das ordenadas representa as iterações da 
+simulação e o eixo $y$ das abcissas, o retorno do método \texttt{conta}. A linha laranja do gráfico ilustra a evolução 
+da \textbf{estimativa} de itens inseridos ao longo das iterações e a linha azul, evolução da quantidade \textbf{real} de 
+itens inseridos ao longo das iterações. Assim, analisando essas duas linhas, podemos ter uma ideia se a estimativa do 
+algoritmo se aproxima ou se distância do valor correto conforme mais iterações acontecem.
 
 \begin{figure}
   \centering
@@ -640,8 +643,8 @@ ideia se a estimativa do algoritmo se aproxima ou se distância do valor correto
 \end{figure}
 
 No entanto, somente com o gráfico acima, pode ser difícil visualizar o erro relativo do algoritmo ao longo das 
-iterações. É por isso que construímos também, o gráfico da Figura~\ref{fig:morris:error:100}, em que o eixo x representa 
-novamente as iterações da simulação e o eixo y, o erro relativo.
+iterações. É por isso que construímos também, o gráfico da Figura~\ref{fig:morris:error:100}, em que o eixo $x$ 
+representa novamente as iterações da simulação e o eixo $y$, o erro relativo.
 
 \begin{figure}
   \centering
@@ -672,7 +675,7 @@ realizadas.
 \end{figure}
 
 A Figura~\ref{fig:morris:error:1000000}, que exibe um gráfico com erro relativo ao longo de toda a simulação, nos leva
-à conclusão que o erro relativo do algoritmo ficou dentro da faixa esperada (menor que~4). Já a 
+à conclusão que o erro relativo do algoritmo ficou dentro da faixa esperada, que é menos que~4. Já a 
 Figura~\ref{fig:morris:1000000}, que exibe um gráfico que destaca a evolução da estimativa da quantidade de itens 
 inseridos ao longo de toda a simulação, ressalta uma importante característa da estrutura: que quanto mais itens tiverem
 sido inseridos, mais demorado é para que a estimativa cresça. Isto está diretamente relacionado com a probabilidade do 
