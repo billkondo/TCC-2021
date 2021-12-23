@@ -1,5 +1,6 @@
-\newcommand{\bitmap}{\mathbb{BITMAP}}
+\newcommand{\bitmap}{\proc{bmap}}
 \newcommand{\pcounting}{\textit{probabilistic counting}}
+\newcommand{\pc}{\proc{ProbabilisticCounting}}
 
 \chapter{Contagens Probabilísticas}
 \label{lab:flajolet-martin}
@@ -46,35 +47,42 @@ Nas próximas seções, veremos o algoritmo desenvolvido por Flajolet e Martin, 
 \section{Algoritmo da \proc{Contagem Probabilística}}
 \label{sec:flajolet-martin:algorithm}
 
-O \textbf{algoritmo de Flajolet-Martin} utiliza uma função de hash $h$ que associa uniformemente cada elemento do 
-conjunto $\Mbb$ para um número inteiro entre $0$ e $2^L-1$, em que $L$ é a quantidade necessária de bits para 
-mapear todas as entradas de $\Mbb$ (na prática, este valor é $32$ ou $64$). Assim, para cada $x_i \in \Mbb$, 
-será calculado um inteiro $y_i \coloneqq h(x_i)$. Note que $y_i$ pode ser visto como uma palavra binária aleatória de 
-$L$ bits em que cada bit é gerado independentemente com probabilidade $\frac{1}{2}$. E o algoritmo é baseado na 
-frequência das aparições dos prefixos dessas palavras aleatórias.
+O Algoritmo da \proc{Contagem Probabilística} supõe a existência uma função~$h$ que associa uniformemente cada elemento 
+do fluxo $\Mbb$ para um número inteiro entre $0$ e $2^L-1$ inclusive, em que $L$ é a quantidade necessária de bits para 
+mapear todas as entradas de~$\Mbb$. O algoritmo também utiliza a função $\rho$ que recebe um inteiro $y$ de $L$ bits e 
+devolve a posição indexada do zero do dígito menos significativo da representação binária de $y$. Vamos ver exemplos 
+para $L = 4$. Temos que $\rho(12) = \rho(1100_2) = 2$ e $\rho(9) = \rho(1001_2) = 0$. Um caso particular é quando 
+$y = 0$ e nesta situação, $\rho(0) = L$. E teremos um vetor $\bitmap$ de tamanho $L + 1$ inicializado com zeros.
 
-Então, suponha que palavras binárias aleatórias de $L$ bits estejam sendo geradas. Espera-se que a cada \textbf{2} 
-palavras, pelo menos uma comece com \textbf{1}. E que a cada \textbf{4} palavras, pelo menos uma deva ter o prefixo 
-\textbf{01}. Assim, a cada $\mathbf{2^k}$ palavras, espera-se que pelo menos uma palavra comece com $\mathbf{0^{k-1}1}$. 
-Por outro lado, caso o prefixo $0^{k-1}1$ apareça, o esperado é que $2^{k}$ items já devam ter sido gerados. 
-
-Dessa forma, o algoritmo mantém a ocorrência dos prefixos de cada $\textit{hash}$ em um vetor 
-$\bitmap[0 \twodots L - 1]$, de modo que $\bitmap[i] = 1$, se e somente se, o prefixo $0^i1$ apareceu entre os 
-\textit{hashes} dos elementos de $\Mbb$. 
-
-Note que é necessário mapear cada prefixo para um inteiro entre $0$ e $2^{L} - 1$. E para isso, defini-se a função $\rho$ 
-que recebe um inteiro e devolve a posição do 1 menos significativo deste inteiro. Então, para um \textit{hash} $y$, 
-suponha que $\rho(y) = k$. Assim, o prefixo da representação binária de $y$ é $0^k1$, e $\bitmap[k] = 1$. Um caso 
-especial para essa função é quando o \textit{hash} é zero. Nesta situação, $\rho(0) = L$.
+Assim, para cada $x_i$ em $\Mbb$, cacularemos um inteiro $y_i \coloneqq h(x_i)$. Em seguida, encontramos o valor de 
+$\rho(y_i)$ e setamos a posição $\rho(y_i)$ do vetor $\bitmap$ para $1$. Dessa forma, esse vetor guardará quais valores 
+$\rho(h(x_i))$ aparecem no fluxo $\Mbb$.
 
 Por fim, seja $R$ o menor índice tal que $\bitmap[R] = 0$. A estimativa para o número de elementos distintos de 
-$\Mbb$ será $2^R/\phi$, em que, $\phi$ é um fator de correção que será discutido em 
-\refeq{sec:flajolet-martin:analysis}.
+$\Mbb$ será $2^R/\phi$, em que, $\phi$ é um fator de correção que será abordado na Seção 
+\refeq{sec:flajolet-martin:analysis} e cujo valor é $0.77351\dots$.
 
-Segue o pseudocódigo:
+Vamos ver um exemplo de execução do algoritmo descrito acima. Considere que $\Mbb = \{ 4, 6, 8, 6, 9, 14 \}$, $L = 4$ e
+que a função $h$ é a identidade, ou seja, para todo $x_i$, temos que $h(x_i) = x_i$. Na primeira iteração, $x_1 = 4$ e 
+$\rho(4) = \rho(0100_2) = 2$. Assim, setamos $\bitmap[2] = 1$. Agora, na segunda iteração, 
+$\rho(x_2) = \rho(6) = \rho(0110_2) = 1$, e setamos $\bitmap[1] = 1$. Na terceita iteração, temos que 
+$\rho(x_3) = \rho(8) = \rho(1000_2) = 3$ e portanto, $\bitmap[3] = 1$. Na quarta iteração, o elemento $6$ já apareceu, 
+então $\bitmap$ permanece intacto. Na iteração seguinte, $\rho(x_6) = \rho(9) = \rho(1001_2) = 0$ e $\bitmap[0] = 1$.
+Na última iteração, $\rho(x_7) = \rho(9) = \rho(1110_2) = 1$, mas a posição 1 de $\bitmap$ já esta setada e dessa forma,
+$\bitmap$ permance o mesmo. Falta, por fim, encontrar o valor de $R$. Como as posições 0, 1, 2, e 3 de $\bitmap$ estão
+preenchidas, temos que $R = 4$ e que a estimativa do número de elementos distintos de $\Mbb$ é 
+$2^{R}/\phi = 2^4/0.77351 \approx 21$. A estimativa anterior está muito distante do valor real, que é $5$. Nas seções
+seguintes verificaremos se essa situação se repete para fluxos com muito mais elementos.
+
+O Algoritmo $\pc$ a seguir recebe um fluxo $\Mbb = \{ x_1, x_2, \dots, x_s, \dots \}$ com $n$ elementos distintos, 
+um inteiro $L$ que representa quantos bits o algoritmo consumirá e uma função~$h$ que mapeia os elementos $\Mbb$ para 
+inteiros entre $0$ e $2^L - 1$ inclusive. E devolve estimador $\hat{n}$ para $n$ da forma $2^{R}/\phi$, em que, $R$ é um
+número inteiro e $\phi$, uma constante teórica. Veremos mais adiante que $\Ebb(R) = \lg \phi n$, $\phi = 0.77351\dots$ e
+$\sigma(R) = 1.12$.
+
 \begin{codebox}
   \Procname{$\proc{ProbabilisticCounting}(\Mbb, h, L)$}
-  \li \For i de $0$ até $L$
+  \li \For i de $0$ até $L + 1$
       \Do
   \li    $\bitmap[i] \gets 0$
       \End
@@ -83,13 +91,8 @@ Segue o pseudocódigo:
   \li   $y \gets h(x)$
   \li   $\bitmap[\rho(y)] \gets 1$
       \End
-  \li $R \gets 0$
-  \li \While $\bitmap[R] = 1$
-      \Do
-  \li   $R \gets R + 1$
-      \End
-  \li
-  \Return $2^R/\phi$
+  \li $R \gets \{ \min \bitmap[i] = 0: 1 \leq i < L \}$
+  \li\Return $2^R/\phi$
   \End
 \end{codebox}
 
