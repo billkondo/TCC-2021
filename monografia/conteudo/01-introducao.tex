@@ -1,10 +1,51 @@
 \chapter{Introdução}
 \label{chap:introducao}
 
-\section{Aplicações}
+Desde a pré-história, o ser humano tem a experiência de contar. Naquela época, o homem contava pequenas quantidades, 
+como quantas pessoas tinham em seu bando ou quanto de alimento ele deveria coletar para sobreviver. Com o passar do 
+tempo, o sistema numérico foi inventado para que pudéssemos trabalhar com valores cada vez maiores. 
 
-Listar aplicações\dots
+Quando pensávamos que contar não pudesse ficar mais difícil, os computadores surgem, abrindo novas discussões sobre a 
+contagem. Entre elas, estavam como armazenar números em uma máquina, como fazer contas nesses aparelhos e até quanto 
+poderíamos contar com a ajuda deles. E poucas décadas após essa invenção, a Internet é criada. 
 
-\section{História}
+Passamos, portanto, a ficar interessados em monitorar essa rede de computadores e para isso, tínhamos que descobrir 
+quantas máquinas diferentes estavam acessando essa rede ou quem eram os aparelhos responsáveis pelo maior fluxo de dados. 
+O principal desafio que surgiu nesse contexto, foi o alto volume de informações que precisavam ser processadas em tempo 
+real. E armazenar todos os dados localmente para em seguida, analisá-los deixou de ser viável devido à lentidão desse 
+processo e ao elevado consumo de memória.
 
-Comentar um pouco sobre a história do problema\dots
+Estruturas de dados e algoritmos probabilísticos são uma forma de tentar contornar essa grande quantidade de dados. A 
+ideia central é sacrificar a exatidão da resposta com o objetivo de consumir menos memória e tempo de processamento. 
+Problemas que podem se beneficiar com soluções probabilísticas são, por exemplo, monitorar quantos usuários diferentes 
+acessaram um site em um dado dia, contar quantas palavras distintas foram pesquisadas na última hora em uma plataforma 
+de varejo ou armazenar quantas visualizações distintas um vídeo teve. 
+
+Uma característica comum desses problemas é que muitas vezes, suas respostas são métricas a serem utilizadas por outros 
+sistemas com o intuito de se identificar falhas ou pontos de melhoria. No caso do monitoramento de quantas pessoas 
+visitaram uma página web, uma forte queda nas visualizações pode ser um indício que um serviço está fora do ar. Nesse 
+sentido, essas métricas não precisam ter necessariamente uma precisão de $100\%$, podendo apresentar um pequeno erro 
+desde que sejam rapidademente computadas e leves de se armazenarem.
+
+Um caso de uso real de um problema dessa natureza foi enfrentado pelo \textit{Reddit}, que é um site em que usuários 
+podem criar posts de discussões sobre diversos temas. E uma das funcionalidades implementadas nesse sistema é manter um 
+contador de quantas visualizações distintas um post teve para que os criadores de conteúdo dessa plataforma pudessem ter 
+noção sobre o quão bem seus posts estavam sendo recebidos ~\citep{Reddit}. A solução elaborada pelo time de engenharia 
+do Reddit utilizou uma estrutura de dados probabilística chamada HyperLogLog. Essa estrutura permite que resolvamos com 
+um baixo consumo de memória, o problema de estimar quantos elementos distintos existem em um conjunto.
+
+O estudo de estruturas e algoritmos dessa natureza teve início por volta da década de~1970, quando Robert Morris tentou
+resolver o problema de contar eventos cujo número de ocorrências não cabia na memória dos computadores da época 
+~\citep{morris:78}. O estudo realizado por Morris serviu de inspiração para que outros autores conseguissem propor 
+soluções para problemas mais desafiadores, como a contagem distinta, que é determinar a quantidade de itens diferentes
+em um fluxo de dados. Assim, poucos anos após Morris publicar seu trabalho, Philippe Flajolet e Nigel Martin 
+desenvolveram o primeiro algoritmo probabilístico que resolve a contagem distinta aproximada 
+~\citep{flajolet:martin:85}. E a partir desse algoritmo, as soluções para esse problema foram passando por melhorias, 
+das quais podemos destacar a redução do consumo de memória, aumento da precisão ou até mesmo o desenvolvimento de 
+técnicas de demonstração que simplificavam o entendimento da razão desses algoritmos funcionarem.
+
+Logo após publicar seu trabalho em 1985, Flajolet desenvolveu outra estrutura que corrigia limitações da solução 
+anterior~\citep{adptive:sampling:90}. E após uma década, a estrutura de dados LogLog é criada. E logo em seguida, sua 
+versão aperfeiçoada HyperLogLog veio a público e se tornou uma das estruturas mais utilizadas para se resolver o 
+problema da contagem distinta aproximada. Este texto, portanto, tem o objetivo de passar por essas soluções e apresentar 
+comentários pertinentes a cada uma.
