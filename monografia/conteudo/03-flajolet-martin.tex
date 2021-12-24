@@ -1,7 +1,7 @@
 \newcommand{\bitmap}{\proc{bmap}}
 \newcommand{\pcounting}{\proc{Contagem Probabilística}}
 \newcommand{\pc}{\proc{ProbabilisticCounting}}
-\newcommand{\pcpp}{\proc{ProbabilisticCounting++}}
+\newcommand{\pcpp}{\proc{ProbabilisticCounting{+}{+}}}
 
 \chapter{Contagens Probabilísticas}
 \label{lab:flajolet-martin}
@@ -31,42 +31,41 @@ nas quais existam vários fluxos sendo monitorados.
 
 \textit{Reddit} é um site que tem como principal funcionalidade a criação de grupos de discussões, nos quais usuários 
 podem expor suas opiniões sobre um dado tema. E um dos desafios enfrentados por esse site é manter o número de 
-visualizações distintas de cada grupo~\citep{Redis}. Nessa situação, em que existem milhões de grupos e cada um podendo 
+visualizações distintas de cada grupo~\citep{Reddit}. Nessa situação, em que existem milhões de grupos e cada um podendo 
 ter milhares ou milhões de visualizações, manter uma tabela para cada discussão armazenando um indentificador dos 
 usuários que a visualizaram seria uma solução muito custosa. Outro fato agravante é que a quantidade de visualizações 
 distintas é basicamente um número, mas teríamos que gastar espaço proporcional a este valor para mantermos esse número 
 corretamente.
 
 Em muitos casos, não precisamos do valor \textit{exato} da quantidade de elementos distintos em $\Mbb$. Podemos assim, 
-tentar projetar algoritmos \textit{aproximados} e que consomem muito menos memória. Uma das primeiras soluções para a 
-\proc{ContagemDistintaAproximada($\Mbb$, $k$)} foi elaborada por \textit{Philippe Flajolet} e 
-\textit{Nigel Martin}~\citep{flajolet:martin:85}. A motivação inicial desses autores era otimizar pesquisas em banco de
-dados relacionais, e a principal dificuldade nesse processo era calcular o número de elementos distintos em uma coluna.
-Nas próximas seções, veremos o algoritmo desenvolvido por Flajolet e Martin, conhecido como 
-\proc{Contagem Probabilística}.
+tentar projetar algoritmos \textit{aproximados} e que consomem muito menos memória. Uma das primeiras soluções para o 
+problema da contagem distinta aproximada foi elaborada por \textit{Philippe Flajolet} e \textit{Nigel Martin}
+~\citep{flajolet:martin:85}. A motivação inicial desses autores era otimizar pesquisas em banco de dados relacionais, e 
+a principal dificuldade nesse processo era calcular o número de elementos distintos em uma coluna. Nas próximas seções, 
+veremos o algoritmo desenvolvido por Flajolet e Martin, conhecido como \proc{Contagem Probabilística}.
 
 \section{Algoritmo da \proc{Contagem Probabilística}}
 \label{sec:flajolet-martin:algorithm}
 
-O Algoritmo da \proc{Contagem Probabilística} supõe a existência uma função~$h$ que associa uniformemente cada elemento 
-do fluxo $\Mbb$ para um número inteiro entre $0$ e $2^L-1$ inclusive, em que $L$ é a quantidade necessária de bits para 
-mapear todas as entradas de~$\Mbb$. O algoritmo também utiliza a função $\rho$ que recebe um inteiro $y$ de $L$ bits e 
-devolve a posição indexada do zero do dígito menos significativo da representação binária de $y$. Vamos ver exemplos 
-para $L = 4$. Temos que $\rho(12) = \rho(1100_2) = 2$ e $\rho(9) = \rho(1001_2) = 0$. Um caso particular é quando 
-$y = 0$ e nesta situação, $\rho(0) = L$. E teremos um vetor $\bitmap$ de tamanho $L + 1$ inicializado com zeros.
+O Algoritmo da \proc{Contagem Probabilística} supõe a existência uma função de hash~$h$ que associa uniformemente cada 
+elemento do fluxo $\Mbb$ para um número inteiro entre $0$ e $2^L-1$ inclusive, em que $L$ é a quantidade necessária de 
+bits para mapear todas as entradas de~$\Mbb$. O algoritmo também utiliza a função $\rho$ que recebe um inteiro $y$ de 
+$L$ bits e devolve a posição indexada do zero do dígito menos significativo da representação binária de $y$. Vamos ver 
+exemplos para $L = 4$. Temos que $\rho(12) = \rho(1100_2) = 2$ e $\rho(9) = \rho(1001_2) = 0$. Um caso particular é 
+quando $y = 0$ e nesta situação, $\rho(0) = L$. E teremos um vetor $\bitmap$ de tamanho $L + 1$ inicializado com zeros.
 
-Assim, para cada $x_i$ em $\Mbb$, cacularemos um inteiro $y_i \coloneqq h(x_i)$. Em seguida, encontramos o valor de 
-$\rho(y_i)$ e setamos a posição $\rho(y_i)$ do vetor $\bitmap$ para $1$. Dessa forma, esse vetor guardará quais valores 
+Assim, para cada $x_i$ em $\Mbb$, cacularemos um inteiro $y_i \coloneqq h(x_i)$. Em seguida, encontraremos o valor de 
+$\rho(y_i)$ e setaremos a posição $\rho(y_i)$ do vetor $\bitmap$ para $1$. Dessa forma, esse vetor guardará quais valores 
 $\rho(h(x_i))$ aparecem no fluxo $\Mbb$.
 
 Por fim, seja $R$ o menor índice tal que $\bitmap[R] = 0$. A estimativa para o número de elementos distintos de 
-$\Mbb$ será $2^R/\phi$, em que, $\phi$ é um fator de correção que será abordado na Seção 
-\refeq{sec:flajolet-martin:analysis} e cujo valor é $0.77351{\dots}$
+$\Mbb$ será $2^R/\phi$, em que, $\phi$ é um fator de correção cujo valor é $0.77351{\dots}$ e cuja origem pode ser vista
+detalhadamente em ~~\citep{flajolet:martin:85}.
 
 Vamos ver um exemplo de execução do algoritmo descrito acima. Considere que $\Mbb = \{ 4, 6, 8, 6, 9, 14 \}$, $L = 4$ e
 que a função $h$ é a identidade, ou seja, para todo $x_i$, temos que $h(x_i) = x_i$. Na primeira iteração, $x_1 = 4$ e 
 $\rho(4) = \rho(0100_2) = 2$. Assim, setamos $\bitmap[2] = 1$. Agora, na segunda iteração, 
-$\rho(x_2) = \rho(6) = \rho(0110_2) = 1$, e setamos $\bitmap[1] = 1$. Na terceita iteração, temos que 
+$\rho(x_2) = \rho(6) = \rho(0110_2) = 1$, e setamos $\bitmap[1] = 1$. Na terceira iteração, temos que 
 $\rho(x_3) = \rho(8) = \rho(1000_2) = 3$ e portanto, $\bitmap[3] = 1$. Na quarta iteração, o elemento $6$ já apareceu, 
 então $\bitmap$ permanece intacto. Na iteração seguinte, $\rho(x_6) = \rho(9) = \rho(1001_2) = 0$ e $\bitmap[0] = 1$.
 Na última iteração, $\rho(x_7) = \rho(14) = \rho(1110_2) = 1$, mas a posição 1 de $\bitmap$ já esta setada e dessa forma,
@@ -76,9 +75,9 @@ $2^{R}/\phi = 2^4/0.77351 \approx 21$. A estimativa anterior está muito distant
 seguintes verificaremos se essa situação se repete para fluxos com muito mais elementos.
 
 O Algoritmo $\pc$ a seguir recebe um fluxo $\Mbb = \{ x_1, x_2, \dots, x_s, \dots \}$ com $n$ elementos distintos, 
-um inteiro $L$ que representa quantos bits o algoritmo consumirá e uma função~$h$ que mapeia os elementos $\Mbb$ para 
-inteiros entre $0$ e $2^L - 1$ inclusive. E esse algoritmo devolve estimador $\hat{n}$ para $n$ da forma $2^{R}/\phi$, 
-em que, $R$ é um número inteiro e $\phi$, uma constante teórica. Veremos mais adiante que 
+um inteiro $L$ que representa quantos bits o algoritmo consumirá e uma função de hash~$h$ que mapeia os elementos $\Mbb$ 
+para inteiros entre $0$ e $2^L - 1$ inclusive. E esse algoritmo devolve estimador $\hat{n}$ para $n$ da forma 
+$2^{R}/\phi$, em que, $R$ é um número inteiro e $\phi$, uma constante teórica. Veremos mais adiante que 
 $\Ebb(R) = \lg \phi n$, $\phi = 0.77351{\dots}$ e $\sigma(R) = 1.12$.
 
 \begin{codebox}
@@ -87,12 +86,12 @@ $\Ebb(R) = \lg \phi n$, $\phi = 0.77351{\dots}$ e $\sigma(R) = 1.12$.
       \Do
   \li    $\bitmap[i] \gets 0$
       \End
-  \li \For cada $x$ em $\Mbb$
+  \li \For cada $x$ em $\Mbb$                               \label{li:pc:for:start}
       \Do
   \li   $y \gets h(x)$
-  \li   $\bitmap[\rho(y)] \gets 1$
+  \li   $\bitmap[\rho(y)] \gets 1$                          \label{li:pc:for:end}
       \End
-  \li $R \gets \{ \min \bitmap[i] = 0: 1 \leq i \leq L \}$
+  \li $R \gets \{ \min 0 \leq i \leq L: \bitmap[i] = 0 \}$  \label{li:pc:r:def}
   \li\Return $2^R/\phi$
   \End
 \end{codebox}
@@ -133,36 +132,30 @@ começar com 1. Em outras palavras, devem ter aparecido pelos menos duas palavra
 esse raciocínio faz sentido para $\bitmap[1] = 1$. O esperado é que $1/4$ dos elementos de $\Mbb_h$ comecem com $01$, 
 que a cada quatro palavras sorteadas de $\Mbb_h$, pelo menos uma comece com $01$ e assim, devem ter aparecido quatro 
 palavras para que $\bitmap[1] = 1$. Analogamente, devem ter aparecido pelo menos 8 palavras para que $\bitmap[2] = 1$ e 
-16 palavras para que $\bitmap[3] = 1$. Como $\bitmap[R] = 0$, então ainda não devem ter aparecido $32$ palavras no fluxo 
-$\Mbb_h$. Portanto, a melhor estimativa nesse caso é afirmar que $\Mbb_h$ possui $2^R = 16$ elementos distintos. 
+16 palavras para que $\bitmap[3] = 1$. Como $\bitmap[R = 4] = 0$, então ainda não devem ter aparecido $32$ palavras no 
+fluxo $\Mbb_h$. Portanto, a melhor estimativa nesse caso é afirmar que $\Mbb_h$ possui $2^R = 16$ elementos distintos. 
 
 A ideia descrita nessa seção é a base para os algoritmos que resolvem o problema da contagem distinta aproximada, e 
 entendê-la ajudará a vermos a origem das soluções. Na próxima seção, serão expostas alguns aspectos da prova do 
-funcionamento do Algoritmo da $\pcounting$~\citep{flajolet:martin:85}. 
+funcionamento do Algoritmo da $\pcounting$. 
 
 \section{Qualidade da aproximação}
 \label{sec:flajolet-martin:analysis}
 
-Suponha que a quantidade de elementos distintos de um fluxo $\Mbb$ seja $n$. O valor esperado de $R$ definido na Seção 
-\refeq{sec:flajolet-martin:algorithm} é aproximadamente $\log_2(\phi n)$, em que $\phi = 0.77351\dots$ E o desvio padrão 
-de $R$ é em torno de $1.12$. Essa seção busca mostrar as etapas da análise do Algoritmo $\pc$ feita 
-por Flajolet e Martin ~\citep{flajolet:martin:85}.
+Essa seção busca destacar as principais \textbf{etapas} da análise desse algoritmo feita por Flajolet e 
+Martin~\citep{flajolet:martin:85}. Dessa forma, os detalhes técnicos de algums passos da demonstração podem ser 
+explorados com mais calma a partir da leitura do artigo original. Suponha que a quantidade de elementos distintos de um 
+fluxo $\Mbb$ seja $n$. O valor esperado da variável $R$ definida na linha~\ref{li:pc:r:def} do Algoritmo $\pc$ é 
+aproximadamente $\lg \phi n$, em que $\phi = 0.77351{\dots}$ E o desvio padrão de $R$ é em torno de $1.12$. 
 
-O primeiro passo é entender que $R$ é uma estimativa para $\lfloor \log_2(n) \rfloor$. Pelo padrão das aparições dos 
-prefixos dos hashes dos elementos de $\Mbb$, espera-se que $\bitmap[0]$ seja acessado aproximadamente $\lfloor 
-\frac{n}{2} \rfloor$ vezes, $\bitmap[1]$ aproximadamente $\lfloor \frac{n}{4} \rfloor$ vezes $\dots$ Agora, para 
-$k = \lfloor \log_2(n) \rfloor$, $\bitmap[k]$ deve ser acessado em torno de $\lfloor \frac{n}{2^{k+1}} \rfloor = 0$ 
-vezes. Assim, o menor índice $R$ tal que o valor de $\bitmap$ seja zero é aproximadamente $\lfloor \log_2(n) \rfloor$.
-
-Então, defini-se a variável aleatória $R_n$ como sendo o valor da variável $R$ ao final da execução do Algoritmo 
-\ref{prog:flajolet-martin} para uma entrada $\Mbb$ com $n$ elementos distintos. Dessa forma, o interesse principal 
-da demonstração é encontrar fórmulas ou estimativas para:
+O primeiro passo da análise é definir a variável aleatória $R_n$ como sendo o valor da variável $R$ ao final da execução 
+do Algoritmo~$\pc$ para uma entrada $\Mbb$ com $n$ elementos distintos, função de hash~$h$ e inteiro $L$. Dessa forma, o 
+interesse principal da demonstração é encontrar fórmulas ou estimativas para:
 \begin{itemize}
-  \item $p_{n,k} = \mathbb{P}(R_n = k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} ser igual a $k$
-  \item $q_{n,k} = \mathbb{P}(R_n \geq k)$: probabilidade de uma saída de \ref{prog:flajolet-martin} 
-  ser maior ou igual a $k$
-  \item $\Ebb[R_n]$: valor esperado de $R_n$
-  \item $\Vbb[R_n]$: variância de $R_n$
+  \item $p_{n,k} = \mathbb{P}(R_n = k)$: probabilidade de uma saída de $\pc$ ser igual a $k$
+  \item $q_{n,k} = \mathbb{P}(R_n \geq k)$: probabilidade de uma saída de $\pc$ ser maior ou igual a $k$
+  \item $\Ebb(R_n)$: valor esperado de $R_n$
+  \item $\Vbb(R_n)$: variância de $R_n$
 \end{itemize}
 
 O primeiro teorema de ~\citep{flajolet:martin:85} mostra uma fórmula \textit{exata} e \textit{discreta} para $q_{n,k}$. 
@@ -176,9 +169,9 @@ O próximo passo é tentar expandir esse polinômio usando \textit{inclusão e e
 probabilidade para $E_0, E_1, \twodots, E_{k-1}, K_k$. E a prova deste teorema termina encontrando uma relação entre 
 $q_{n,k}$ e esta expansão de polinômio.
 
-Em seguida, o Teorema 2 apresenta aproximações de $q_{n,k}$ para diferentes intervalos de $k$. E a consequência deste 
-teorema é a existência de uma distribuição limitante para a distribuição de probabilidade de $R_n$ conforme $n$ cresce. 
-Dessa forma, obtém-se uma fórmula \textit{aproximada} e \textit{contínua} para $q_{n,k}$:
+Em seguida, o Teorema 2 de~\citep{flajolet:martin:85} apresenta aproximações de $q_{n,k}$ para diferentes intervalos de 
+$k$. E a consequência deste teorema é a existência de uma distribuição limitante para a distribuição de probabilidade de 
+$R_n$ conforme $n$ cresce. Dessa forma, obtém-se uma fórmula \textit{aproximada} e \textit{contínua} para $q_{n,k}$:
 \[ q_{n,k} \approx \psi(\frac{n}{2^k}) \]
 
 em que, $\psi(x) = \prod_{j \geq 0} (1 - e^{-x2^j})$.
@@ -186,41 +179,41 @@ em que, $\psi(x) = \prod_{j \geq 0} (1 - e^{-x2^j})$.
 Note que por definição, $p_{n,k} = q_{n,k} - q_{n,k+1}$. Assim, pode-se aproximar $p_{n,k}$:
 \[ p_{n,k} \approx \psi(\frac{n}{2^k}) - \psi(\frac{n}{2^{k+1}}) \ . \]
 
-O interesse passa a ser, portanto, estimar $\Ebb[R_n]$ a partir dessa fórmula aproximada de $p_{n,k}$, de maneira 
+O interesse passa a ser, portanto, estimar $\Ebb(R_n)$ a partir dessa fórmula aproximada de $p_{n,k}$, de maneira 
 que 
-\[ \Ebb[R_n] = \sum_{k \geq 1} k p_{n,k} \approx \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi 
+\[ \Ebb(R_n) = \sum_{k \geq 1} k p_{n,k} \approx \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi 
   \Big( \frac{n}{2^{k+1}} \Big) \Big] \ . \]
 
 Desse modo, defini-se a função real $F(x)$ como sendo
 \[ F(x) =  \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi \Big( \frac{n}{2^{k+1}} \Big) \Big] \ . \]
 
 E o Lema 1 do artigo, afirma que 
-\[ \Ebb[R_n] = F(x) + O \Big( \frac{1}{n^{0.49}} \Big) \ , \]
+\[ \Ebb(R_n) = F(x) + O \Big( \frac{1}{n^{0.49}} \Big) \ , \]
 ou seja, que o valor esperado de $R_n$ se aproxima de $F(x)$ conforme $n$ cresce.
 
 Em seguida, o Lema 2 apresenta o resultado da \hyperref[ap:mellin]{transformada de Mellin} de $F(X)$. A principal razão 
 para se calcular essa transformação é que se pode expressar a fórmula inversa da transformada de Mellin como uma 
 expansão assintótica cujos termos são resíduos da transformada. Assim, o Teorema $3A$ utiliza os Lemas 1 e 2, e o 
 Teorema dos Resíduos para afirmar que 
-\[ \Ebb[R_n] = \lg (\phi n) + P(\lg n) + o(1) \ , \]
-em que, $P(x)$ é a expansão assintótica de $F(x)$ e $\phi = 0.77351\dots$, concluindo a prova que 
-$\Ebb[R_n] \approx \lg (\phi n)$.
+\[ \Ebb(R_n) = \lg \phi n + P(\lg n) + o(1) \ , \]
+em que, $P(x)$ é a expansão assintótica de $F(x)$ e $\phi = 0.77351{\dots}$, concluindo a prova que 
+$\Ebb(R_n) \approx \lg \phi n$.
 
-A prova para a estimativa de $\Vbb[R_n]$ segue os mesmos passos da prova anterior. Pela definição de 
-\hyperref[ap:variance]{variância}, precisa-se estimar $\Ebb[R_n ^ 2]$. Assim, 
-\[ \mathbb{E[R_n ^2]} = \sum_{k=1} k^2 p_{n,k} \approx G(x) \ , \]
+A prova para a estimativa de $\Vbb(R_n)$ segue os mesmos passos da prova anterior. Pela definição de 
+\hyperref[ap:variance]{variância}, precisa-se estimar $\Ebb(R_n ^ 2)$. Assim, 
+\[ \Ebb(R_n ^ 2) = \sum_{k=1} k^2 p_{n,k} \approx G(x) \ , \]
 em que
 \[ G(x) = \sum_{k=1} k^2 p_{n,k} \ . \]
 
 Dessa forma, encontra-se a transformada de Mellin de $G(x)$ e se analisa a inversa desta transformação para estimar 
-$\Ebb[R_n^2]$.
+$\Ebb(R_n^2)$.
 
 \section{\proc{Lei dos Grandes Números} novamente}
 
-Na seção anterior, foi visto que $\Ebb[R_n] \approx \lg(\phi n)$, em que $\phi \approx 0.77351$. Assim, se o valor 
-do contador $R$ no final do Algoritmo \ref{prog:flajolet-martin} para uma entrada com $n$ elementos distintos for 
-aproximadamente igual a $\lg(\phi n)$, então a saída desse algoritmo é aproximadamente $n$. A tabela \ref{tab:flajolet} 
-mostra que, em alguns casos, a saída do programa é praticamente igual a $n$ quando $R_n \approx \lg(\phi n)$.
+Na seção anterior, foi visto que $\Ebb(R_n) \approx \lg \phi n$, em que $\phi \approx 0.77351$. Assim, se o valor 
+do contador $R$ no final do Algoritmo~$\pc$ para uma entrada com $n$ elementos distintos for aproximadamente igual a 
+$\lg \phi n$, então a saída desse algoritmo é aproximadamente $n$. A Tabela \ref{tab:flajolet} mostra que, em alguns 
+casos, a saída do programa é praticamente igual a $n$ quando $R_n \approx \lg \phi n$.
 
 \begin{center}
   \def\arraystretch{2}%
@@ -228,7 +221,7 @@ mostra que, em alguns casos, a saída do programa é praticamente igual a $n$ qu
     \begin{tabular}{ |p{1.5cm}||p{2.5cm}|  }
       \hline
       \multicolumn{1}{|p{1.5cm}|}{\centering $n$ } 
-      & \multicolumn{1}{|p{2.5cm}|}{\centering $(1 \slash \phi) 2^{\lg(\phi n)}$ }  \\
+      & \multicolumn{1}{|p{2.5cm}|}{\centering $2^{\lg(\phi n)} \slash \phi$}  \\
       \hline
       \multicolumn{1}{|p{1.5cm}|}{\centering 50 } 
       & \multicolumn{1}{|p{2.5cm}|}{\centering 49.99 }  \\
@@ -243,122 +236,101 @@ mostra que, em alguns casos, a saída do programa é praticamente igual a $n$ qu
       & \multicolumn{1}{|p{2.5cm}|}{\centering 50000.0 }  \\
       \hline
      \end{tabular}
-     \caption{\label{tab:flajolet} Comparação entre $n$ e saída do Algoritmo \ref{prog:flajolet-martin} para 
-     $R_n = \lg(\phi n)$.}
+     \caption{\label{tab:flajolet} Comparação entre $n$ e a saída do Algoritmo~$\pc$ quando $R_n \approx \lg \phi n$.}
   \end{table}
 \end{center}
 
-Contudo, $\Vbb[R_n] \approx\nolinebreak 1.12$ e consequentemente, o desvio padrão de $R_n$ é aproximadamente~$1$. 
-Isto quer dizer que o valor de $R_n$ pode ser uma unidade maior ou menor que $\lg(\phi n)$, o que implica que a 
-estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o Algoritmo de Flajolet e Martin apresenta uma 
-grande variabilidade.
+Contudo, $\Vbb(R_n) \approx\nolinebreak 1.12$ e consequentemente, o desvio padrão de $R_n$ é aproximadamente~$1$. 
+Isto quer dizer que o valor de $R_n$ pode ser uma unidade maior ou menor que $\lg \phi n$, o que implica que a 
+estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o Algoritmo $\pc$ apresenta uma grande 
+variabilidade.
 
-Assim como foi visto na Seção \ref{sec:morris:plus}, pode-se diminuir a variância da estimativa fazendo $k$ iterações 
-do Algoritmo \ref{prog:flajolet-martin}. Dessa forma, seria necessário manter $k$ vetores $\bitmap$, $k$ valores de $R$ e 
-$k$ funções de hash $h$. Ao final de todas as $k$ iterações, seria calculado a média $\bar{R}$ dos valores de $R$, e a 
-estimativa do número de elementos distintos seria $(1 \slash \phi) 2^{\bar{R}}$.
+De modo similar ao que foi visto em \hyperref[sec:morris:plus]{\proc{Morris} e a \proc{Lei dos Grandes Números}}, 
+podemos obter a partir do Algoritmo~$\pc$, uma solução com variância menor. Assim, o Algoritmo $\pc{+}$ recebe um fluxo 
+de dados $\Mbb$, inteiros $m$ e $L$, além de uma lista de $m$ funções de hash $\mathbb{H}$, em que cada função 
+$\mathbb{H}_i$ desse grupo mapeia uniformemente os elementos de $\Mbb$ para o intervalo $[0, 2^L - 1]$. Esse algoritmo 
+modificado manterá $m$ vetores $\bitmap$, de maneira que para cada elemento $x$ de $\Mbb$, para todo $0 \leq j < m$, 
+vamos setar $\bitmap_j[\rho(\mathbb{H}_{j}(x))] = 1$. Quando todos os itens de $\Mbb$ forem percorridos, calcularemos 
+$R_j = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$ para todo $0 \leq j < m$ e em seguida, encontraremos a média 
+desses valores obtendo $\bar{R}$. Por fim, a estimativa para o número de elementos distintos em $\Mbb$ será 
+$2^{\bar{R}} / \phi$. 
 
-O pseudocódigo a seguir codifica essa idea:
+Uma outra forma de vermos essa solução é que estamos executando em pararelo $m$ funções $\pc$ e para isso, temos que 
+passar uma função de hash diferente para cada execução, a fim de produzir vetores $\bitmap$ diferentes ao final.
+
 \begin{codebox}
-  \Procname{$\proc{ProbabilisticCounting+}(\Mbb, m, \mathbb{H}, L)$}
-  \li \For $i$ de $0$ até $m$
+  \Procname{$\pc{+}(\Mbb, \mathbb{H}, L, m)$}
+  \li \For $j$ de $0$ até $m$
       \Do
-  \li    \For $j$ de $0$ até $L$
+  \li    \For $i$ de $0$ até $L + 1$
           \Do
-  \li       $\mathbb{BITMAP}_{i}[j] \gets 0$
+  \li       $\bitmap_{j}[i] \gets 0$
           \End
       \End
-  \li \For $i$ de $0$ até $m$
+  \li \For $j$ de $0$ até $m$
       \Do
   \li    \For cada $x$ em $\Mbb$
           \Do
-  \li       $y \gets \mathbb{H}_{i}(x)$
-  \li       $\bitmap_i[\rho(y)] = 1$
+  \li       $y \gets \mathbb{H}_{j}(x)$
+  \li       $\bitmap_j[\rho(y)] = 1$
           \End
       \End
   \li \For $i$ de $0$ até $m$
       \Do
-  \li    $\mathbb{R}[i] = 0$
+  \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
       \End
-  \li $\bar{R} = 0$
-  \li \For de $i$ até $m$
-      \Do
-  \li $\bar{R} = \bar{R} + \mathbb{R}[i]$
-      \End
-  \li $\bar{R} = \bar{R} / m$
-  \li
-  \Return $2^{\bar{R}}/\phi$
+  \li $\bar{R} = \sum_{j=0}^{m} \mathbb{R}[j] / m$
+  \li \Return $2^{\bar{R}}/\phi$
   \End
 \end{codebox}
 
-Seja $\bar{R_n}$ o valor da variável $\bar{R}$ ao final da execução do Algoritmo \ref{prog:flajolet-martin+} para uma
-entrada com $n$ elementos distintos. De forma análoga aos resultados vistos na Seção \ref{sec:morris:plus}, pode-se
-concluir que:
-\[ \Ebb[\bar{R_n}] \approx \lg(\phi n)  \; \; \text{e}  \; \; \Vbb[\bar{R_n}] \approx \frac{1.12}{k} \ . \]
+Seja $\bar{R_n}$ o valor da variável $\bar{R}$ ao final da execução do Algoritmo~$\pc{+}$ para uma
+entrada com $n$ elementos distintos. De forma análoga aos resultados vistos em \hyperref[sec:morris:plus]{\proc{Morris} 
+e a \proc{Lei dos Grandes Números}}, pode-se concluir que:
+\[ \Ebb(\bar{R_n}) \approx \lg \phi n   \; \; \text{e}  \; \; \Vbb(\bar{R_n}) \approx \frac{1.12}{m} \ . \]
 
+No entanto, o fato de precisarmos de uma função de hash distinta para cada iteração torna a solução acima inviável, uma 
+vez que, encontrar funções que mapeiem na prática os elementos de um conjunto $\Mbb$ de maneira uniforme não é uma 
+tarefa simples. Para contornar esse problema, os autores propuseram o uso da \textbf{média estocástica}.
 
-No entanto, o fato de se precisar de uma função de hash distinta para cada iteração torna a solução acima inviável, 
-uma vez que, encontrar funções de hash que mapeiem na prática os elementos de um conjunto $\Mbb$ de maneira
-uniforme não é uma tarefa simples. Para contornar esse problema, os autores propuseram o uso da 
-\textit{média estocástica}.
+Essa ideia consiste em dividr os elementos da entrada em $m$ lotes e usar parte da informação do hash dos elementos para 
+definir em qual lote um elemento deve ir. As linhas \ref{li:pcpp:for:start}-\ref{li:pcpp:for:end} do Algoritmo~$\pc{++}$ 
+a seguir mostram como essa divisão é feita.
 
-Essa ideia consiste em dividr os elementos da entrada em $k$ lotes e usar parte da informação do hash para definir em 
-qual lote um elemento deve ir. 
-As linhas de $7$ até $11$ do pseudocódigo a seguir mostram como esta divisão é feita:
-\begin{programruledcaption}{
-  Algoritmo de Flajolet-Martin++
-  \\ \textbf{Entrada:} conjunto $\Mbb$, funções de hash $h$, tamanho $L$ do vetor $\bitmap$, 
-  quantidade $k$ de lotes
-  \\ \textbf{Saída:} quantidade de elementos distintos de $\Mbb$
-  \label{prog:flajolet-martin++}
-  }
-    \begin{lstlisting}[
-      language={[brazilian]pseudocode},
-      style=pseudocode,
-      style=wider,
-      functions={},
-      specialidentifiers={},
-    ]
-        funcao FlajoletMartin($\Mbb$, k, h, L)
-          para i de 0 até k \kw{faça}:
-            para j de 0 até L \kw{faça}:
-              $\bitmap_i[j]$ := 0
-            fim
-          fim
-          para x $\in$ $\Mbb$ \kw{faça}:
-            lote := $h(x) \mod k$
-            y := $\lfloor h(x) / k \rfloor$
-            $\bitmap^{<lote>}[\rho(y)]$ := 1
-          fim
-          para i de 0 até k \kw{faça}:
-            $R_i$ := 0
-          fim
-          para i de 0 até k \kw{faça}:
-            enquanto $\bitmap_i[R_i]$ = 1 \kw{faça}:
-              $R_i$ := $R_i$ + 1
-            fim
-          fim
-          $\bar{R}$ := 0
-          para i de 0 até k \kw{faça}:
-            $\bar{R}$ := $\bar{R} + R_i$ 
-          fim
-          $\bar{R}$ := $\bar{R} \slash k$
-          devolva $k2^{\bar{R}}/\phi$
-        fim
-    \end{lstlisting}
-  \end{programruledcaption}
+\begin{codebox}
+  \Procname{$\pc{++}(\Mbb, $h$, $L$)$}
+  \li \For $j$ de $0$ até $m$
+      \Do
+  \li    \For $i$ de $0$ até $L + 1$
+          \Do
+  \li       $\bitmap_{j}[i] \gets 0$
+          \End
+      \End
+  \li \For cada $x$ em $\Mbb$                                               \label{li:pcpp:for:start}
+      \Do
+  \li   $\texttt{lote} \gets h(x) \mod k$
+  \li   $y \gets \lfloor h(x) / k \rfloor$
+  \li   $\bitmap_{\texttt{lote}}[y] = 1$                                             \label{li:pcpp:for:end}
+      \End
+  \li \For $i$ de $0$ até $m$
+      \Do
+  \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
+      \End
+  \li $\bar{R} = \sum_{j=0}^{m} \mathbb{R}[j] / m$
+  \li \Return $m \times 2^{\bar{R}}/\phi$
+  \End
+\end{codebox}
 
-Se a função de hash $h$ distribuir os $n$ elementos distintos do conjunto $\Mbb$ uniformemente entre os 
-$k$ lotes, então espera-se que cada lote tenha aproximadament $\frac{n}{k}$ elementos. Dessa forma, 
-$(1 / \phi)2^{\bar{R_n}}$ seria uma aproximação para $\frac{n}{k}$. É devido a este fato que a saída do Algoritmo~
-\ref{prog:flajolet-martin++} é $\mathbf{k} (1 / \phi)2^{\bar{R_n}}$, pois este valor é uma estimativa para 
-$\mathbf{k} \frac{n}{k} = n$.
+Se a função de hash $h$ distribuir os $n$ elementos distintos do conjunto $\Mbb$ uniformemente entre os $m$ lotes, então 
+esperamos que cada lote tenha aproximadament $\frac{n}{m}$ elementos. Nesse caso, $2^{\bar{R_n}}/\phi$ seria uma 
+aproximação para $\frac{n}{m}$. É devido a este fato que a saída do Algoritmo~$\pc{++}$ é 
+$\mathbf{m} \times 2^{\bar{R_n}}/\phi$, pois este valor é uma estimativa para $\mathbf{m} \times \frac{n}{m} = n$.
 
 Por fim, o erro relativo esperado do algoritmo \pcpp é em torno de $0.78 / \sqrt{m}$. Isto quer 
 dizer que para $m = 64$, o desvio esperado é em torno de $10\%$. Dessa forma, a escolha de $m$ depende das exigências do 
 problema. Se precisarmos de uma precisão maior, escolheremos um valor de $m$  maior, mas teremos um algoritmo mais 
 custoso em termos de tempo e espaço. Por outro lado, se a exigência é, por exemplo, decidir qual de dois conjuntos tem a 
-menor quantidade de elementos distintos, podemos escolher um valor menor de $m$ para fazer essa comparação, mas teríamos 
+menor quantidade de elementos distintos, podemos escolher um valor menor de $m$ para fazer essa comparação, mesmo tendo 
 um risco maior de escolher o conjunto errado.
 
 \section{Estimando valores pequenos com a \proc{Contagem Probabilística}}
@@ -375,23 +347,23 @@ quantidade de itens distintos. Logo, se o vetor $\bitmap$ for um vetor de inteir
 $m$ for igual a 1024, então a memória consumida por esse algoritmo seria em torno de 4 KB, que é um consumo de espaço
 \textbf{1000 vezes menor} que a solução exata.
 
-O erro relativo esperado do $\pcounting$ para $m = 1024$ é em torno de $2{,}5\%$. Assim, para um conjunto de milhões de 
+O erro relativo esperado da $\pcounting$ para $m = 1024$ é em torno de $2{,}5\%$. Assim, para um conjunto de milhões de 
 itens distintos, o erro seria em torno das dezenas ou centenas de milhares. Com esse tipo de desvio, teríamos como 
 mensurar a ordem de grandeza do número de itens distintos de um conjunto com bastante confiança. Contudo, para utilizar
-o $\pcounting$, o viés desse algoritmo deve ser entendido.
+a $\pcounting$, o viés desse algoritmo deve ser entendido.
 
 O \textbf{viés} de um estimador é a diferença entre seu valor esperado e o valor real do parâmetro estimado. 
 Nesse sentido, a estimativa da quantidade de elementos em um conjunto devolvida pelo algoritmo de \proc{Morris} é 
-\textit{não-viesada}, uma vez que, o Lema \ref{morris:expected_value} afirma que o valor esperado deste estimador é 
-igual ao tamanho do conjunto estimado.
+\textit{não-viesada}, uma vez que, o \hyperref[morris:theorem:expected_value]{Teorema do valor esperado de $\Morris$} 
+afirma que o valor esperado deste estimador é igual ao tamanho do conjunto estimado.
 
-Na prova descrita em ~\citep{flajolet:martin:85}, o estimador de $\lg(n)$ é $R_n$, que representa o valor da variável 
+Na prova descrita em ~\citep{flajolet:martin:85}, o estimador de $\l gn$ é $R_n$, que representa o valor da variável 
 $R$ ao final da execução de \proc{ProbabilisticCounting}, tendo como entrada um conjunto com $n$ elementos distintos. 
-Vimos que o valor esperado de $R_n$ é aproximadamente $\lg(\phi n)$, que é diferente de $\lg(n)$. Portanto, $R_n$ é um 
-estimador \textit{viesado} de $\lg(n)$. E analogamente, o estimador devolvido por \pcpp também 
+Vimos que o valor esperado de $R_n$ é aproximadamente $\lg \phi n$, que é diferente de $\lg n$. Portanto, $R_n$ é um 
+estimador \textit{viesado} de $\lg n$. E analogamente, o estimador devolvido por \pcpp também 
 é \textit{viesado}.  
 
-Então, além do erro padrão, existe também o viés do algoritmo $\pcounting$, cujo valor é $1 + 0{,}31/m$. Contudo, para 
+Então, além do erro padrão, existe também o viés do Algoritmo da \proc{Contagem Probabilística}, cujo valor é $1 + 0{,}31/m$. Contudo, para 
 valores de $m$ maiores que $32$, o viés se torna desprezíval se comparado ao erro padrão. Dessa forma, uma pessoa pode 
 ser induzida a concluir que a escolha de $m$ é o único cuidado que ela deve tomar ao utilizar esse algoritmo. No 
 entanto, ainda existe o problema de estimar \textit{baixas cardinalidades} com essa estrutura.
@@ -404,7 +376,7 @@ $n = 1$.
 
 Em vista disso, um tratamento especial deve ser dado para situações em que a cardinalidade do número de elementos 
 distintos de um conjunto for baixa. Poderíamos, por exemplo, manter os elementos percorridos em uma tabela de hash, e 
-quando essa tabela atingisse um certo tamanho, passaríamos a usar a estratégia original do $\pcounting$, que é preencher
+quando essa tabela atingisse um certo tamanho, passaríamos a usar a estratégia original da $\pcounting$, que é preencher
 os vetores $\bitmap$.  
 
 \section{Um, dois, três, \dots, repetido, \dots}
@@ -429,28 +401,27 @@ assim, não há a necessidade de mapeá-los para inteiros entre $0$ e $2^{32} - 
 é a função identidade.
 
 O gráfico a seguir exibe a evolução da estimativa conforme itens vão sendo inseridos na estrutura com $m = 64$. Observe 
-que até setecentos mil elementos, a estimativa se manteve dentro da faixa do erro relativo teórico esperado, que é em 
-torno de $5\%$. Mas a partir desse ponto, o erro passou a ser maior que o esperado, ultrapassando o valor de $10\%$. 
-Uma das possíveis razões para essa situação é que um inteiro $x$ com um grande valor de $\rho(x)$ pode ter aparecido 
-antes do esperado, o que faz com que a estimativa aumente drasticamente.
+que o erro relativo do algoritmo ficou em torno de $10\%$.
 
 \begin{figure}
   \centering
-  \includegraphics[height=6cm, width=15cm]{figuras/pcounting-estimate-64.png}
-	\caption{Evolução da estimativa do Algoritmo $\pcpp$ com $m = 64$}
+  \includegraphics[height=6cm, width=15cm]{figuras/probabilistic_counting_m_64_full.png}
+	\caption{Simulação do Algoritmo da $\pcounting$ com $m = 64$}
   \label{fig:pcounting:64}
 \end{figure}
 
 \newpage
 Os próximos gráficos mostram, respectivamente, a porção inicial do gráfico acima e a evolução do erro relativo nessa 
-faixa, que corresponde às 256 primeiras estimativas. É possível, dessa forma, notar que o $\pcounting$ é pouco preciso 
+faixa, que corresponde às 256 primeiras estimativas. É possível, dessa forma, notar que a $\pcounting$ é pouco precisa 
 para estimar cardinalidades baixas, podendo o erro relativo ser maior que $1000\%$ nessas situações.
 
 \begin{figure}
   \centering
-  \subfloat[\centering Evolução da estimativa $(m=64)$]{{\includegraphics[width=7cm]{figuras/pcounting-estimate-64-first.png} }}
+  \subfloat[\centering Evolução da estimativa $(m=64)$]
+  {{\includegraphics[width=7cm]{figuras/probabilistic_counting_m_64_first.png} }}
   \qquad
-  \subfloat[\centering Evolução do erro relativo $(m=64)$]{{\includegraphics[width=7cm]{figuras/pcounting-error-64-first.png} }}
+  \subfloat[\centering Evolução do erro relativo $(m=64)$]
+  {{\includegraphics[width=7cm]{figuras/probabilistic_counting_erro_m_64_first.png} }}
   \caption{Resumo das primeiras 256 estimativas}
   \label{fig:pcounting:64:first}
 \end{figure}
@@ -470,7 +441,7 @@ $m = 1024$, que é aproximadamente~$2{,}5\%$.
 
 \newpage
 
-Os dois últimos gráficos resumem o comportamento do $\pcounting$ com $m = 1024$ para cardinalidades baixas. Novamente, a
+Os dois últimos gráficos resumem o comportamento da $\pcounting$ com $m = 1024$ para cardinalidades baixas. Novamente, a
 faixa escolhida para as construções desses gráficos foi as primeiras 256 estimativas. E o erro para estimar essas 
 cardinalidades aumentou se comparado com o erro da estrutura com $m = 64$.
 
@@ -481,7 +452,7 @@ cardinalidades aumentou se comparado com o erro da estrutura com $m = 64$.
   \subfloat[\centering Evolução do erro relativo $(m=1024)$]{{\includegraphics[width=7cm]{figuras/pcounting-error-1024-first.png} }}
 \end{figure}
 
-A precisão do $\pcounting$, portanto, pode ser melhorada se aumentarmos o valor de $m$, mas essa ideia não se aplica 
+A precisão da $\pcounting$, portanto, pode ser melhorada se aumentarmos o valor de $m$, mas essa ideia não se aplica 
 para cardinalidades baixas. O artigo ~\citep{flajolet:martin:85} nomeia esse problema como 
 \textit{não-lineariade inicial}, e os autores afirmam que a estimativa se aproxima do valor esperado do estimador assim 
 que a cardinalidade estimada atinge pelo menos os valores $10m{-}20m$. Assim, para $m = 64$, é esperado que essa 
@@ -492,8 +463,8 @@ Vale lembrar, no entanto, que a proposta inicial para a adoção de estruturas d
 de memória conforme o volume dos dados cresce. Nesse sentido, esse problema da \textit{não-linearidade inicial} pode ser 
 desconsiderado dependendo da situação. 
 
-Por fim, o $\pcounting$ foi um dos primeiros algoritmos que surgiram para resolver o problema da 
+Por fim, a $\pcounting$ foi um dos primeiros algoritmos que surgiram para resolver o problema da 
 \textbf{Contagem Distinta Aproximada}, e até nos dias atuais, é uma das estruturas com o menor erro relativo esperado, 
-que é igual a $0.78 / \sqrt{m}$. Embora o $\pcounting$ não seja tão utilizado atualmente, o seu desenvolvimento serviu 
+que é igual a $0.78 / \sqrt{m}$. Embora a $\pcounting$ não seja tão utilizado atualmente, o seu desenvolvimento serviu 
 de base para que outras estruturas com menor consumo de memória surgissem, e a análise delas é muito semelhante à 
 análise presente em ~\citep{flajolet:martin:85}. 
