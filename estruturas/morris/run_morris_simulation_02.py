@@ -29,7 +29,7 @@ if __name__ == "__main__":
     for tamanho in tamanhos:
         frequencia_dos_contadores[tamanho] = frequencia_dos_contadores.get(tamanho, 0) + 1
 
-    arquivo_de_saida = open("morris_variance.json", "w")
+    arquivo_de_saida = open("morris_simulation_02_result.json", "w")
 
     json.dump(
         frequencia_dos_contadores,

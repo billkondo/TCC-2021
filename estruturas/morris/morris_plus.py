@@ -3,17 +3,16 @@ from morris import Morris
 
 class MorrisPlus:
     def __init__(self, t: int):
-        self._t = t
-        self._morris = [Morris() for _ in range(0, self._t)]
+        self.t = t
+        self.morris = [Morris() for _ in range(0, self.t)]
 
     def adiciona(self):
-        for i in range(0, self._t):
-            self._morris[i].adiciona()
+        for i in range(0, self.t):
+            self.morris[i].adiciona()
 
-    def conta(self) -> int:
+    def conta(self):
         sum = 0
+        for i in range(0, self.t):
+            sum += self.morris[i].conta()
 
-        for i in range(0, self._t):
-            sum += self._morris[i].conta()
-
-        return sum // self._t
+        return sum // self.t
