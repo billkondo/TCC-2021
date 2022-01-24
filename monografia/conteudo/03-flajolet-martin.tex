@@ -47,7 +47,7 @@ veremos o algoritmo desenvolvido por Flajolet e Martin, conhecido como \proc{Con
 \section{Algoritmo da \proc{Contagem Probabilística}}
 \label{sec:flajolet-martin:algorithm}
 
-O Algoritmo da \proc{Contagem Probabilística} supõe a existência uma função de hash~$h$ que associa uniformemente cada 
+O algoritmo da \proc{Contagem Probabilística} supõe a existência uma função de hash~$h$ que associa uniformemente cada 
 elemento do fluxo $\Mbb$ para um número inteiro entre $0$ e $2^L-1$ inclusive, em que $L$ é a quantidade necessária de 
 bits para mapear todas as entradas de~$\Mbb$. O algoritmo também utiliza a função $\rho$ que recebe um inteiro $y$ de 
 $L$ bits e devolve a posição indexada do zero do dígito menos significativo da representação binária de $y$. Vamos ver 
@@ -74,7 +74,7 @@ preenchidas, temos que $R = 4$ e que a estimativa do número de elementos distin
 $2^{R}/\phi = 2^4/0.77351 \approx 21$. A estimativa anterior está muito distante do valor real, que é $5$. Nas seções
 seguintes verificaremos se essa situação se repete para fluxos com muito mais elementos.
 
-O Algoritmo $\pc$ a seguir recebe um fluxo $\Mbb = \{ x_1, x_2, \dots, x_s, \dots \}$ com $n$ elementos distintos, 
+O algoritmo $\pc$ a seguir recebe um fluxo $\Mbb = \{ x_1, x_2, \dots, x_s, \dots \}$ com $n$ elementos distintos, 
 um inteiro $L$ que representa quantos bits o algoritmo consumirá e uma função de hash~$h$ que mapeia os elementos $\Mbb$ 
 para inteiros entre $0$ e $2^L - 1$ inclusive. E esse algoritmo devolve estimador $\hat{n}$ para $n$ da forma 
 $2^{R}/\phi$, em que, $R$ é um número inteiro e $\phi$, uma constante teórica. Veremos mais adiante que 
@@ -99,10 +99,10 @@ $\Ebb(R) = \lg \phi n$, $\phi = 0.77351{\dots}$ e $\sigma(R) = 1.12$.
 \section{Padrões nos bits}
 \label{sec:flajolet-martin:pattern}
 
-Na seção anterior, descrevemos o Algoritmo da \proc{Contagem Probabilística}. Vamos, agora, tentar entender a intuição
+Na seção anterior, descrevemos o algoritmo da \proc{Contagem Probabilística}. Vamos, agora, tentar entender a intuição
 por trás dessa solução.
 
-No Algoritmo $\pc(\Mbb, h, L)$, a função~$h$ que mapeia uniformemente os elementos do fluxo $\Mbb$ para inteiros entre 
+No algoritmo $\pc(\Mbb, h, L)$, a função~$h$ que mapeia uniformemente os elementos do fluxo $\Mbb$ para inteiros entre 
 $0$ e $2^L - 1$ inclusive nos permite supor que o fluxo $\Mbb$ é na verdade um fluxo de números inteiros no intervalo 
 $[0, 2^L - 1]$. Nesse sentido, podemos considerar um fluxo $\Mbb_h = \{ h(x_1), h(x_2), \dots, h(x_s), \dots \} = 
 \{ y_1, y_2, \dots, y_s, \dots \} $, em que $x_1, x_2, \dots$ são elementos de $\Mbb$.
@@ -137,7 +137,7 @@ fluxo $\Mbb_h$. Portanto, a melhor estimativa nesse caso é afirmar que $\Mbb_h$
 
 A ideia descrita nessa seção é a base para os algoritmos que resolvem o problema da contagem distinta aproximada, e 
 entendê-la ajudará a vermos a origem das soluções. Na próxima seção, serão expostas alguns aspectos da prova do 
-funcionamento do Algoritmo da $\pcounting$. 
+funcionamento do algoritmo da $\pcounting$. 
 
 \section{Qualidade da aproximação}
 \label{sec:flajolet-martin:analysis}
@@ -145,11 +145,11 @@ funcionamento do Algoritmo da $\pcounting$.
 Essa seção busca destacar as principais \textbf{etapas} da análise desse algoritmo feita por Flajolet e 
 Martin~\citep{flajolet:martin:85}. Dessa forma, os detalhes técnicos de algums passos da demonstração podem ser 
 explorados com mais calma a partir da leitura do artigo original. Suponha que a quantidade de elementos distintos de um 
-fluxo $\Mbb$ seja $n$. O valor esperado da variável $R$ definida na linha~\ref{li:pc:r:def} do Algoritmo $\pc$ é 
+fluxo $\Mbb$ seja $n$. O valor esperado da variável $R$ definida na linha~\ref{li:pc:r:def} do algoritmo $\pc$ é 
 aproximadamente $\lg \phi n$, em que $\phi = 0.77351{\dots}$ E o desvio padrão de $R$ é em torno de $1.12$. 
 
 O primeiro passo da análise é definir a variável aleatória $R_n$ como sendo o valor da variável $R$ ao final da execução 
-do Algoritmo~$\pc$ para uma entrada $\Mbb$ com $n$ elementos distintos, função de hash~$h$ e inteiro $L$. Dessa forma, o 
+do algoritmo~$\pc$ para uma entrada $\Mbb$ com $n$ elementos distintos, função de hash~$h$ e inteiro $L$. Dessa forma, o 
 interesse principal da demonstração é encontrar fórmulas ou estimativas para:
 \begin{itemize}
   \item $p_{n,k} = \mathbb{P}(R_n = k)$: probabilidade de uma saída de $\pc$ ser igual a $k$
@@ -211,7 +211,7 @@ $\Ebb(R_n^2)$.
 \section{\proc{Lei dos Grandes Números} novamente}
 
 Na seção anterior, foi visto que $\Ebb(R_n) \approx \lg \phi n$, em que $\phi \approx 0.77351$. Assim, se o valor 
-do contador $R$ no final do Algoritmo~$\pc$ para uma entrada com $n$ elementos distintos for aproximadamente igual a 
+do contador $R$ no final do algoritmo~$\pc$ para uma entrada com $n$ elementos distintos for aproximadamente igual a 
 $\lg \phi n$, então a saída desse algoritmo é aproximadamente $n$. A Tabela \ref{tab:flajolet} mostra que, em alguns 
 casos, a saída do programa é praticamente igual a $n$ quando $R_n \approx \lg \phi n$.
 
@@ -236,17 +236,17 @@ casos, a saída do programa é praticamente igual a $n$ quando $R_n \approx \lg 
       & \multicolumn{1}{|p{2.5cm}|}{\centering 50000.0 }  \\
       \hline
      \end{tabular}
-     \caption{\label{tab:flajolet} Comparação entre $n$ e a saída do Algoritmo~$\pc$ quando $R_n \approx \lg \phi n$.}
+     \caption{\label{tab:flajolet} Comparação entre $n$ e a saída do algoritmo~$\pc$ quando $R_n \approx \lg \phi n$.}
   \end{table}
 \end{center}
 
 Contudo, $\Vbb(R_n) \approx\nolinebreak 1.12$ e consequentemente, o desvio padrão de $R_n$ é aproximadamente~$1$. 
 Isto quer dizer que o valor de $R_n$ pode ser uma unidade maior ou menor que $\lg \phi n$, o que implica que a 
-estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o Algoritmo $\pc$ apresenta uma grande 
+estimativa de $n$ possa ser duas vezes maior ou menor que $n$. Logo, o algoritmo $\pc$ apresenta uma grande 
 variabilidade.
 
 De modo similar ao que foi visto em \hyperref[sec:morris:plus]{\proc{Morris} e a \proc{Lei dos Grandes Números}}, 
-podemos obter a partir do Algoritmo~$\pc$, uma solução com variância menor. Assim, o Algoritmo $\pc{+}$ recebe um fluxo 
+podemos obter a partir do algoritmo~$\pc$, uma solução com variância menor. Assim, o algoritmo $\pc{+}$ recebe um fluxo 
 de dados $\Mbb$, inteiros $m$ e $L$, além de uma lista de $m$ funções de hash $\mathbb{H}$, em que cada função 
 $\mathbb{H}_i$ desse grupo mapeia uniformemente os elementos de $\Mbb$ para o intervalo $[0, 2^L - 1]$. Esse algoritmo 
 modificado manterá $m$ vetores $\bitmap$, de maneira que para cada elemento $x$ de $\Mbb$, para todo $0 \leq j < m$, 
@@ -284,7 +284,7 @@ passar uma função de hash diferente para cada execução, a fim de produzir ve
   \End
 \end{codebox}
 
-Seja $\bar{R_n}$ o valor da variável $\bar{R}$ ao final da execução do Algoritmo~$\pc{+}$ para uma
+Seja $\bar{R_n}$ o valor da variável $\bar{R}$ ao final da execução do algoritmo~$\pc{+}$ para uma
 entrada com $n$ elementos distintos. De forma análoga aos resultados vistos em \hyperref[sec:morris:plus]{\proc{Morris} 
 e a \proc{Lei dos Grandes Números}}, pode-se concluir que:
 \[ \Ebb(\bar{R_n}) \approx \lg \phi n   \; \; \text{e}  \; \; \Vbb(\bar{R_n}) \approx \frac{1.12}{m} \ . \]
@@ -294,7 +294,7 @@ vez que, encontrar funções que mapeiem na prática os elementos de um conjunto
 tarefa simples. Para contornar esse problema, os autores propuseram o uso da \textbf{média estocástica}.
 
 Essa ideia consiste em dividr os elementos da entrada em $m$ lotes e usar parte da informação do hash dos elementos para 
-definir em qual lote um elemento deve ir. As linhas \ref{li:pcpp:for:start}-\ref{li:pcpp:for:end} do Algoritmo~$\pc{++}$ 
+definir em qual lote um elemento deve ir. As linhas \ref{li:pcpp:for:start}-\ref{li:pcpp:for:end} do algoritmo~$\pc{++}$ 
 a seguir mostram como essa divisão é feita.
 
 \begin{codebox}
@@ -306,15 +306,15 @@ a seguir mostram como essa divisão é feita.
   \li       $\bitmap_{j}[i] \gets 0$
           \End
       \End
-  \li \For cada $x$ em $\Mbb$                                               \label{li:pcpp:for:start}
+  \li \For cada $x$ em $\Mbb$                                                         \label{li:pcpp:for:start}
       \Do
   \li   $\texttt{lote} \gets h(x) \mod k$
   \li   $y \gets \lfloor h(x) / k \rfloor$
-  \li   $\bitmap_{\texttt{lote}}[y] = 1$                                             \label{li:pcpp:for:end}
+  \li   $\bitmap_{\texttt{lote}}[y] = 1$                                              \label{li:pcpp:for:end}
       \End
   \li \For $i$ de $0$ até $m$
       \Do
-  \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
+  \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$             \label{li:pcpp:rmin}
       \End
   \li $\bar{R} = \sum_{j=0}^{m} \mathbb{R}[j] / m$
   \li \Return $m \times 2^{\bar{R}}/\phi$
@@ -323,7 +323,7 @@ a seguir mostram como essa divisão é feita.
 
 Se a função de hash $h$ distribuir os $n$ elementos distintos do conjunto $\Mbb$ uniformemente entre os $m$ lotes, então 
 esperamos que cada lote tenha aproximadament $\frac{n}{m}$ elementos. Nesse caso, $2^{\bar{R_n}}/\phi$ seria uma 
-aproximação para $\frac{n}{m}$. É devido a este fato que a saída do Algoritmo~$\pc{++}$ é 
+aproximação para $\frac{n}{m}$. É devido a este fato que a saída do algoritmo~$\pc{++}$ é 
 $\mathbf{m} \times 2^{\bar{R_n}}/\phi$, pois este valor é uma estimativa para $\mathbf{m} \times \frac{n}{m} = n$.
 
 Por fim, o erro relativo esperado do algoritmo \pcpp é em torno de $0.78 / \sqrt{m}$. Isto quer 
@@ -339,132 +339,234 @@ um risco maior de escolher o conjunto errado.
 Uma das principais razões para escolhermos algoritmos \textit{probabilísticos} ao invés de algoritmos \textit{exatos} é 
 o \textbf{consumo de memória reduzido}. Como já foi abordado, para resolver o problema da contagem distinta de forma 
 \textit{exata}, podemos manter uma tabela de hash e conforme os elementos forem processados, adicionar a esta tabela 
-somente aqueles elementos que não apareceram ainda. Assim,  quantidade de elementos distintos processados será o tamanho 
+somente aqueles elementos que não apareceram ainda. Assim, a quantidade de elementos distintos processados será o tamanho 
 da tabela. Suponha que cada hash seja um inteiro de 4 bytes (32 bits) e que existam um milhão de itens distintos 
-percorridos. Para armazenar essa tabela, gastaríamos pelos menos 4 MB. Por outro lado, se usarmos o Algoritmo da
+percorridos. Para armazenar essa tabela, gastaríamos pelos menos 4 MB. Por outro lado, se usarmos o algoritmo da
 $\pcounting$ para resolver esse problema, o consumo de memória seria proporcional ao valor $m$ e não dependeria da 
 quantidade de itens distintos. Logo, se o vetor $\bitmap$ for um vetor de inteiros de 4 bytes de tamanho $m$, e 
 $m$ for igual a 1024, então a memória consumida por esse algoritmo seria em torno de 4 KB, que é um consumo de espaço
 \textbf{1000 vezes menor} que a solução exata.
 
-O erro relativo esperado da $\pcounting$ para $m = 1024$ é em torno de $2{,}5\%$. Assim, para um conjunto de milhões de 
+O erro relativo esperado da $\pcounting$ para $m = 1024$ é em torno de $2{,}5\%$. Logo, para um fluxo de milhões de 
 itens distintos, o erro seria em torno das dezenas ou centenas de milhares. Com esse tipo de desvio, teríamos como 
-mensurar a ordem de grandeza do número de itens distintos de um conjunto com bastante confiança. Contudo, para utilizar
-a $\pcounting$, o viés desse algoritmo deve ser entendido.
+mensurar a ordem de grandeza do número de itens distintos que já passaram pelo fluxo com bastante confiança. Contudo, 
+para utilizar a $\pcounting$, o viés desse algoritmo deve ser entendido.
 
 O \textbf{viés} de um estimador é a diferença entre seu valor esperado e o valor real do parâmetro estimado. 
 Nesse sentido, a estimativa da quantidade de elementos em um conjunto devolvida pelo algoritmo de \proc{Morris} é 
 \textit{não-viesada}, uma vez que, o \hyperref[morris:theorem:expected_value]{Teorema do valor esperado de $\Morris$} 
 afirma que o valor esperado deste estimador é igual ao tamanho do conjunto estimado.
 
-Na prova descrita em ~\citep{flajolet:martin:85}, o estimador de $\l gn$ é $R_n$, que representa o valor da variável 
-$R$ ao final da execução de \proc{ProbabilisticCounting}, tendo como entrada um conjunto com $n$ elementos distintos. 
-Vimos que o valor esperado de $R_n$ é aproximadamente $\lg \phi n$, que é diferente de $\lg n$. Portanto, $R_n$ é um 
-estimador \textit{viesado} de $\lg n$. E analogamente, o estimador devolvido por \pcpp também 
-é \textit{viesado}.  
+Na prova descrita em ~\citep{flajolet:martin:85}, o estimador de $\lg n$ é $R_n$, que representa o valor da variável 
+$R$ ao final da execução de \proc{ProbabilisticCounting}, tendo como entrada um fluxo de dados com $n$ elementos 
+distintos. Vimos que o valor esperado de $R_n$ é aproximadamente $\lg \phi n$, que é diferente de $\lg n$. Portanto, 
+$R_n$ é um estimador \textit{viesado} de $\lg n$. E analogamente, o estimador devolvido por \pcpp também é 
+\textit{viesado}.  
 
-Então, além do erro padrão, existe também o viés do Algoritmo da \proc{Contagem Probabilística}, cujo valor é $1 + 0{,}31/m$. Contudo, para 
-valores de $m$ maiores que $32$, o viés se torna desprezíval se comparado ao erro padrão. Dessa forma, uma pessoa pode 
-ser induzida a concluir que a escolha de $m$ é o único cuidado que ela deve tomar ao utilizar esse algoritmo. No 
-entanto, ainda existe o problema de estimar \textit{baixas cardinalidades} com essa estrutura.
+Então, além do erro padrão, existe também o viés do algoritmo da \proc{Contagem Probabilística}, cujo valor é 
+$1 + 0{,}31/m$. Contudo, para valores de $m$ maiores que $32$, o viés se torna desprezíval se comparado ao erro padrão. 
+Dessa forma, uma pessoa pode ser induzida a concluir que a escolha de $m$ é o único cuidado que ela deve tomar ao 
+utilizar esse algoritmo. No entanto, ainda existe o problema de estimar \textbf{baixas cardinalidades} com essa 
+estrutura.
 
-Suponha, portanto, que $m = 64$ e que o hash do único elemento de um conjunto $\Mbb$ comece com $1$. Logo, se passarmos 
-$\Mbb$ para \pcpp, existiria um vetor $\bitmap$ cuja primeira posição teria o valor $1$, e o 
-restante dos vetores $\bitmap$ teriam todos valores zero. Assim, $\bar{R}$ seria igual a $1/64$, e o estimador de $n$ 
-teria o valor de $64 \ 2^{\frac{1}{64}}/\phi \approx 83.64$. Esta estimativa está muito distante do valor real, que é 
-$n = 1$.
+Suponha, portanto, que $m = 64$ e que o hash do único elemento que já passou por um fluxo $\Mbb$ comece com $1$. Logo, 
+se passarmos $\Mbb$ para \pcpp, existiria um vetor $\bitmap$ cuja primeira posição teria o valor $1$, e o restante dos 
+vetores $\bitmap$ teriam todos valores zero. Assim, $\bar{R}$ seria igual a $1/64$, e o estimador de $n$ teria o valor 
+de $64 \ 2^{\frac{1}{64}}/\phi \approx 83.64$. Esta estimativa está muito distante do valor real, que é $n = 1$.
 
 Em vista disso, um tratamento especial deve ser dado para situações em que a cardinalidade do número de elementos 
 distintos de um conjunto for baixa. Poderíamos, por exemplo, manter os elementos percorridos em uma tabela de hash, e 
 quando essa tabela atingisse um certo tamanho, passaríamos a usar a estratégia original da $\pcounting$, que é preencher
 os vetores $\bitmap$.  
 
+O artigo ~\citep{flajolet:martin:85} nomeia esse problema como \textbf{não-lineariade inicial}, e os autores afirmam que 
+a estimativa se aproxima do valor esperado do estimador assim que a quantidade de elementos distintos atinge pelo menos 
+os valores $10m{-}20m$. Assim, para $m = 64$, é esperado que essa imprecisão inicial desapareça quando aproximadamente 
+$600{-}1200$ dados distintos passarem pelo fluxo.
+
+Vale lembrar, no entanto, que a proposta inicial para a adoção de estruturas de dados probabilísticas é o alto consumo 
+de memória conforme o volume dos dados cresce. Nesse sentido, esse problema da não-linearidade inicial pode ser 
+desconsiderado dependendo da situação. 
+
 \section{Um, dois, três, \dots, repetido, \dots}
 \label{sec:fm:experiments}
 
-Nesta seção, vamos ver os resultados das simulações da $\pcounting$, em que, um milhão de inteiros gerados 
-aleatoriamente foram inseridos em uma implementação dessa estrutura. 
+Nesta seção, apresentaremos a implementação da $\pcounting$. Além disso, experimentos similares ao da 
+Seção~\ref{chap:morris:experiments} forams realizados com o objetivo de se verificar a acurácia dessa solução.
 
-Essa implementação é baseada no Algoritmo \pcpp. Contudo, enquanto que nesse pseudocódigo, a 
-$\pcounting$ é descrita como uma função que recebe um fluxo de dados e retorna o número de elementos distintos deste 
-fluxo, o código utilizado nas simulações utiliza uma abordagem voltada à orientação a objetos. Nesse sentido, definimos 
-uma classe \texttt{ProbabilisticCounting}, cujo construtor recebe os parâmetros $m$ e $L$. E nesta classe, existem os 
+A implementação foi baseada no algoritmo $\pcpp$ com algumas modificações. Dessa forma, definimos uma 
+classe~\texttt{ProbabilisticCounting}, cujo construtor recebe os parâmetros $m$ e $L$. E nesta classe, existem os 
 métodos \texttt{adiciona} e \texttt{conta}. O primeiro adiciona um elemento à estrutura, e o segundo devolve a 
-estimativa do valor de elementos distintos. Dessa forma, as simulações se baseiam em uma versão \textit{online} da 
+estimativa da quantidade de elementos distintos. Dessa forma, as simulações se baseiam em uma versão \textit{online} da 
 $\pcounting$ para que possamos observar como a estimativa evolui conforme novos itens são inseridos nessa estrutura.
 
-O valor de $L$ utilizado nas simulações foi de $32$, uma vez que, nas linguagens de programação, um inteiro é geralmente 
-armazenado em $4$ bytes de memória. Já os valores de $m$ escolhidos foram 64 e 1024. Com estes valores, podemos ver 
-a evolução da precisão da estimativa conforme $m$ aumenta. Outro detalhe de implementação é que não estamos utilizando a 
-função de hash~$h$ durante a inserção dos elementos na estrutura, uma vez que, os elementos inseridos já são inteiros e 
-assim, não há a necessidade de mapeá-los para inteiros entre $0$ e $2^{32} - 1$. Ou seja, implicitamente, temos que $h$
-é a função identidade.
+\begin{lstlisting}[style=mypython,caption=Implementação do algoritmo $\pc$,captionpos=b, label=pc:code]
+class ProbabilisticCounting:
+    def __init__(self, m=64, L=64):
+        self.m: int = m
+        self.L: int = L
+        self.phi = 0.77351
+        self.BITMAP: List[List[int]] = []
 
-O gráfico a seguir exibe a evolução da estimativa conforme itens vão sendo inseridos na estrutura com $m = 64$. Observe 
-que o erro relativo do algoritmo ficou em torno de $10\%$.
+        for _ in range(0, self.m):
+            self.BITMAP.append([None] * self.L)
 
-\begin{figure}
+        self.R: List[int] = [0] * self.m
+        self.R_sum = 0
+
+    def p(self, x: int):
+        return (x & -x).bit_length() - 1
+
+    def adiciona(self, x: int):
+        lote = x % self.m
+        y = x // self.m
+        self.BITMAP[lote][self.p(y)] = 1
+
+        while self.BITMAP[lote][self.R[lote]] == 1:
+            self.R[lote] += 1
+            self.R_sum += 1
+
+    def conta(self):
+        R = self.R_sum / self.m
+
+        return floor((self.m * pow(2, R)) / self.phi)
+\end{lstlisting}
+
+Vamos comentar alguns detalhes de implementação do Programa~\ref{pc:code}. O primeiro deles é relacionado ao método
+~\texttt{adiciona}, que foi baseados nas linhas~\ref{li:pcpp:for:start}--\ref{li:pcpp:rmin} do algoritmo~$\pcpp$. O 
+principal diferencial da implementação desse método na classe~\texttt{ProbabilisticCounting} é que já mantemos o menor
+valor de $R$ de cada lote atualizado, como pode ser visto no \texttt{while}. Dessa forma, a complexidade de se adicionar
+um elemento nessa estrutura é $O(1)$ amortizado.
+
+O próximo comentário é relacionado ao método \texttt{p} da classe \texttt{ProbabilisticCounting}, que é a implementação 
+da função $\rho$ do algoritmo~$\pcpp$. Essa função deve retornar a posição do bit menos significativo de um inteiro. 
+Assim, dado um inteiro~$x$, tentaremos encontrar uma forma de encontrar o índice do bit menos significativo de $x$. É 
+interessante, portanto, considerar o oposto de $x$, ou seja, $-x$. Considerando a representação binária de $x$, $-x$ 
+pode ser calculado da seguinte maneira: $\overline{x} + 1$, em que $\overline{x}$ é o complementar de $x$, cuja 
+representação binária inverte todos os bits de $x$. Tendo $-x$ em mãos, a posição do único bit ligado de 
+$x \ {\&} \ {-x}$ coincide com a posição do bit menos significativo de~$x$. Para recuperar esse bit, usamos a função 
+\texttt{bit\_length} do \proc{Python} que retorna a menor quantidade de bits para se representar um inteiro. Esta função 
+é indexado a partir do 1 e, por isso, subtraímos 1 do retorno dela. 
+
+Vamos ver alguns exemplos para deixar esse ideia mais clara. Tome $\rho(10) = \rho(110_2) = 1$. Para chegar nesse valor 
+de 1, primeiro encontramos $-10 = \overline{10} + 1 = 001_2 + 001_2 = 010_2$. Em seguida, calculamos
+$10 \ {\&} \ -10 = 110_2 \ {\&} \ 010_2 = 010_2$. E a posição do único bit ligado deste número binário é 1. Outro 
+exemplo é $\rho(9) = \rho(101_2) = 0$. Assim, $-9 = \overline{9} + 1 = 101_2 + 001_2 = 110_2$, e 
+$9 \ {\&} \ -9 = 101_2 \ {\&} \ 110_2 = 001_2$. E o único bit ligado deste número está na posição zero, que coincide com
+o valor de $\rho(9)$.
+
+Outro detalhe de implementação é que não estamos utilizando a função de hash~$h$ durante a inserção dos elementos na 
+estrutura, uma vez que, os elementos inseridos já são inteiros, e estamos supondo que eles são gerados uniformente. 
+Assim, não há a necessidade de mapeá-los para inteiros entre $0$ e $2^{L} - 1$. Ou seja, implicitamente, temos que $h$ é 
+a função identidade.
+
+Tendo esclarecido os detalhes de implementação do Programa~\ref{pc:code}, podemos partir para a apresentação dos 
+experimentos. O valor de $L$ utilizado nesses experimentos foi de $64$, uma vez que, a maior parte das linguagens de 
+programação suporta atualmente inteiros de $8$~bytes. Além disso, gerar número aleatórios de 64 bits garatem uma maior
+variabilidade dos dados dos experimentos. Outro fato importante de se destacar é que cada experimento foi repetido duas 
+vezes, uma vez utilizando uma estrutura \texttt{ProbabilisticCounting} com $m = 64$ e outra vez, com uma estrutura com 
+$m = 1024$. A razão disso ter sido feito foi averiguar se aumentando o valor de $m$, teríamos uma melhora considerável 
+na precisão.
+
+O primeiro experimento tem como objetivo verificar a evolução da estimativa devolvida pela estrutura 
+conforme mais elementos são inseridos nela. Dessa forma, foram feitas duas simulações, em que cada simulação consistiu
+em gerar um milhão de inteiros aleatórios e inserí-los em uma estrutura~\texttt{ProbabilisticCounting}. Analisaremos
+primeiramente as estimativas da estrutura com $m = 64$. O gráfico da Figura~\ref{fig:pc:64:full} exibe a evolução da
+estimativa devolvida pela estrutura~\texttt{ProbabilisticCounting} com $m = 64$ e podemos notar, que a estimativa, 
+representada pela linha laranja, ficou um pouco distante do valor real, representado pela linha azul.
+
+\begin{figure}[h]
   \centering
-  \includegraphics[height=6cm, width=15cm]{figuras/probabilistic_counting_m_64_full.png}
-	\caption{Simulação do Algoritmo da $\pcounting$ com $m = 64$}
-  \label{fig:pcounting:64}
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_full_64.png}
+	\caption{Simulação do algoritmo~$\pc$ com $m = 64$ (todas as iterações)}
+  \label{fig:pc:64:full}
 \end{figure}
 
 \newpage
-Os próximos gráficos mostram, respectivamente, a porção inicial do gráfico acima e a evolução do erro relativo nessa 
-faixa, que corresponde às 256 primeiras estimativas. É possível, dessa forma, notar que a $\pcounting$ é pouco precisa 
-para estimar cardinalidades baixas, podendo o erro relativo ser maior que $1000\%$ nessas situações.
+Na Seção~\ref{sec:fm:low_estimates}, vimos que a $\pcounting$ estima pequenas cardinalidades com um grande erro. Esse 
+fato pode ser confirmado na Figura~\ref{fig:pc:64:first:erro}, em que é possível perceber o erro relativo pode chegar 
+até $8000\%$ logo nas primeiras iterações da simulação. A Figura~\ref{fig:pc:64:first} exibe as primeiras estimativas 
+devolvidas pela estrutura~\texttt{ProbabilisticCounting}, e podemos notar que a linha das estimativas já começa distante 
+da linha dos valoes reais.
 
-\begin{figure}
+\begin{figure}[h]
   \centering
-  \subfloat[\centering Evolução da estimativa $(m=64)$]
-  {{\includegraphics[width=7cm]{figuras/probabilistic_counting_m_64_first.png} }}
-  \qquad
-  \subfloat[\centering Evolução do erro relativo $(m=64)$]
-  {{\includegraphics[width=7cm]{figuras/probabilistic_counting_erro_m_64_first.png} }}
-  \caption{Resumo das primeiras 256 estimativas}
-  \label{fig:pcounting:64:first}
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_first_64.png}
+	\caption{Simulação do algoritmo~$\pc$ com $m = 64$ (128 primeiras iterações)}
+  \label{fig:pc:64:first}
 \end{figure}
 
-Então, podemos aumentar o valor do parâmetro $m$ para tentar corrigir esses problemas de precisão. O gráfico seguinte 
-mostra uma simulação em que os mesmos elementos da primeira simulação foram inseridos em uma estrutura com $m = 1024$.
-Comparando o gráfico abaixo com a Figura \refeq{fig:pcounting:64}, nota-se que a precisão das estimativas de 
-cardinalidades maiores que setecentos mil melhoraram quando o valor de $m$ foi aumentado, e o erro para essas 
-cardinalidades altas ficou na faixa de $10\%$. Contudo, o erro ainda ficou acima do erro relativo esperado para 
-$m = 1024$, que é aproximadamente~$2{,}5\%$.
-
-\begin{figure}
+\begin{figure}[h]
   \centering
-  \includegraphics[scale=0.50]{figuras/pcounting-estimate-1024.png}
-	\caption{Evolução da estimativa do $\pcounting$ com $m = 1024$}
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_first_64.png}
+	\caption{Erro relativo da simulação do algoritmo~$\pc$ com $m = 64$ (128 primeiras iterações)}
+  \label{fig:pc:64:first:erro}
 \end{figure}
 
 \newpage
+Vamos, assim, desconsiderar as primeiras iterações da simulação anterior e observar se a $\pcounting$ começa a produzir
+melhores estimativas conforme mais itens são inseridos nessa estrutura. A Figura~\ref{fig:pc:64:erro:sem:first} nos 
+permite concluir que nessas simulação, o problema de se estimar baixas cardinalidades desaparece após aproximadamente 
+128~iterações, e depois deste ponto, os erros relativos das estimativas devolvidas ficaram dentro da faixa de erro 
+esperado, que é de $10\%$, até por volta da iteração de número 150413. E dessa iteração em diante, os valores estimados 
+passam a frequentemente ter um erro maior que o esperado.
 
-Os dois últimos gráficos resumem o comportamento da $\pcounting$ com $m = 1024$ para cardinalidades baixas. Novamente, a
-faixa escolhida para as construções desses gráficos foi as primeiras 256 estimativas. E o erro para estimar essas 
-cardinalidades aumentou se comparado com o erro da estrutura com $m = 64$.
-
-\begin{figure}
+\begin{figure}[h]
   \centering
-  \subfloat[\centering Evolução da estimativa $(m=1024)$]{{\includegraphics[width=7cm]{figuras/pcounting-estimate-1024-first.png} }}
-  \qquad
-  \subfloat[\centering Evolução do erro relativo $(m=1024)$]{{\includegraphics[width=7cm]{figuras/pcounting-error-1024-first.png} }}
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_sem_first_64.png}
+	\caption{Erro relativo da simulação do algoritmo~$\pc$ com $m = 64$ (desconsiderando asd 128 primeiras iterações)}
+  \label{fig:pc:64:erro:sem:first}
 \end{figure}
 
-A precisão da $\pcounting$, portanto, pode ser melhorada se aumentarmos o valor de $m$, mas essa ideia não se aplica 
-para cardinalidades baixas. O artigo ~\citep{flajolet:martin:85} nomeia esse problema como 
-\textit{não-lineariade inicial}, e os autores afirmam que a estimativa se aproxima do valor esperado do estimador assim 
-que a cardinalidade estimada atinge pelo menos os valores $10m{-}20m$. Assim, para $m = 64$, é esperado que essa 
-imprecisão inicial desapareça por volta de seiscentos itens, e pela Figura \ref{fig:pcounting:64:first}, vemos que esse 
-problema desapare por volta de cento e cinquenta itens.
+Dessa forma, podemos verificar se aumentando o valor do parâmetro $m$, esses problemas de precisão serão corrigidos. O 
+gráfico da Figura~\ref{fig:pc:1024:full} mostra o resultado do experimento em que os mesmos elementos da simulação do 
+algoritmo~$\pcpp$ com $m = 64$ foram inseridos em uma estrutura com $m = 1024$. E é possível notar que as estimativas da 
+estrutura com $m = 1024$ estão bastantes próximas dos valores reais.
 
-Vale lembrar, no entanto, que a proposta inicial para a adoção de estruturas de dados probabilísticas é o alto consumo 
-de memória conforme o volume dos dados cresce. Nesse sentido, esse problema da \textit{não-linearidade inicial} pode ser 
-desconsiderado dependendo da situação. 
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_full_1024.png}
+	\caption{Simulação do algoritmo~$\pc$ com $m = 1024$ (todas as iterações)}
+  \label{fig:pc:1024:full}
+\end{figure}
 
-Por fim, a $\pcounting$ foi um dos primeiros algoritmos que surgiram para resolver o problema da 
-\textbf{Contagem Distinta Aproximada}, e até nos dias atuais, é uma das estruturas com o menor erro relativo esperado, 
-que é igual a $0.78 / \sqrt{m}$. Embora a $\pcounting$ não seja tão utilizado atualmente, o seu desenvolvimento serviu 
-de base para que outras estruturas com menor consumo de memória surgissem, e a análise delas é muito semelhante à 
-análise presente em ~\citep{flajolet:martin:85}. 
+\newpage
+Precisamos, agora, verificar como se comportam as estimativas de baixas cardinalidades da estrutura
+~\texttt{ProbabilisticCounting} com $m = 1024$. Vamos, assim, destacar as primeiras 2048 iterações da simulação 
+anterior. A Figura~\ref{fig:pc:1024:first:erro}, que exibe o erro relativo nas iterações iniciais, evidencia que o erro
+relativo pode chegar até $120.000\%$. E a Figura~\ref{fig:pc:1024:first}, que mostra as estimativas iniciais, reforça o 
+fato que aumentar o valor de $m$ \textbf{piora} a estimativa de valores pequenos.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_first_1024.png}
+	\caption{Simulação do algoritmo~$\pc$ com $m = 1024$ (2048 primeiras iterações)}
+  \label{fig:pc:1024:first}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_first_1024.png}
+	\caption{Erro relativo da simulação do algoritmo~$\pc$ com $m = 1024$ (2048 primeiras iterações)}
+  \label{fig:pc:1024:first:erro}
+\end{figure}
+
+\newpage
+Vamos, portanto, desconsiderar as primeiras 2048 iterações da simulação anterior. A partir da observação da Figura~
+\ref{fig:pc:1024:erro:sem:first}, que exibe a evolução das estimativas devolvidas pela estrutura
+~\texttt{ProbabilisticCounting} desconsiderado essas iterações iniciais, podemos concluir que o erro relativo do 
+algoritmo~$\pc$ ficou dentro da faixa esperada, que é de $2\%$, na maior parte da simulção. Dessa forma, se queremos 
+estimar valores grandes, aumentar o parâmetro de $m$ \textbf{melhora} a precisão das estimativas.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_sem_first_1024.png}
+	\caption{Simulação do algoritmo~$\pc$ com $m = 1024$ (desconsiderando as 2048 primeiras iterações)}
+  \label{fig:pc:1024:erro:sem:first}
+\end{figure}
+
+% Por fim, a $\pcounting$ foi um dos primeiros algoritmos que surgiram para resolver o problema da 
+% \textbf{Contagem Distinta Aproximada}, e até nos dias atuais, é uma das estruturas com o menor erro relativo esperado, 
+% que é igual a $0.78 / \sqrt{m}$. Embora a $\pcounting$ não seja tão utilizado atualmente, o desenvolvimento dela serviu 
+% de base para que outras estruturas com menor consumo de memória surgissem, e a análise delas é muito semelhante à 
+% análise presente em ~\citep{flajolet:martin:85}. 

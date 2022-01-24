@@ -1,27 +1,15 @@
-import sys
-from pathlib import Path
-from random import randint
-from typing import Dict
+import random
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        raise Exception("Empty filename")
 
-    filename = sys.argv[1]
-    N = int(sys.argv[2]) if len(sys.argv) >= 3 else 5000
-    L = int(sys.argv[3]) if len(sys.argv) >= 4 else 64
+def gera_numeros_aleatorios(N, L=64):
+    generated_numbers = set()
+    MAX_NUMBER = (1 << L) - 1
 
-    max_number = (1 << L) - 1
-    generated: Dict[int, int] = {}
-    for _ in range(0, N):
-        x = randint(1, max_number)
-        while generated.get(x) is not None:
-            x = randint(1, max_number)
-        generated[x] = 1
+    while len(generated_numbers) < N:
+        number = random.randint(0, MAX_NUMBER)
 
-    generated_list = list(generated.keys())
+        if number in generated_numbers:
+            continue
 
-    Path("./input").mkdir(parents=True, exist_ok=True)
-    with open(f"./input/{filename}", "w") as f:
-        for x in generated_list:
-            f.write(f"{x}\n")
+        generated_numbers.add(number)
+        yield number
