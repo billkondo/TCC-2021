@@ -478,7 +478,7 @@ representada pela linha laranja, ficou um pouco distante do valor real, represen
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_full_64.png}
-	\caption{Simulação do algoritmo~$\pc$ com $m = 64$ (todas as iterações)}
+	\caption{Simulação do algoritmo~$\pcpp$ com $m = 64$ (todas as iterações)}
   \label{fig:pc:64:full}
 \end{figure}
 
@@ -492,14 +492,14 @@ da linha dos valoes reais.
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_first_64.png}
-	\caption{Simulação do algoritmo~$\pc$ com $m = 64$ (128 primeiras iterações)}
+	\caption{Simulação do algoritmo~$\pcpp$ com $m = 64$ (128 primeiras iterações)}
   \label{fig:pc:64:first}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_first_64.png}
-	\caption{Erro relativo da simulação do algoritmo~$\pc$ com $m = 64$ (128 primeiras iterações)}
+	\caption{Erro relativo da simulação do algoritmo~$\pcpp$ com $m = 64$ (128 primeiras iterações)}
   \label{fig:pc:64:first:erro}
 \end{figure}
 
@@ -514,7 +514,7 @@ passam a frequentemente ter um erro maior que o esperado.
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_sem_first_64.png}
-	\caption{Erro relativo da simulação do algoritmo~$\pc$ com $m = 64$ (desconsiderando asd 128 primeiras iterações)}
+	\caption{Erro relativo da simulação do algoritmo~$\pcpp$ com $m = 64$ (desconsiderando asd 128 primeiras iterações)}
   \label{fig:pc:64:erro:sem:first}
 \end{figure}
 
@@ -526,7 +526,7 @@ estrutura com $m = 1024$ estão bastantes próximas dos valores reais.
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_full_1024.png}
-	\caption{Simulação do algoritmo~$\pc$ com $m = 1024$ (todas as iterações)}
+	\caption{Simulação do algoritmo~$\pcpp$ com $m = 1024$ (todas as iterações)}
   \label{fig:pc:1024:full}
 \end{figure}
 
@@ -540,14 +540,14 @@ fato que aumentar o valor de $m$ \textbf{piora} a estimativa de valores pequenos
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_first_1024.png}
-	\caption{Simulação do algoritmo~$\pc$ com $m = 1024$ (2048 primeiras iterações)}
+	\caption{Simulação do algoritmo~$\pcpp$ com $m = 1024$ (2048 primeiras iterações)}
   \label{fig:pc:1024:first}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_first_1024.png}
-	\caption{Erro relativo da simulação do algoritmo~$\pc$ com $m = 1024$ (2048 primeiras iterações)}
+	\caption{Erro relativo da simulação do algoritmo~$\pcpp$ com $m = 1024$ (2048 primeiras iterações)}
   \label{fig:pc:1024:first:erro}
 \end{figure}
 
@@ -561,12 +561,45 @@ estimar valores grandes, aumentar o parâmetro de $m$ \textbf{melhora} a precis�
 \begin{figure}[h]
   \centering
   \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_erro_sem_first_1024.png}
-	\caption{Simulação do algoritmo~$\pc$ com $m = 1024$ (desconsiderando as 2048 primeiras iterações)}
+	\caption{Simulação do algoritmo~$\pcpp$ com $m = 1024$ (desconsiderando as 2048 primeiras iterações)}
   \label{fig:pc:1024:erro:sem:first}
 \end{figure}
 
-% Por fim, a $\pcounting$ foi um dos primeiros algoritmos que surgiram para resolver o problema da 
-% \textbf{Contagem Distinta Aproximada}, e até nos dias atuais, é uma das estruturas com o menor erro relativo esperado, 
-% que é igual a $0.78 / \sqrt{m}$. Embora a $\pcounting$ não seja tão utilizado atualmente, o desenvolvimento dela serviu 
-% de base para que outras estruturas com menor consumo de memória surgissem, e a análise delas é muito semelhante à 
-% análise presente em ~\citep{flajolet:martin:85}. 
+Os dois experimentos apresentados destacam a imprecisão da estrutura~\texttt{ProbabilisticCounting} na hora de se 
+estimar pequenos valores e que aumentando o valor de $m$, essa imprecisão ficar ainda pior. Contudo, a partir de um 
+certo ponto, esse problema desaparece e um parâmetro $m$ maior implica em um algoritmo mais preciso. Dessa forma, os
+próximos experimentos têm como objetivo verificar a variância da $\pcounting$ e como o valor $m$ a influencia.
+
+Assim como foi feito na Seção~\ref{chap:morris:experiments}, repetimos as simulações dos experimentos anteriores várias 
+vezes e coletamos a frequência de cada estimativa. A Figura~\ref{fig:pc:64:variance} exibe como as estimativas 
+devolvidas pela estrutura~\texttt{ProbabilisticCounting} com $m = 64$ ficaram distribuídas após dez mil simulações. Boa
+parte dos valores devolvidos ficaram entre 900.000 e 1.100.000, que corresponde à faixa de erro relativo de $10\%$. No 
+entanto, existem casos em que as simulações produziram estimativas muito fora do esperado, podendo o erro chegar a quase 
+$50\%$ nessas situações. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_variance_64.png}
+	\caption{Distribuição das estimativas devolvidas pelo algoritmo~$\pcpp$ com $m = 64$ em 10 mil simulações}
+  \label{fig:pc:64:variance}
+\end{figure}
+
+Já na Figura~\ref{fig:pc:1024:variance}, podemos observar a distribuição das estimativas devolvidas por uma estrutura 
+com $m = 1024$. É posível notar que a maior parte dos valores ficaram entre 980.000 e 1.020.000, que corresponde à faixa
+de erro relativo de $2\%$. E mesmo que existam situações nas quais o erro tenha sido maior que o esperado, o desvio 
+nesse experimento não ficou maior que $10\%$. Aumentar o valor de $m$, portanto, reduz a variância do estimador da 
+$\pcounting$.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=6cm, width=\textwidth]{figuras/probabilistic_counting_variance_1024.png}
+	\caption{Distribuição das estimativas devolvidas pelo algoritmo~$\pcpp$ com $m = 1024$ em 10 mil simulações}
+  \label{fig:pc:1024:variance}
+\end{figure}
+
+\newpage
+Por fim, a $\pcounting$ foi um dos primeiros algoritmos que surgiram para resolver o problema da 
+\textbf{Contagem Distinta Aproximada}, e até nos dias atuais, é uma das estruturas com o menor erro relativo esperado, 
+que é igual a $0.78 / \sqrt{m}$. Embora a $\pcounting$ não seja tão utilizado atualmente, o desenvolvimento dela serviu 
+de base para que outras estruturas com menor consumo de memória surgissem, e a análise delas é muito semelhante à 
+análise presente em ~\citep{flajolet:martin:85}. 
