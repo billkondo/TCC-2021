@@ -1,4 +1,4 @@
-from morris import Morris
+from .morris import Morris
 
 
 class MorrisPlus:

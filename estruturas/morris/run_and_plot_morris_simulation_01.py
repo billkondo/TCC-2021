@@ -54,6 +54,7 @@ def constroi_grafico(
     ax.set_ylabel("Quantidade de elementos", labelpad=15)
     ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris}")
     ax.legend()
+    ax.ticklabel_format(style="plain")
     plt.tight_layout()
     plt.show()
 
@@ -79,6 +80,7 @@ def constroi_grafico_erro_relativo(
     ax.set_ylabel("Erro relativo", labelpad=15)
     ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris}")
     ax.legend()
+    ax.ticklabel_format(style="plain")
     plt.tight_layout()
     plt.show()
 
