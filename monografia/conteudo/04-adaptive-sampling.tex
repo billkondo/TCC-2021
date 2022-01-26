@@ -1,24 +1,24 @@
-\newcommand{\asampling}{\textit{adaptive sampling}}
+\newcommand{\asampling}{\proc{Amostragens Adaptativas}}
+\newcommand{\AS}{\proc{AdaptiveSampling}}
 
-\chapter{Contagem distinta aproximada: $\asampling$ (1990)}
+\chapter{Contagens por amostragens}
 
-Este capítulo aborda uma outra solução para o problema da \textit{contagem distinta aproximada}. O 
-Capítulo~\ref{lab:flajolet-martin} apresentou o Algoritmo de Flajolet e Martin, que estima o número de elementos 
-distintos de um conjunto com erro relativo esperado em torno de $0.78 / \sqrt{m}$. 
+Este capítulo aborda uma outra solução para o problema da contagem distinta aproximada. O 
+Capítulo~\ref{lab:flajolet-martin} apresentou o algoritmo da $\pcounting$, que estima o número de elementos distintos em 
+um fluxo de dados com desvio padrão em torno de $0.78 / \sqrt{m}$. 
 
-O Algoritmo $\asampling$ publicado no artigo ~\citep{adptive:sampling:90} tem um erro relativo esperado de 
-aproximadamente $1.20 / \sqrt{m}$. As razões para estudarmos esse algoritmo mesmo que ele apresente um erro relativo 
-maior ficarão claras nas próximas seções.
+O algoritmo das $\asampling$ tem um desvio padrão de aproximadamente $1.20 / \sqrt{m}$~\citep{adptive:sampling:90}. 
+As razões para estudarmos esse algoritmo mesmo que ele apresente um erro maior ficarão claras nas próximas seções.
 
-\section{Algoritmo $\asampling$}
+\section{Algoritmo das $\asampling$}
 \label{lab:chapter:04:01}
 
-Assim como a solução do capítulo anterior, o algoritmo $\asampling$ também se baseia em padrões de bits dos hashes dos 
+O algoritmo das $\asampling$ também se baseia em \hyperref[sec:flajolet-martin:pattern]{padrões de bits} dos hashes dos 
 elementos examinados. Podemos dessa forma, considerar que os elementos que estamos contando são palavras binárias de 
 tamanho infinito. 
 
-Enquanto que no algoritmo $\pcounting$, estávamos interessados na \textbf{aparição} de um elemento com 
-prefixo da forma $0^*1$, no Algoritmo $\asampling$, queremos saber a \textbf{quantidade} de elementos com um certo 
+Enquanto que no algoritmo da $\pcounting$, estávamos interessados na \textbf{aparição} de um elemento com 
+prefixo da forma $0^*1$, no algoritmo das $\asampling$, queremos saber a \textbf{quantidade} de elementos com um certo 
 prefixo $0^*$.
 
 Nesse sentido, vamos manter um contador $\delta$ cujo valor inicialmente é zero, e uma lista que armazena elementos com 
@@ -32,14 +32,14 @@ esperamos que a cada $2^{\delta}$ itens, pelo menos um item tenha um prefixo des
 $l$ elementos com prefixo $0^{\delta}$, então devemos ter examinado pelo menos $2^{\delta} l$ itens, e este valor é 
 justamente a estimativa para a quantidade de valores distintos.
 
-O Algoritmo \proc{AdaptiveSampling} recebe um conjunto $\Mbb$ com $n$ elementos distintos e um parâmetro $m$, que está 
-relacionado com o consumo de memória do algoritmo e sua precisão. O algoritmo usa uma função de hash $h$ para associar 
-os elementos de $\Mbb$ no intervalo $[0, 2^L - 1]$, em que $L$ é a quantidade de bits necessária para se conseguir fazer 
-essa associação sem colisões. E o valor devolvido é um estimador~$\hat{n}$ para $n$ da forma $2^{\delta} l$, em que $l$ 
-e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem formato~$0^{\delta}$.
+O algoritmo $\AS$ recebe um fluxo $\Mbb$ com $n$ elementos distintos e um parâmetro $m$, que está relacionado com o 
+consumo de memória do algoritmo e sua precisão. O algoritmo usa uma função de hash $h$ para associar os elementos de 
+$\Mbb$ no intervalo $[0, 2^L - 1]$, em que $L$ é a quantidade de bits necessária para se conseguir fazer essa associação 
+sem colisões. E o valor devolvido é um estimador~$\hat{n}$ para $n$ da forma $2^{\delta} l$, em que $l$ e $\delta$ 
+indicam que estão sendo armazenados $l$ elementos cujos prefixos tem formato~$0^{\delta}$. 
 
 \begin{codebox}
-  \Procname{$\proc{AdaptiveSampling}(\Mbb, m)$}
+  \Procname{$\AS(\Mbb, m)$}
   \li $LIST \gets \emptyset$
   \li $\delta \gets 0$
   \li \For cada $x$ em $\Mbb$ 
@@ -47,7 +47,7 @@ e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem
          \If $0^{\delta}$ é prefixo de $h(x)$ \textbf{e} $h(x) \not\in LIST$
   \li             \Then $LIST \gets LIST \cup \{ h(x) \}$
          \End
-  \li    \While $|LIST| > m$
+  \li    \While $|LIST| > m$                                   \label{li:as:while}
   \li    \Do
          $\delta \gets \delta + 1$
   \li    $TEMPLIST \gets \emptyset$
@@ -66,6 +66,173 @@ e $\delta$ indicam que estão sendo armazenados $l$ elementos cujos prefixos tem
 \end{codebox}
 
 
-\section{Vantagens do algoritmo $\asampling$}
+\section{Vantagens das $\asampling$}
 \label{lab:chapter:04:02}
+
+Vamos simular um exemplo pequeno para ver o funcionamento do algortimo $\AS$. Assim, queremos estimar quantos elementos 
+distintos o fluxo $\Mbb = \{ 36, 108, 41, 82, 71, 61, 5, 54, 10 \}$ possui. Vamos considerar que a função de hash~$h$ é
+a identidade, ou seja, $h(x) = x$ para todo $x$ em $\Mbb$, e que $m = 3$. 
+
+Inicialmente, a lista $LIST$ está vazia e $\delta = 0$. Na primeira iteração do algoritmo, temos que verificar se o 
+prefixo da representação binária do elemento $36 = 100100_2$ é da forma $0^0$. Note que qualquer elemento passará nessa 
+validação quando $\delta$ for zero, uma vez que, uma palavra binária precisar ter o prefixo $0^0$ significa que ela tem 
+que começar com 0 zeros, ou seja, pode começar com 0 ou com 1. Dessa forma, podemos inserir o elemento $36$ na lista, de 
+modo que $LIST = \{ 36 \}$. Na próxima iteração, temos que fazer a mesma verificação anterior, só que usando o item de 
+valor 108. Novamente, como $\delta = 0$, podemos adicionar $108$ à lista. Analogamente, podemos incluir os elementos 
+$41$ e $82$ em $LIST$. 
+
+Contudo, na quarta iteração, entramos no \texttt{while} da linha~\ref{li:as:while}, já que $|LIST| = 4 > m = 3$. Por 
+conta disso, incrementamos o valor de $\delta$ e devemos manter em $LIST$ somente aqueles valores cujos prefixos de suas 
+representações binárias são da forma $0^{1}$. Vamos ver quais elementos estão em $LIST$:
+\[ 
+       LIST = \{ 36 = 100100_2, 108 = 1101100_2, 41 = 101001_2, 82 = 1010010_2 \} \  .        
+\] 
+Precisamos manter nessa lista, somente aqueles números com prefixos que começam com~0. Assim, temos que remover o valor 
+41 de $LIST$. 
+
+Continuando o exemplo, precisamos verificar se adicionaremos $71 = 1000111_2$ na lista. Agora, os elementos em $LIST$ 
+precisam começar com zero, logo 71 não é inserido. A mesma situação ocorre para os valores $61 = 111101_2$ e 
+$5 = 101_2$. Em seguida, podemos inserir $54 = 110110_2$ em $LIST$ e como novamente, $|LIST| = 4 > 3$, teremos que 
+incrementar $\delta$ e filtrar os itens da lista. A lista atual é 
+\[ \{ 36 = 100100_2, 108 = 1101100_2, 82 = 1010010_2, 54 = 110110_2 \} \ . \] 
+Manteremos somentes os valores cujos prefixos binários se iniciam com dois zeros e portanto, 
+\[ LIST = \{ 36 = 100100_2, 108 = 1101100_2 \} \ . \]
+Por fim, o valor $10 = 1010_2$ não é inserido na lista. E a estimativa para a quantidade de elementos distintos em 
+$\Mbb$ é $2^{\delta} \times |LIST| = 2^2 \times 2 = 8$. Essa estimativa está cometendo um erro de um item, já que $\Mbb$
+tem 9 itens distintos. 
+
+O fato curioso desse exemplo acontece nas primeiras iterações, quando $\delta$ tem valor zero. Vimos que qualquer 
+elemento de $\Mbb$ nessas primeiras iterações é inserido em $LIST$. Nessas situações, a estimativa do algoritmo é 
+$2^{\delta} \times |LIST| = 2^{0} \times |LIST| = |LIST|$. Ou seja, para os primeiros $m$ itens distintos de $\Mbb$, a 
+estimativa tem precisão de $100\%$. Isto é o principal diferencial do algoritmo das $\asampling$ para o algoritmo da 
+$\pcounting$, que como foi visto em \hyperref[sec:fm:low_estimates]{Estimando valores pequenos com a $\pcounting$}, 
+apresenta um erro muito grande quando queremos estimar cardinalidades baixas.
+
+Outro fator importante de se destacar é que o estimador devolvido por $\AS$ é 
+\textbf{não-viesado}~\citep{adptive:sampling:90}. Essa característica está relacionada com o fato do algoritmo das 
+$\asampling$ poder estimar valores pequenos sem problemas.
+
+\newpage
+\section{Um, dois, três, \dots, repetido, \dots}
+
+Nesta seção apresentaremos a implementação do algoritmo das \proc{Amostragens} \proc{Adaptativas} e experimentos.
+
+\begin{lstlisting}[style=mypython,caption=Implementação do algoritmo $\AS$,captionpos=b, label=as:code]
+class AdaptiveSampling:
+    def __init__(self, m=64, L=64):
+        self.delta: int = 0
+        self.m: int = m
+        self.L: int = L
+        self.LIST: Set[int] = set()
+   
+    def zeros_no_prefixo(self, x: int):
+        return (x & -x).bit_length() - 1
+
+    def adiciona(self, x: int):
+        if x not in self.LIST and self.zeros_no_prefixo(x) >= self.delta:
+            self.LIST.add(x)
+
+        while len(self.LIST) > self.m:
+            self.delta = self.delta + 1
+            temp: Set[int] = set()
+
+            for y in self.LIST:
+                if self.zeros_no_prefixo(y) >= self.delta:
+                    temp.add(y)
+
+            self.LIST = temp
+
+    def conta(self):
+        return (1 << self.delta) * len(self.LIST)
+\end{lstlisting}
+
+Vamos comentar alguns aspectos do código do Programa~\ref{as:code} baseado no algoritmo~$\AS$. O primeiro detalhe de 
+implementação desse programa é que a função de hash~$h$ é implicitamente a função identidade, uma vez que, estamos 
+supondo que os elementos inseridos são inteiros gerados uniformemente. O próximo detalhe é a estrutura de dados 
+utilizada para representar a lista $LIST$. Foi escolhido um \proc{Set} para representá-la, que é uma estrutura padrão do 
+\proc{Python} que permite inserir elementos e verificar se um elemento está presente nela em tempo constante. Dessa 
+forma, a complexidade do método~\texttt{adiciona} é $O(1)$ amortizado.
+
+Por fim, falta esclarecer como foi codificada a verificação se um inteiro tem prefixo da forma $0^{\delta}$, ou em 
+outras palavras, se a representação binária de um inteiro começa com pelo menos $\delta$ zeros. Lembremos dessa forma, 
+da função $\rho$ definida na Seção~\ref{sec:flajolet-martin:algorith}. Essa função recebe um inteiro $x$ e devolve a 
+posição indexada a partir do zero do bit menos significativo de $x$. Assim, $\rho(12) = \rho(1100_2) = 2$ e 
+$\rho(24) = \rho(11000_2) = 3$. Note que a saída da função $\rho$ corresponde também a quantidade de bits zeros no 
+prefixo da representação binário de um inteiro. Podemos, portanto, aproveitar o método $p$ da classe 
+\texttt{ProbabilisticCounting} para implementar o método \texttt{zeros\_no\_prefixo} e agora, para verificar se um 
+inteiro~$x$ tem prefixo da forma $0^{\texttt{delta}}$, basta testar se \texttt{zeros\_no\_prefixo(x)} é maior ou igual a
+\texttt{delta}.
+
+A partir deste ponto, apresentaremos experimentos do algoritmo das \proc{Amostragens} \proc{Adaptativas}, que serão os 
+mesmos realizados na Seção~\ref{sec:fm:experiments}, só que utilizando a estrutura apresentada nesse capítulo. Assim, o 
+primeiro experimento que veremos é observar a evolução das estimativas devolvidas por pela 
+estrutura~\texttt{AdaptiveSampling} conforme mais itens são inseridos nela. Portanto, as simulações realizadas 
+consistiram de inserirmos um milhão de inteiros de 64 bits distintos gerados uniformemente em estruturas com $m = 64$ e 
+$m = 1024$. E o mesmo gerador de números pseudo-aleatórios dos experimentos do algoritmo~$\pcounting$ foi utilizado, ou 
+seja, os mesmos elementos foram aproveitados.
+
+Os resusltados do primeiro experimento podem ser observados na Figura~\ref{fig:as:experimento:01}. É possível perceber
+que a estrutura com o parâmetro $m$ maior teve uma precisão melhor que a estrutura com $m$ menor ao longo de todo a 
+simulação. 
+
+\begin{figure}
+  \centering
+  \captionsetup{justification=centering,margin=2cm}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_full_64.png}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_full_1024.png}
+  \end{subfigure}
+  \caption{Experimento 1 - foram inseridos um milhão de elementos em estruturas \texttt{AdaptiveSampling} com $m = 64$
+  e $m = 1024$}
+  \label{fig:as:experimento:01}
+\end{figure}
+
+Os gráficos com a evolução do erro relativo do experimento anterior estão na Figura~\ref{fig:as:experimento:01:erro}.
+O desvio padrão do algorimto das $\asampling$ é $1.20/\sqrt{m}$. Portanto, para a estrutura com $m = 64$, o desvio 
+padrão é de $15\%$. As estimativas devolvidas por essa estrutura ficaram entre dois desvios padrões na maior parte da 
+simulação, apresentado um erro maior quando esta se aproximava do fim. Já a estrutura com $m = 1024$ tem desvio padrão 
+de $3{,}75\%$, e a simulação dela teve valores que ficaram dentro de um desvio na maior parte das iterações.
+
+\begin{figure}
+  \centering
+  \captionsetup{justification=centering,margin=2cm}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_full_64.png}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_full_1024.png}
+  \end{subfigure}
+  \caption{Experimento 1 - Erro Relativo}
+  \label{fig:as:experimento:01:erro}
+\end{figure}
+
+\newpage
+Antes de passarmos para o segundo experimento, é interessante verificarmos se o que foi discutido na 
+Seção~\ref{lab:chapter:04:02} pode ser observado nas simulações anteriores. Queremos, assim, averiguar se o algoritmo 
+das~$\asampling$ funciona de fato para baixas cardinalidades. A Figura~\ref{fig:as:experimento:01:erro:first} tem
+gráficos que destacam o erro relativo nas primeiras~256 iterações no caso da estrutura com $m = 64$ e nas primeiras~1024
+iterações no caso da estrutura com $m = 1024$. Nos dois casos, podemos notar que o erro relativo nas primeiras~$m$ 
+iterações é de fato zero e que o erro após essas iterações iniciais se manteve controlado, dentro da faixa de dois 
+desvios padrões.
+
+\begin{figure}
+  \centering
+  \captionsetup{justification=centering,margin=2cm}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_first_64.png}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_first_1024.png}
+  \end{subfigure}
+  \caption{Experimento 1 - Erro Relativo nas primeiras iterações}
+  \label{fig:as:experimento:01:erro:first}
+\end{figure}
 
