@@ -171,7 +171,7 @@ consistiram de inserirmos um milhão de inteiros de 64 bits distintos gerados un
 $m = 1024$. E o mesmo gerador de números pseudo-aleatórios dos experimentos do algoritmo~$\pcounting$ foi utilizado, ou 
 seja, os mesmos elementos foram aproveitados.
 
-Os resusltados do primeiro experimento podem ser observados na Figura~\ref{fig:as:experimento:01}. É possível perceber
+Os resultados do primeiro experimento podem ser observados na Figura~\ref{fig:as:experimento:01}. É possível perceber
 que a estrutura com o parâmetro $m$ maior teve uma precisão melhor que a estrutura com $m$ menor ao longo de todo a 
 simulação. 
 
@@ -180,19 +180,20 @@ simulação.
   \captionsetup{justification=centering,margin=2cm}
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_full_64.png}
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_full_64.png}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_full_1024.png}
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_full_1024.png}
   \end{subfigure}
-  \caption{Experimento 1 - foram inseridos um milhão de elementos em estruturas \texttt{AdaptiveSampling} com $m = 64$
-  e $m = 1024$}
+  \caption{Experimento 1 - Algoritmo $\AS$ \linebreak Foram inseridos um milhão de inteiros de 64 bits gerados 
+  uniformemente em estruturas \texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$}
   \label{fig:as:experimento:01}
 \end{figure}
 
+\newpage
 Os gráficos com a evolução do erro relativo do experimento anterior estão na Figura~\ref{fig:as:experimento:01:erro}.
-O desvio padrão do algorimto das $\asampling$ é $1.20/\sqrt{m}$. Portanto, para a estrutura com $m = 64$, o desvio 
+O desvio padrão do algoritmo das $\asampling$ é $1.20/\sqrt{m}$. Portanto, para a estrutura com $m = 64$, o desvio 
 padrão é de $15\%$. As estimativas devolvidas por essa estrutura ficaram entre dois desvios padrões na maior parte da 
 simulação, apresentado um erro maior quando esta se aproximava do fim. Já a estrutura com $m = 1024$ tem desvio padrão 
 de $3{,}75\%$, e a simulação dela teve valores que ficaram dentro de um desvio na maior parte das iterações.
@@ -202,17 +203,16 @@ de $3{,}75\%$, e a simulação dela teve valores que ficaram dentro de um desvio
   \captionsetup{justification=centering,margin=2cm}
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_full_64.png}
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_full_64.png}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_full_1024.png}
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_full_1024.png}
   \end{subfigure}
-  \caption{Experimento 1 - Erro Relativo}
+  \caption{Experimento 1 - Algoritmo $\AS$ \linebreak Erro Relativo}
   \label{fig:as:experimento:01:erro}
 \end{figure}
 
-\newpage
 Antes de passarmos para o segundo experimento, é interessante verificarmos se o que foi discutido na 
 Seção~\ref{lab:chapter:04:02} pode ser observado nas simulações anteriores. Queremos, assim, averiguar se o algoritmo 
 das~$\asampling$ funciona de fato para baixas cardinalidades. A Figura~\ref{fig:as:experimento:01:erro:first} tem
@@ -226,13 +226,52 @@ desvios padrões.
   \captionsetup{justification=centering,margin=2cm}
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_first_64.png}
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_first_64.png}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=3cm]{figuras/adaptive_sampling_erro_first_1024.png}
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_first_1024.png}
   \end{subfigure}
-  \caption{Experimento 1 - Erro Relativo nas primeiras iterações}
+  \caption{Experimento 1 - Algoritmo~$\AS$ \linebreak Erro relativo nas primeiras iterações da simulação}
   \label{fig:as:experimento:01:erro:first}
 \end{figure}
 
+Para o segundo experimento, repetimos as simulações anteriores dez mil vezes. No final do processo, construímos 
+histogramas a partir das frequências das estimativas devolvidas. A Figura~\ref{fig:as:experimento:02:64} tem a 
+distribuição das estimativas da estrutura~\texttt{AdaptiveSampling} com $m = 64$ e a 
+Figura~\ref{fig:as:experimento:02:1024}, com $m = 1024$. Nos dois casos, quase todos as estimativas ficaram dentro de
+dois desvios padrões, e houve uma grande concentração de estimativas entre um desvio padrão. E podemos notar que com um
+valor de $m$ maior, a variância do algoritmo das $\asampling$ diminuiu.
+
+\begin{figure}
+  \centering
+  \captionsetup{justification=centering,margin=.5cm}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_variance_64.png}
+    \caption{$m = 64$}
+    \label{fig:as:experimento:02:64}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_variance_1024.png}
+    \caption{$m = 1024$}
+    \label{fig:as:experimento:02:1024}
+  \end{subfigure}
+  \caption{Experimento 2 - Algoritmo $\AS$ \linebreak
+    Foram realizadas dez mil simulações. Em cada simulação, foram inseridos um milhão de inteiros de~64 bits gerados 
+    uniformemente em estruturas~\texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$. Os resultados foram utilizados para 
+    a construção de histogramas de frequência.}
+  \label{fig:as:experimento:02}
+\end{figure}
+
+Com os experimentos apresentados nessa seção, foi possível termos noção da precisão do algoritmo das~$\asampling$. Este
+algoritmo tem pontos interessantes, como se basear em padrões de bits para construir a estimativa e funcionar bem para
+fluxos com poucos elementos. Porém, a principal desvantagem dessa solução é o consumo de memória. Se considerarmos uma
+aplicação que precise lidar com hashes de 32~bits, então o consumo de memória da estrutura~\texttt{AdaptiveSampling} 
+seria de pelos menos $32 \times m$ bits no pior caso, quando a lista $LIST$ passa a ter mais que $m$ elementos. Esse
+custo é o mesmo que o do algoritmo~$\pcounting$, quando $L = 32$. Dessa forma, as $\asampling$, que tem um desvio maior
+que a $\pcounting$, tem também um consumo de espaço pior. 
+
+Para que esse gasto de memória fosse reduzido sem perder muito na questão precisão, demorou mais de 20 anos desde a 
+criação da $\pcounting$. Veremos na próxima seção como podemos reduzir ainda mais o consumo de memória.

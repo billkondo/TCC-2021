@@ -10,9 +10,9 @@ from .adaptive_sampling import AdaptiveSampling
 
 matplotlib.rcParams["text.usetex"] = True
 font = {
-    "family": "normal",
+    "family": "monospace",
     "weight": "bold",
-    "size": 8,
+    "size": 12,
 }
 matplotlib.rc("font", **font)
 
@@ -39,7 +39,7 @@ def constroi_grafico(tamanhos: List[int], respostas: List[int], m: int, inicio: 
     ax.set_xlabel("Iterações", labelpad=15)
     ax.set_ylabel("Quantidade de elementos distintos", labelpad=15)
     ax.legend()
-    ax.set_title(rf"Experimento 1 - Algoritmo $\textbf{{AdaptiveSampling}}$ ($m = {{{m}}}$)")
+    ax.tick_params(axis="x", labelsize=8)
     plt.ticklabel_format(style="plain")
     plt.tight_layout()
     plt.show()
@@ -68,7 +68,7 @@ def constroi_grafico_erro(
         color="orange",
         alpha=0.5,
     )
-    ax.axhline(y=0, xmin=0, xmax=1000000, linestyle="--")
+    ax.axhline(y=0, xmin=0, xmax=1000000, linestyle=":")
 
     if erro_esperado:
         ax.axhline(
@@ -102,7 +102,7 @@ def constroi_grafico_erro(
     ax.set_xlabel("Iterações", labelpad=15)
     ax.set_ylabel("Erro Relativo", labelpad=15)
     ax.legend()
-    ax.set_title(rf"Experimento 1 - Algoritmo $\textbf{{AdaptiveSampling}}$ ($m = {{{m}}}$)")
+    ax.tick_params(axis="x", labelsize=8)
     plt.ticklabel_format(style="plain")
     plt.tight_layout()
     plt.show()
