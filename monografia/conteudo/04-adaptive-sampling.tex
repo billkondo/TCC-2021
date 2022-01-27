@@ -177,21 +177,20 @@ simulação.
 
 \begin{figure}
   \centering
-  \captionsetup{justification=centering,margin=2cm}
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_full_64.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_full_64.png}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_full_1024.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_full_1024.png}
   \end{subfigure}
-  \caption{Experimento 1 - Algoritmo $\AS$ \linebreak Foram inseridos um milhão de inteiros de 64 bits gerados 
-  uniformemente em estruturas \texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$}
+  \caption{Primeiro experimento do algoritmo $\AS$. Foram inseridos em estruturas \texttt{AdaptiveSampling} com $m = 64$ 
+  e $m = 1024$, um milhão de inteiros de 64 bits gerados uniformemente.}
   \label{fig:as:experimento:01}
 \end{figure}
 
-\newpage
+
 Os gráficos com a evolução do erro relativo do experimento anterior estão na Figura~\ref{fig:as:experimento:01:erro}.
 O desvio padrão do algoritmo das $\asampling$ é $1.20/\sqrt{m}$. Portanto, para a estrutura com $m = 64$, o desvio 
 padrão é de $15\%$. As estimativas devolvidas por essa estrutura ficaram entre dois desvios padrões na maior parte da 
@@ -200,16 +199,16 @@ de $3{,}75\%$, e a simulação dela teve valores que ficaram dentro de um desvio
 
 \begin{figure}
   \centering
-  \captionsetup{justification=centering,margin=2cm}
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_full_64.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_erro_full_64.png}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_full_1024.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_erro_full_1024.png}
   \end{subfigure}
-  \caption{Experimento 1 - Algoritmo $\AS$ \linebreak Erro Relativo}
+  \caption{Erro relativo do primeiro experimento do algoritmo $\AS$. Para $m = 64$, o erro ficou dentro de dois desvios
+  padrões. Para $m = 1024$, a faixa de erro foi de um desvio padrão.}
   \label{fig:as:experimento:01:erro}
 \end{figure}
 
@@ -223,16 +222,16 @@ desvios padrões.
 
 \begin{figure}
   \centering
-  \captionsetup{justification=centering,margin=2cm}
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_first_64.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_erro_first_64.png}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_erro_first_1024.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_erro_first_1024.png}
   \end{subfigure}
-  \caption{Experimento 1 - Algoritmo~$\AS$ \linebreak Erro relativo nas primeiras iterações da simulação}
+  \caption{Erro relativo nas primeiras iterações do experimento do algoritmo~$\AS$. Nas $m$ inserções iniciais,o erro 
+  relativo do algoritmo é zero.}
   \label{fig:as:experimento:01:erro:first}
 \end{figure}
 
@@ -245,23 +244,21 @@ valor de $m$ maior, a variância do algoritmo das $\asampling$ diminuiu.
 
 \begin{figure}
   \centering
-  \captionsetup{justification=centering,margin=.5cm}
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_variance_64.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_variance_64.png}
     \caption{$m = 64$}
     \label{fig:as:experimento:02:64}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth, height=5cm]{figuras/adaptive_sampling_variance_1024.png}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_variance_1024.png}
     \caption{$m = 1024$}
     \label{fig:as:experimento:02:1024}
   \end{subfigure}
-  \caption{Experimento 2 - Algoritmo $\AS$ \linebreak
-    Foram realizadas dez mil simulações. Em cada simulação, foram inseridos um milhão de inteiros de~64 bits gerados 
-    uniformemente em estruturas~\texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$. Os resultados foram utilizados para 
-    a construção de histogramas de frequência.}
+  \caption{Segundo experimento do algoritmo $\AS$. Foram realizadas dez mil simulações e em cada simulação, foram 
+    inseridos em estruturas~\texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$, um milhão de inteiros de~64 bits 
+    gerados uniformemente. Os resultados foram utilizados para a construção dos histogramas de frequência acima. }
   \label{fig:as:experimento:02}
 \end{figure}
 
