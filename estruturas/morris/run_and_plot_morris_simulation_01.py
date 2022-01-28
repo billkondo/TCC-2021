@@ -8,7 +8,7 @@ from morris import Morris
 
 matplotlib.rcParams["text.usetex"] = True
 font = {
-    "family": "normal",
+    "family": "monospace",
     "weight": "bold",
     "size": 12,
 }
@@ -55,6 +55,8 @@ def constroi_grafico(
     ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris}")
     ax.legend()
     ax.ticklabel_format(style="plain")
+    ax.tick_params(axis="x", labelsize=8)
+    ax.tick_params(axis="y", labelsize=8)
     plt.tight_layout()
     plt.show()
 
@@ -81,6 +83,8 @@ def constroi_grafico_erro_relativo(
     ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris}")
     ax.legend()
     ax.ticklabel_format(style="plain")
+    ax.tick_params(axis="x", labelsize=8)
+    ax.tick_params(axis="y", labelsize=8)
     plt.tight_layout()
     plt.show()
 
@@ -100,7 +104,8 @@ if __name__ == "__main__":
         morris.adiciona()
         contadores_devolvidos_por_morris.append(morris.conta())
         contadores_esperados.append(i)
-        erro_relativo.append((morris.conta() - i) / i)
+        erro = (morris.conta() - i) / i
+        erro_relativo.append(erro * 100)
 
     constroi_grafico(
         contadores_esperados,

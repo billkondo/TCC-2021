@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 matplotlib.rcParams["text.usetex"] = True
 font = {
-    "family": "normal",
+    "family": "monospace",
     "weight": "bold",
     "size": 12,
 }
@@ -36,12 +36,15 @@ if __name__ == "__main__":
         ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris++}")
         ax.legend()
         ax.ticklabel_format(style="plain")
+        ax.tick_params(axis="x", labelsize=8)
+        ax.tick_params(axis="y", labelsize=8)
         plt.tight_layout()
         plt.show()
 
-    def desenha_grafico_02(inicio=0, fim=-1, xticks: List[int] = []):
+    def desenha_grafico_02(inicio=0, fim=-1, xticks: List[int] = [], erro_esperado: int = 0):
         _, ax = plt.subplots()
-        ax.plot(contadores_esperados[inicio:fim], erro_relativo[inicio:fim], alpha=0.5, color="orange")
+        erro_relativo_100 = list(map(lambda erro: 100 * erro, erro_relativo))
+        ax.plot(contadores_esperados[inicio:fim], erro_relativo_100[inicio:fim], alpha=0.5, color="orange")
         ax.set_xlabel("Iterações", labelpad=15)
         ax.set_ylabel("Erro relativo", labelpad=15)
         ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris++}")
@@ -51,10 +54,29 @@ if __name__ == "__main__":
         if xticks:
             ax.set_xticks(xticks)
 
+        if erro_esperado:
+            ax.axhline(
+                y=erro_esperado,
+                xmin=0,
+                xmax=1000000,
+                linestyle=":",
+            )
+            ax.axhline(
+                y=-erro_esperado,
+                xmin=0,
+                xmax=1000000,
+                linestyle=":",
+            )
+
+            new_yticks = list(set(list(ax.get_yticks()) + [erro_esperado, -erro_esperado]))
+            ax.set_yticks(new_yticks)
+
+        ax.tick_params(axis="x", labelsize=8)
+        ax.tick_params(axis="y", labelsize=8)
         plt.tight_layout()
         plt.show()
 
     desenha_grafico_01()
-    desenha_grafico_02()
-    desenha_grafico_02(fim=50)
-    desenha_grafico_02(inicio=50, xticks=[50, 250000, 500000, 750000, 1000000])
+    desenha_grafico_02(erro_esperado=10)
+    desenha_grafico_02(fim=50, erro_esperado=10)
+    desenha_grafico_02(inicio=50, xticks=[50, 250000, 500000, 750000, 1000000], erro_esperado=10)

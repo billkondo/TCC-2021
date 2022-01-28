@@ -205,7 +205,6 @@ rótulo $X_3 = 3$.
   \includegraphics[scale=0.50]{figuras/morris-tree.png}
 	\caption{Árvore de decisão para determinar $\Ebb\big(2^{X_3} - 1\big)$ no algoritmo \proc{Morris}. A fração próxima de 
   cada folha indica a probabilidade de $X_3$ assumir o valor em seu rótulo.}\label{fig:morris-tree}
-
 \end{figure}  
 
 Inspecionando as folhas da árvore acima, vemos que
@@ -625,6 +624,26 @@ podemos usar um gerador de inteiros pseudo-aleatórios no lugar de~$g$ sem neces
 do algoritmo. As simulações a serem exibidas a seguir devem mostrar indícios que de fato, a precisão do algoritmo de 
 $\Morris$ não fica comprometida com essa mudança.
 
+\begin{figure}
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_first.png}
+    \caption{Estimativas}
+    \label{fig:morris:100}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_erro_first.png}
+    \caption{Erro Relativo}
+    \label{fig:morris:error:100}
+  \end{subfigure}
+  \caption{Primeiras iterações do primeiro experimento do algoritmo~$\Morris$. Foram inseridos em uma 
+  estrutura~\texttt{Morris}, um milhão de elementos. Em outras palavras, o método~\texttt{adiciona} foi chamado um 
+  milhão de vezes. Depois de cada inserção, o resultado do método~\texttt{conta} foi utilizado para a construção dos 
+  gráficos com a evolução da estimativa e do erro relativo.}
+\end{figure}
+
 O primeiro experimento a ser apresentado é simular uma situação em que um milhão de elementos são inseridos na estrutura 
 \texttt{Morris}. Para fazermos isso, chamamos o método \texttt{adiciona} do Programa~\ref{morris:code} um milhão de 
 vezes. Para cada vez que executamos esse método, calculamos o erro relativo do algoritmo, ou seja, na $i$-ésima 
@@ -638,23 +657,9 @@ da \textbf{estimativa} de itens inseridos ao longo das iterações e a linha azu
 itens inseridos ao longo das iterações. Assim, analisando essas duas linhas, podemos ter uma ideia se a estimativa do 
 algoritmo se aproxima ou se distância do valor correto conforme mais iterações acontecem.
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_first.png}
-	\caption{Simulação do algoritmo $\Morris$ (100 primeiras iterações)}
-  \label{fig:morris:100}
-\end{figure}
-
 No entanto, somente com esse gráfico, pode ser difícil visualizar o erro relativo do algoritmo ao longo das iterações. 
 É por isso que construímos também, o gráfico da Figura~\ref{fig:morris:error:100}, em que o eixo $x$ representa 
 novamente as iterações da simulação e o eixo $y$, o erro relativo.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_erro_first.png}
-	\caption{Erro relativo da simulação do algoritmo $\Morris$ (100 primeiras iterações)}
-  \label{fig:morris:error:100}
-\end{figure}
 
 Para as primeiras cem iterações da simulação, é possível perceber pela Figura~\ref{fig:morris:error:100}, que o erro 
 relativo não é maior que $0.8$. Na seção sobre a 
@@ -663,18 +668,23 @@ relativo cometido por $\Morris(\Mbb)$ é quase certamente menor do que 4. Nesse 
 está dentro do esperado. Vamos agora, verificar se esse resultado esperado se mantém conforme mais iterações são 
 realizadas.
 
-\begin{figure}[h]
+\begin{figure}
   \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_full.png}
-	\caption{Simulação do algoritmo $\Morris$ (todas as iterações)}
-  \label{fig:morris:1000000}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_erro_full.png}
-	\caption{Erro relativo da simulação do algoritmo $\Morris$ (todas as iterações)}
-  \label{fig:morris:error:1000000}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_full.png}
+    \caption{Estimativas}
+    \label{fig:morris:1000000}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_erro_full.png}
+	  \caption{Erro Relativo}
+    \label{fig:morris:error:1000000}
+  \end{subfigure}
+  \caption{Todas as iterações do primeiro experimento do algoritmo~$\Morris$.}
 \end{figure}
 
 A Figura~\ref{fig:morris:error:1000000}, que exibe um gráfico com erro relativo ao longo de toda a simulação, nos leva
@@ -686,6 +696,14 @@ contador~$X$ ser incrementado no algoritmo~$\Morris$. Contudo, esse incremento d
 vez que, existem casos nessa simulação em que um crescimento da estimativa ocorreu em menos iterações que o 
 crescimento anterior. 
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=4cm, width=.5\textwidth]{figuras/morris_interval.png}
+	\caption{Situação no primeiro experimento do algoritmo $\Morris$, em que o contador foi incrementado mais cedo que o 
+  esperado. As linhas verticais indicam as iterações nas quais ocorreram um incremento do contador. }
+  \label{fig:morris:interval}
+\end{figure}
+
 Uma dessas situações pode ser vista na Figura~\ref{fig:morris:interval}. Nessa figura, as linhas verticais indicam as 
 iterações nas quais o contador foi incrementado. Assim, o contador foi incrementado nas iterações de números 75720, 
 176384 e 241343. 
@@ -696,10 +714,12 @@ $241343 - 176384 = 64959$~iterações.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_interval.png}
-	\caption{Situação em que o contador foi incrementado mais cedo que o esperado. As linhas verticais indicam as 
-  iterações nas quais ocorreram um incremento do contador. }
-  \label{fig:morris:interval}
+  \includegraphics[height=4cm, width=.5\textwidth]{figuras/morris_variance.png}
+	\caption{Segundo experimento do algoritmo $\Morris$. Foram realizadas dez mil simulações. Em cada simulação, foram 
+  inseridos um milhão de elementos em uma estrutura~\texttt{Morris} e ao final de todas as inserções, o resultados do 
+  método~\texttt{conta} foi utilizado para construir o gráfico com as distribuições das estimativas devolvidas pelo 
+  algoritmo.}
+  \label{fig:morris:variance}
 \end{figure}
 
 O próximo experimento a ser apresentado consiste em repetir a simulação anterior várias vezes para que possamos ter uma 
@@ -709,14 +729,6 @@ Figura~\ref{fig:morris:variance}, e para construir o eixo das abcissas, utilizam
 classe \texttt{Morris} após todos os elementos terem sido inseridos. Nesse sentido, esse eixo apresentará em quantas 
 simulações o contador~\texttt{X} terminou por exemplo, com o valor 19. Nos experimentos realizados, isso aconteceu 3617 
 vezes.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_variance.png}
-	\caption{Distribuição da estimativa devolvida pela estrutura~\texttt{Morris} em dez mil simulações, nas quais
-  chamamos o método~\texttt{adiciona} um milhão de vezes e guardamos o retorno do método~\texttt{conta}.}
-  \label{fig:morris:variance}
-\end{figure}
 
 Analisando a Figura~\ref{fig:morris:variance}, podemos concluir que na maioria dos casos, o erro relativo do 
 algoritmo~$\Morris$ ficou menor ou igual que 4, como foi previsto em~\eqref{morris:error:result}. A melhor aproximação 
@@ -728,6 +740,7 @@ Dessa forma, podemos partir para a implementação da versão aprimorada desse a
 base~$\Morrispp$. Como no algoritmo~$\Morrispp$, utilizamos o algoritmo~$\Morris$ como subrotina, vamos aproveitar o 
 fato que temos a classe \texttt{Morris} já implementada e utilizá-la para implementar a classe~\texttt{MorrisPlus}.
 
+\newpage
 \begin{lstlisting}[style=mypython,caption=Implementação do algoritmo $\Morrispp$,captionpos=b, label=morris:plus:code]
 class MorrisPlus:
   def __init__(self, t: int):
@@ -756,18 +769,30 @@ Vamos, agora, repetir os mesmos experimentos feitos para a estrutura \texttt{Mor
 poderemos comparar os resultados deles com as contas desenvolvidas na seção sobre como 
 \hyperref[sec:morris:plus]{aprimorar o algoritmo~$\Morris$}.
 
+\begin{figure}
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[height=4cm, width=\linewidth]{figuras/morris_plus_full.png}
+    \caption{Estimativas}
+    \label{fig:morris:plus:full}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_plus_erro_full.png}
+	  \caption{Erro Relativo}
+    \label{fig:morris:plus:erro:full}
+  \end{subfigure}
+  \caption{Primeiro experimento do algoritmo~$\Morrispp$. Foram inseridos em um estrutura~\texttt{MorrisPlus}, um milhão
+  de elementos.}
+\end{figure}
+
 O primeiro experimento a ser repetido é aquele em que desejamos observar a evolução do estimador devolvido pela 
 estrutura~\texttt{MorrisPlus}. Para isso, chamamos o método \texttt{adiciona} um milhão de vezes e construímos o 
 gráfico com as estimativas ao longos das chamadas dessa função. O resultado dessa simulação pode ser visto na 
 Figura~\ref{fig:morris:plus:full}, em que podemos notar que a linha laranja, que representa as estimativas devolvidas, 
 se aproxima bastante da linha azul, que representa os valores esperados.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_plus_full.png}
-	\caption{Simulação do algoritmo~$\Morrispp$ com $t = 1000$ (todas as iterações)}
-  \label{fig:morris:plus:full}
-\end{figure}
 
 A Figura~\ref{fig:morris:plus:erro:full} exibe um gráfico com a evolução do erro relativo cometido pela estrutura
 ~\texttt{MorrisPlus} ao longo das iterações da simulação anterior. Em \eqref{morris:plus:expected_result}, foi previsto
@@ -778,27 +803,22 @@ Podemos, assim, desconsiderar essas iterações iniciais e ver como o erro evolu
 Figura~\ref{fig:morris:plus:erro:sem:first} ilustra essa situação, e é possível perceber que o desvio cometido foi menor
 que $5\%$, que está dentro do previsto.
 
-\newpage
-\begin{figure}[h]
+\begin{figure}
   \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_plus_erro_full.png}
-	\caption{Erro relativo da simulação do algoritmo~$\Morrispp$ com $t = 1000$ (todas as iterações)}
-  \label{fig:morris:plus:erro:full}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_plus_erro_first.png}
-	\caption{Erro relativo da simulação do algoritmo~$\Morrispp$ com $t = 1000$ (50 primeiras iterações)}
-  \label{fig:morris:plus:erro:first}
-\end{figure}
-
-\newpage
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_plus_erro_sem_first.png}
-	\caption{Erro relativo da simulação do algoritmo~$\Morrispp$ com $t = 1000$ (desconsiderando as 50 primeiras iterações)}
-  \label{fig:morris:plus:erro:sem:first}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[height=4cm, width=\linewidth]{figuras/morris_plus_erro_first.png}
+    \caption{50 primeiras iterações}
+    \label{fig:morris:plus:erro:first}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \captionsetup{justification=centering}
+    \includegraphics[height=4cm, width=\textwidth]{figuras/morris_plus_erro_sem_first.png}
+	  \caption{Desconsiderando as 50 primeiras iterações}
+    \label{fig:morris:plus:erro:sem:first}
+  \end{subfigure}
+  \caption{Erro relativo do primeiro experimento do algoritmo~$\Morrispp$.}
 \end{figure}
 
 Podemos, agora, partir para o segundo experimento do algoritmo~$\Morrispp$, cujo objetivo é verificar a variância dele.
@@ -809,10 +829,10 @@ esperado, que é de $10\%$.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[height=6cm, width=\textwidth]{figuras/morris_plus_variance.png}
-	\caption{Histograma dos resultados das 100 simulações da estrutura de dados \texttt{MorrisPlus} com $t = 1000$. Cada 
-  simulação consistiu em chamar o método \texttt{adiciona} um milhão de vezes e no final, guardar o retorno do método 
-  \texttt{conta}.}
+  \includegraphics[height=4cm, width=.5\textwidth]{figuras/morris_plus_variance.png}
+	\caption{Segundo experimento do algoritmo~$\Morrispp$. Foram realizadas mil simulações e em cada simulação, foram 
+  inseridos um milhão de elementos em uma estrutura~$\Morrispp$. Ao final de todas as inserções, as estimativas 
+  devolvidas foram usadas para construir o histograma de frequências.}
   \label{fig:morris:plus:variance}
 \end{figure}
 

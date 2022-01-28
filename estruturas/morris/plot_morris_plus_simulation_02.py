@@ -7,7 +7,7 @@ matplotlib.rcParams["text.usetex"] = True
 font = {
     "family": "normal",
     "weight": "bold",
-    "size": 14,
+    "size": 12,
 }
 matplotlib.rc("font", **font)
 
@@ -33,7 +33,8 @@ if __name__ == "__main__":
     ax.set_xlabel("Estimativas", labelpad=15)
     ax.set_ylabel("Frequência", labelpad=15)
     ax.set_xticks([900000, 975000, 1000000, 1025000, 1100000])
-    ax.tick_params(axis="x", labelsize=10)
+    ax.tick_params(axis="x", labelsize=8)
+    ax.tick_params(axis="x", labelsize=8)
     plt.ticklabel_format(style="plain")
     ax.set_title(r"Experimento 2 - Algoritmo \textbf{Morris++}")
     plt.tight_layout()

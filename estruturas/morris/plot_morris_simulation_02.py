@@ -28,8 +28,10 @@ if __name__ == "__main__":
 
     p1 = ax.bar(X_log, Y, tick_label=labels, alpha=0.5, color="orange")
     ax.bar_label(p1, label_type="edge", font={"size": 10})
-    ax.set_xlabel(r"Valor de $X$ ao final da simulação", labelpad=15)
+    ax.set_xlabel(r"Valor do contador $X$ ao final da simulação", labelpad=15)
     ax.set_ylabel("Frequência", labelpad=15)
-    ax.set_title(r"Experimento 2 - Algortimo \textbf{Morris}")
+    ax.tick_params(axis="x", labelsize=8)
+    ax.tick_params(axis="y", labelsize=8)
+    ax.set_title(r"Experimento 2 - Algoritmo \textbf{Morris}")
     plt.tight_layout()
     plt.show()
