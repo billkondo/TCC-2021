@@ -1,0 +1,100 @@
+\newcommand{\LOG}{\proc{LogLog}}
+
+\chapter{LogLog's}
+
+Em 1978, Morris resolveu o problema de estimar quantos elementos passaram por um fluxo de dados sem armazenar esse valor 
+em um contador. E as ideias principais da \hyperref[chap:morris:algorithm]{solução dele} era guardar uma aproximação do 
+logarítmo dessa quantidade e incrementá-la por meio de um método probabilístico que lembra lançamentos de moedas. Dessa 
+forma, se temos um fluxo $\Mbb$ com $n$ elementos, e $X$ é a aproximação do algoritmo de Morris para~$\lg n$, então $X$ 
+deve ser incrementado com probabilidade $1 / 2^X$ para cada novo elemento, e isto é equivalente a lançarmos uma moeda 
+$X$ vezes e aumentar $X$ somente se todas as jogadas forem cara. 
+
+Essa solução inspirou o desenvolvimento do algoritmo da $\pcounting$ em 1985, que resolvia o problema de estimar a 
+quantidade de elementos distintos que passaram por um fluxo. Nesse \hyperref[sec:flajolet-martin:algorithm]{algoritmo}, 
+estamos interessados em ter uma função que mapeia de modo uniforme os dados de um fluxo para inteiros e assim, podemos 
+considerar que os elementos são na verdade inteiros uniformemente distribuídos. Essa simplificação possibilita que 
+olhemos para \hyperref[sec:flajolet-martin:pattern]{padrões de bits} de inteiros aleatórios e os agrupemos por prefixos 
+da forma $0^{*}1$. A razão disso ser feito é que a probabilidade de um inteiro ter um prefixo da forma $0^{X}1$ é 
+$1 / 2^{X}$, a mesma que aparece no algoritmo de Morris, e portanto, essa ideia pode ser usada para estimarmos o 
+logarítmo da quantidade de elementos distintos em um fluxo da seguinte forma: guardaremos o menor $R$ tal que ainda não 
+tenha aparecido algum inteiro com prefixo $0^{R}1$.
+
+Dessa maneira, para um fluxo $\Mbb$ com $n$ elementos distintos, $R$ seria a estimativa para~$\lg n$. No entanto, por 
+meio do cálculo do valor esperado desse estimador, é possível concluir que $R$, na verdade, não estima $\lg n$, mas 
+$\lg \phi n$~\citep{flajolet:martin:85}. Em outras palavras, o algoritmo da $\pcounting$ produz uma estimativa com um 
+desvio $\phi$ mensurável e podemos, em vista disso, corrigí-lo.
+
+Contudo, mesmo corrigindo esse erro do estimador, este ainda possui uma grande variância, ou seja, a estimativa 
+devolvida pode estar muito próxima ou muito longe do valor real. Para contornar essa situação, podemos repetir várias 
+vezes o algoritmo da $\pcounting$ e encontrar a média dos estimadores. E uma forma interessante de se fazer isso em uma 
+única iteração, removendo, assim, a necessidade de executarmos o algoritmo muitas vezes, é dividir de modo uniforme os 
+dados do fluxo em $m$ lotes. Então, um inteiro $x$ faria parte do lote $x \% m$, e olharíamos para o prefixo de 
+$\lfloor x / m \rfloor$. E guardaríamos um estimador $R$ para cada lote, e a estimativa final seria a média desses 
+estimadores.
+
+Por fim, o algoritmo da $\pcounting$ tem consumo proporcional a $O(mL)$ bits, em que $m$ é o número de lotes e $L$ é a
+quantidade de bits necessária para armazenar os inteiros do fluxo. Esse consumo é decorrente do fato de precisarmos 
+guardar se um prefixo da forma $0^{*}1$ já apareceu, e podemos fazer isto com $L$ bits. Como cada lote deve manter essa 
+informação, então o gasto total dessa solução é de $O(mL)$ bits. Nesse sentido, o próximo algoritmo, chamado $\LOG$, 
+terá como base muitas ideias da $\pcounting$, e apresentará uma significativa redução do consumo de espaço.
+
+\section{Algoritmo \proc{LogLog}}
+
+Dado um fluxo $\Mbb$ com $n$ elementos distintos, o algoritmo~$\LOG$ devolverá um estimador~$\hat{n}$ para $n$, que terá
+um desvio padrão de $1.30 / \sqrt{m}$. Assim como foi feito no algoritmo da $\pcounting$, precisaremos ter uma função de
+hash~$h$ que mapeie uniformemente os dados de um fluxo para inteiros. Tendo esta função em mãos, poderemos supor que 
+estamos trabalhando com um fluxo de inteiros aleatórios, e consideraremos os bits deles. Dessa forma, estamos 
+interessados em manter o maior $M$ tal que já tenha aparecido algum elemento com prefixo~$0^{M}1$.
+
+A probabilidade de um inteiro ter um prefixo da forma~$0^{M}1$ é $1 / 2^{M}$, ou seja, esperamos que um em cada $2^{M}$ 
+elementos tenha esse prefixo. Por outro lado, podemos inverter essa ideia, e pensar que se temos um inteiro com prefixo 
+da forma $0^{M}1$, então pelo menos $2^{M}$ elementos distintos devem ter aparecido. Dessa forma, o valor de $M$ será 
+uma aproximação para~$\lg n$.
+
+De modo semelhante ao que foi feito no algortimo da~$\pcounting$ para se reduzir a variância da estimativa, dividiremos 
+o fluxo~$\Mbb$ em $m = 2^{k}$ lotes de acordo com os bits dos elementos. E cada lote $y$ manterá o maior $M_y$ tal que
+já tenha aparecido algum inteiro que pertença ao lote~$y$ e cujos bits comecem com~$0^{M_y}1$. Dessa forma, um inteiro 
+$x = \langle b_1 b_2 {\dots} b_k {\dots} \rangle$ fará parte do lote $y = \langle b_1 b_2 {\dots} b_k \rangle$, ou seja, 
+os $k$ primeiros bits de um elemento indicarão em qual lote ele pertence. Os bits restantes 
+$\langle b_{k+1} b_{k+2} {\dots} \rangle$ serão levado em consideração na hora de encontramos o valor de $M_y$.
+
+Desse modo, o valor de $M_y$ de cada lote~$y$ será uma estimativa para $\lg n / m$. Para diminuirmos a variância dessa
+aproximação, calculamos a média $\overline{M} = \frac{\sum_y M_y}{m}$. Logo, $\overline{M}$ aproxima $\lg n / m$, e 
+consequentemente, $2^{\overline{M}}$ aproxima $n / m$. E, portanto, a estimativa para $n$ será 
+$m \times 2^{\overline{M}}$.
+
+No entanto, essa estimativa apresenta um desvio e para corrigí-lo, multiplicamos ela por uma constante $\alpha_m$ cujo 
+valor é proporcional ao número de lotes utilizados no algoritmo. Em vista disso, a saída do algoritmo~$\LOG$ será um 
+estimador $\hat{n}$ da forma $\alpha_m \times m \times 2^{\overline{M}}$. 
+
+\begin{codebox}
+  \Procname{$\proc{LogLog}(\Mbb, m = 2^k)$}
+  \li \For $i$ de $0$ até $m$
+        \Do
+  \li   $M[i] \gets 0$
+        \End
+  \li \For cada $x = h(e) = b_1b_2{\dots}$ em $\Mbb$ 
+        \Do
+  \li   $lote \gets \langle b_1 {\dots} b_k \rangle$
+  \li   $M[lote] \gets \max(M[lote], \rho(b_{k+1}b_{k+2}{\dots}))$
+        \End
+  \li
+  \Return $\alpha_m \times m \times 2^{\frac{1}{m}\sum_i{M[i]}}$   
+  \End
+\end{codebox}
+
+\begin{codebox}
+      \Procname{$\proc{HyperLogLog}(\Mbb, m = 2^k)$}
+      \li \For $i$ de $0$ até $m$
+            \Do
+      \li   $M[i] \gets 0$
+            \End
+      \li \For cada $x = b_1b_2{\dots}$ em $\Mbb$ 
+            \Do
+      \li   $lote \gets \langle b_1 {\dots} b_k \rangle$
+      \li   $M[lote] \gets \max(M[lote], \rho(b_{k+1}b_{k+2}{\dots}) + 1)$
+            \End
+      \li
+      \Return $\alpha_m \times m^2 \times \sum_i{2^{-M[i]}}$   
+      \End
+    \end{codebox}
