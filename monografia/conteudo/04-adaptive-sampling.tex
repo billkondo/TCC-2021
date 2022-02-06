@@ -113,7 +113,7 @@ Outro fator importante de se destacar é que o estimador devolvido por $\AS$ é
 $\asampling$ poder estimar valores pequenos sem problemas.
 
 \newpage
-\section{Um, dois, três, \dots, repetido, \dots}
+\section{Implementando $\asampling$}
 
 Nesta seção apresentaremos a implementação do algoritmo das \proc{Amostragens} \proc{Adaptativas} e experimentos.
 
@@ -236,24 +236,21 @@ desvios padrões.
 \end{figure}
 
 Para o segundo experimento, repetimos as simulações anteriores dez mil vezes. No final do processo, construímos 
-histogramas a partir das frequências das estimativas devolvidas. A Figura~\ref{fig:as:experimento:02:64} tem a 
-distribuição das estimativas da estrutura~\texttt{AdaptiveSampling} com $m = 64$ e a 
-Figura~\ref{fig:as:experimento:02:1024}, com $m = 1024$. Nos dois casos, quase todos as estimativas ficaram dentro de
-dois desvios padrões, e houve uma grande concentração de estimativas entre um desvio padrão. E podemos notar que com um
-valor de $m$ maior, a variância do algoritmo das $\asampling$ diminuiu.
+histogramas a partir das frequências das estimativas devolvidas. A Figura~\ref{fig:as:experimento:02} tem as 
+distribuições das estimativas da estrutura~\texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$. Nos dois casos, quase 
+todos as estimativas ficaram dentro de dois desvios padrões, e houve uma grande concentração de estimativas entre um 
+desvio padrão. E podemos notar que com um valor de $m$ maior, a variância do algoritmo das $\asampling$ diminuiu.
 
 \begin{figure}
   \centering
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_variance_64.png}
-    \caption{$m = 64$}
     \label{fig:as:experimento:02:64}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_variance_1024.png}
-    \caption{$m = 1024$}
     \label{fig:as:experimento:02:1024}
   \end{subfigure}
   \caption{Segundo experimento do algoritmo $\AS$. Foram realizadas dez mil simulações e em cada simulação, foram 

@@ -76,6 +76,7 @@ if __name__ == "__main__":
     ax.set_xlabel("Estimativas", labelpad=15)
     ax.set_ylabel("Frequência", labelpad=15)
     ax.set_xticks([estimates[0], *config["xticks"], estimates[-1]])
+    ax.set_title(rf"$m = {M}$", fontsize=12)
     ax.tick_params(axis="x", labelsize=8)
     plt.ticklabel_format(style="plain")
     plt.tight_layout()
