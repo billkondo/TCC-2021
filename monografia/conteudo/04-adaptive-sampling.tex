@@ -69,7 +69,7 @@ estão sendo armazenados $l$ elementos cujos prefixos tem formato~$0^{\delta}$.
 \section{Vantagens das $\asampling$}
 \label{lab:chapter:04:02}
 
-Vamos simular um exemplo pequeno para ver o funcionamento do algortimo $\AS$. Assim, queremos estimar quantos elementos 
+Vamos simular um exemplo pequeno para ver o funcionamento do algoritmo $\AS$. Assim, queremos estimar quantos elementos 
 distintos o fluxo $\Mbb = \{ 36, 108, 41, 82, 71, 61, 5, 54, 10 \}$ possui. Vamos considerar que a função de hash~$h$ é
 a identidade, ou seja, $h(x) = x$ para todo $x$ em $\Mbb$, e que $m = 3$. 
 
@@ -105,8 +105,8 @@ O fato curioso desse exemplo acontece nas primeiras iterações, quando $\delta$
 elemento de $\Mbb$ nessas primeiras iterações é inserido em $LIST$. Nessas situações, a estimativa do algoritmo é 
 $2^{\delta} \times |LIST| = 2^{0} \times |LIST| = |LIST|$. Ou seja, para os primeiros $m$ itens distintos de $\Mbb$, a 
 estimativa tem precisão de $100\%$. Isto é o principal diferencial do algoritmo das $\asampling$ para o algoritmo da 
-$\pcounting$, que como foi visto em \hyperref[sec:fm:low_estimates]{Estimando valores pequenos com a $\pcounting$}, 
-apresenta um erro muito grande quando queremos estimar cardinalidades baixas.
+$\pcounting$, que como foi visto na Seção~\ref{sec:fm:low_estimates}, apresenta um erro muito grande quando queremos 
+estimar cardinalidades baixas.
 
 Outro fator importante de se destacar é que o estimador devolvido por $\AS$ é 
 \textbf{não-viesado}~\citep{adptive:sampling:90}. Essa característica está relacionada com o fato do algoritmo das 
@@ -158,7 +158,7 @@ outras palavras, se a representação binária de um inteiro começa com pelo me
 da função $\rho$ definida na Seção~\ref{sec:flajolet-martin:algorithm}. Essa função recebe um inteiro $x$ e devolve a 
 posição indexada a partir do zero do bit menos significativo de $x$. Assim, $\rho(12) = \rho(0011_2) = 2$ e 
 $\rho(24) = \rho(00011_2) = 3$. Note que a saída da função $\rho$ corresponde também a quantidade de bits zeros no 
-prefixo da representação binário de um inteiro. Podemos, portanto, aproveitar o método $p$ da classe 
+prefixo da representação binária de um inteiro. Podemos, portanto, aproveitar o método $p$ da classe 
 \texttt{ProbabilisticCounting} para implementar o método \texttt{zeros\_no\_prefixo} e agora, para verificar se um 
 inteiro~$x$ tem prefixo da forma $0^{\texttt{delta}}$, basta testar se \texttt{zeros\_no\_prefixo(x)} é maior ou igual a
 \texttt{delta}.
@@ -215,7 +215,7 @@ de $3{,}75\%$, e a simulação dela teve valores que ficaram dentro de um desvio
 Antes de passarmos para o segundo experimento, é interessante verificarmos se o que foi discutido na 
 Seção~\ref{lab:chapter:04:02} pode ser observado nas simulações anteriores. Queremos, assim, averiguar se o algoritmo 
 das~$\asampling$ funciona de fato para baixas cardinalidades. A Figura~\ref{fig:as:experimento:01:erro:first} tem
-gráficos que destacam o erro relativo nas primeiras~256 iterações no caso da estrutura com $m = 64$ e nas primeiras~1024
+gráficos que destacam o erro relativo nas primeiras~256 iterações no caso da estrutura com $m = 64$ e nas primeiras~4096
 iterações no caso da estrutura com $m = 1024$. Nos dois casos, podemos notar que o erro relativo nas primeiras~$m$ 
 iterações é de fato zero e que o erro após essas iterações iniciais se manteve controlado, dentro da faixa de dois 
 desvios padrões.
@@ -238,7 +238,7 @@ desvios padrões.
 Para o segundo experimento, repetimos as simulações anteriores dez mil vezes. No final do processo, construímos 
 histogramas a partir das frequências das estimativas devolvidas. A Figura~\ref{fig:as:experimento:02} tem as 
 distribuições das estimativas da estrutura~\texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$. Nos dois casos, quase 
-todos as estimativas ficaram dentro de dois desvios padrões, e houve uma grande concentração de estimativas entre um 
+todas as estimativas ficaram dentro de dois desvios padrões, e houve uma grande concentração de estimativas entre um 
 desvio padrão. E podemos notar que com um valor de $m$ maior, a variância do algoritmo das $\asampling$ diminuiu.
 
 \begin{figure}
@@ -264,8 +264,8 @@ algoritmo tem pontos interessantes, como se basear em padrões de bits para cons
 fluxos com poucos elementos. Porém, a principal desvantagem dessa solução é o consumo de memória. Se considerarmos uma
 aplicação que precise lidar com hashes de 32~bits, então o consumo de memória da estrutura~\texttt{AdaptiveSampling} 
 seria de pelos menos $32 \times m$~bits no pior caso, quando a lista $LIST$ passa a ter mais que $m$ elementos. Esse
-custo é o mesmo que o do algoritmo~$\pcounting$, quando $L = 32$. Dessa forma, as $\asampling$, que tem um desvio maior
-que a $\pcounting$, tem também um consumo de espaço pior. 
+custo é o mesmo que o do algoritmo~$\pcounting$ quando $L = 32$. Dessa forma, as $\asampling$, que têm um desvio maior
+que a $\pcounting$, têm também um consumo de espaço pior. 
 
 Para que esse gasto de memória fosse reduzido sem que se perdesse muita precisão, demorou mais de 20 anos desde a 
 criação da $\pcounting$. Veremos na próxima seção como podemos reduzir ainda mais esse consumo.
