@@ -7,10 +7,10 @@ class LogLog:
         self.B = math.floor(math.log2(m))
         self.M = [0] * m
         self.Z = 0
-        self.alpha = 0.79402
+        self.alpha = 0.39701
 
     def p(self, x: int):
-        return (x & -x).bit_length() - 1
+        return (x & -x).bit_length()
 
     @property
     def prefixo(self):
