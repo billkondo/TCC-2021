@@ -24,6 +24,8 @@ def constroi_estimativa(
     respostas: List[int],
     start=0,
     end=-1,
+    mostra_y_label=True,
+    titulo="",
 ):
     _, ax = plt.subplots()
 
@@ -44,16 +46,32 @@ def constroi_estimativa(
         label=r"$\hat{n}$",
     )
 
-    ax.set_xlabel("Iterações", labelpad=15)
-    ax.set_ylabel("Quantidade de elementos distintos", labelpad=15)
-    ax.set_title(r"Experimento 1 - Algortimo \textbf{ProbabilisticCounting}")
+    if mostra_y_label:
+        ax.set_ylabel("Quantidade de elementos distintos", labelpad=15, fontsize=16)
+
+    if titulo:
+        ax.set_title(titulo, fontsize=16)
+
+    ax.set_xlabel("Iterações", labelpad=15, fontsize=16)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", labelsize=12)
     ax.ticklabel_format(style="plain")
     ax.legend()
     plt.tight_layout()
     plt.show()
 
 
-def constroi_erro(tamanhos: List[int], respostas: List[int], start=0, end=-1, expected_error=0, xticks=[], vlines=[]):
+def constroi_erro(
+    tamanhos: List[int],
+    respostas: List[int],
+    start=0,
+    end=-1,
+    expected_error=0,
+    xticks=[],
+    vlines=[],
+    titulo="",
+    mostra_y_label=True,
+):
     _, ax = plt.subplots()
 
     erros_relativo: List[float] = []
@@ -70,26 +88,73 @@ def constroi_erro(tamanhos: List[int], respostas: List[int], start=0, end=-1, ex
     ax.axhline(y=0, xmin=0, xmax=1000000, linestyle=":")
 
     if expected_error:
-        ax.axhline(y=expected_error, xmin=0, xmax=1000000, linestyle=":")
-        ax.axhline(y=-expected_error, xmin=0, xmax=1000000, linestyle=":")
+        ax.axhline(
+            y=expected_error,
+            xmin=0,
+            xmax=1000000,
+            linestyle=":",
+        )
+        ax.axhline(
+            y=-expected_error,
+            xmin=0,
+            xmax=1000000,
+            linestyle=":",
+        )
+        ax.axhline(
+            y=2 * expected_error,
+            xmin=0,
+            xmax=1000000,
+            linestyle=":",
+        )
+        ax.axhline(
+            y=-2 * expected_error,
+            xmin=0,
+            xmax=1000000,
+            linestyle=":",
+        )
+
+        new_yticks = list(
+            [
+                -expected_error * 2,
+                -expected_error,
+                0,
+                expected_error,
+                expected_error * 2,
+                25,
+            ]
+        )
+        ax.set_yticks(new_yticks)
+        ax.tick_params(axis="y", labelsize=12)
 
     if xticks:
         ax.set_xticks(xticks)
-        ax.tick_params(axis="x", labelsize=8)
+        ax.tick_params(axis="x", labelsize=12)
 
     if vlines:
         for x in vlines:
             ax.axvline(x=x, linestyle=":", alpha=0.5)
 
-    ax.set_xlabel("Iterações", labelpad=15)
-    ax.set_ylabel(r"Erro Relativo", labelpad=15)
-    ax.set_title(r"Experimento 1 - Algortimo \textbf{ProbabilisticCounting}")
+    if titulo:
+        ax.set_title(titulo, fontsize=16)
+
+    if mostra_y_label:
+        ax.set_ylabel("Erro Relativo", labelpad=15, fontsize=16)
+
+    ax.set_xlabel("Iterações", labelpad=15, fontsize=16)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", labelsize=12)
     ax.ticklabel_format(style="plain")
     plt.tight_layout()
     plt.show()
 
 
-def experimento(M: int, expected_error: int, xticks: List[int] = [], vlines: List[int] = []):
+def experimento(
+    M: int,
+    expected_error: int,
+    xticks: List[int] = [],
+    vlines: List[int] = [],
+    mostra_y_label=True,
+):
     random.seed(0)
 
     probabilistic_count = ProbabilisticaCounting(M)
@@ -107,9 +172,9 @@ def experimento(M: int, expected_error: int, xticks: List[int] = [], vlines: Lis
         tamanhos.append(tamanho)
         respostas.append(probabilistic_count.conta())
 
-    constroi_estimativa(tamanhos, respostas)
-    constroi_estimativa(tamanhos, respostas, 0, 2 * M)
-    constroi_erro(tamanhos, respostas, 0, 2 * M)
+    constroi_estimativa(tamanhos, respostas, mostra_y_label=mostra_y_label, titulo=rf"m = {M}")
+    constroi_estimativa(tamanhos, respostas, 0, 2 * M, mostra_y_label=mostra_y_label, titulo=rf"m = {M}")
+    constroi_erro(tamanhos, respostas, 0, 2 * M, titulo="Erro Relativo")
     constroi_erro(
         tamanhos,
         respostas,
@@ -117,18 +182,20 @@ def experimento(M: int, expected_error: int, xticks: List[int] = [], vlines: Lis
         expected_error=expected_error,
         xticks=xticks,
         vlines=vlines,
+        mostra_y_label=mostra_y_label,
+        titulo=rf"m = {M}",
     )
 
 
 if __name__ == "__main__":
     experimento(
         M=64,
-        expected_error=10,
-        xticks=[128, 150413, 250000, 500000, 750000, 1000000],
-        vlines=[150413],
+        expected_error=9.75,
+        xticks=[128, 250000, 500000, 750000, 1000000],
     )
     experimento(
         M=1024,
-        expected_error=2,
+        expected_error=2.5,
         xticks=[2048, 250000, 500000, 750000, 1000000],
+        mostra_y_label=False,
     )

@@ -8,7 +8,7 @@ matplotlib.rcParams["text.usetex"] = True
 font = {
     "family": "normal",
     "weight": "bold",
-    "size": 14,
+    "size": 10,
 }
 matplotlib.rc("font", **font)
 
@@ -16,14 +16,18 @@ M = 64
 
 config = {
     1024: {
-        "expected_lower_bound": 980000,
-        "expected_upper_bound": 1020000,
-        "xticks": [980000, 1000000, 1020000],
+        "expected_lower_bound_02": 975625,
+        "expected_lower_bound_01": 951250,
+        "expected_upper_bound_01": 1024375,
+        "expected_upper_bound_02": 1048750,
+        "xticks": [975625, 951250, 1000000, 1024375, 1048750],
     },
     64: {
-        "expected_lower_bound": 900000,
-        "expected_upper_bound": 1100000,
-        "xticks": [900000, 1000000, 1100000],
+        "expected_lower_bound_02": 805000,
+        "expected_lower_bound_01": 902500,
+        "expected_upper_bound_01": 1097500,
+        "expected_upper_bound_02": 1195000,
+        "xticks": [805000, 902500, 1000000, 1097500, 1195000],
     },
 }[M]
 
@@ -65,13 +69,15 @@ if __name__ == "__main__":
     _, ax = plt.subplots()
     ax.hist(histogram_data, bins=30, alpha=0.5, histtype="bar", ec="black", color="orange")
     plt.axvline(x=1000000, linestyle=":")
-    plt.axvline(x=config["expected_lower_bound"], linestyle=":")
-    plt.axvline(x=config["expected_upper_bound"], linestyle=":")
-    ax.set_xlabel("Estimativas", labelpad=15)
-    ax.set_ylabel("Frequência", labelpad=15)
+    plt.axvline(x=config["expected_lower_bound_01"], linestyle=":")
+    plt.axvline(x=config["expected_upper_bound_01"], linestyle=":")
+    plt.axvline(x=config["expected_lower_bound_02"], linestyle=":")
+    plt.axvline(x=config["expected_upper_bound_02"], linestyle=":")
+    ax.set_xlabel("Estimativas", labelpad=15, fontsize=16)
+    ax.set_ylabel("Frequência", labelpad=15, fontsize=16)
     ax.set_xticks([estimates[0], *config["xticks"], estimates[-1]])
-    ax.tick_params(axis="x", labelsize=8)
+    ax.tick_params(axis="x")
     plt.ticklabel_format(style="plain")
-    ax.set_title(r"Experimento 2 - Algoritmo \textbf{ProbabilisticCounting}")
+    ax.set_title(rf"m = {M}", fontsize=16)
     plt.tight_layout()
     plt.show()
