@@ -7,7 +7,7 @@ class HyperLogLog:
         self.B = math.floor(math.log2(m))
         self.M = [0] * m
         self.Z = self.m
-        self.alpha = 0.709
+        self.alpha = 0.7213
 
     def p(self, x: int):
         return (x & -x).bit_length()

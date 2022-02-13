@@ -1,6 +1,7 @@
 \newcommand{\LOG}{\proc{LogLog}}
 \newcommand{\logprogram}{\textsf{LogLog}}
 \newcommand{\HLOG}{\proc{HyperLogLog}}
+\newcommand{\hlogprogram}{\textsf{HyperLogLog}}
 
 \chapter{\textbf{LogLog's}}
 
@@ -8,8 +9,8 @@ Em 1978, Morris resolveu o problema de estimar quantos elementos passaram por um
 em um contador. E as ideias principais da \hyperref[chap:morris:algorithm]{solução dele} era guardar uma aproximação do 
 logarítmo dessa quantidade e incrementá-la por meio de um método probabilístico que lembra lançamentos de moedas. Dessa 
 forma, se temos um fluxo com $n$ elementos, e $X$ é a aproximação do algoritmo de Morris para~$\lg n$, então $X$ deve 
-ser incrementado com probabilidade $1 / 2^X$ para cada novo elemento, e isto é equivalente a lançarmos uma moeda $X$ 
-vezes e aumentar $X$ somente se todas as jogadas forem cara. 
+ser incrementado com probabilidade $1 \mathbin{/} 2^X$ para cada novo elemento, e isto é equivalente a lançarmos uma 
+moeda $X$ vezes e aumentar $X$ somente se todas as jogadas forem cara. 
 
 Essa solução inspirou o desenvolvimento do algoritmo da $\pcounting$, que resolvia o problema de estimar a quantidade de 
 elementos distintos que passaram por um fluxo~$\Mbb$. Nesse \hyperref[sec:flajolet-martin:algorithm]{algoritmo}, estamos 
@@ -17,9 +18,10 @@ interessados em usar \hyperref[sec:flajolet-martin:pattern]{padrões de bits} de
 essa estimativa. Portanto, os dados de $\Mbb$ são mapeados para inteiros por meio de uma função de hash, e assim, 
 podemos considerar que esses elementos são na verdade palavras binárias de tamanho infinito. Essa simplificação nos 
 permite agrupar os itens de $\Mbb$ por prefixos da forma $0^{*}1$. A razão de fazermos isto é que a probabilidade de a 
-representação binária de um inteiro ter um prefixo da forma $0^{X-1}1$ é $1 / 2^{X}$, a mesma que aparece no algoritmo 
-de Morris, e portanto, essa ideia pode ser usada para estimarmos o logarítmo da quantidade de elementos distintos em 
-$\Mbb$ da seguinte forma: guardaremos o menor $R$ tal que ainda não tenha aparecido algum inteiro com prefixo~$0^{R}1$.
+representação binária de um inteiro ter um prefixo da forma $0^{X-1}1$ é $1 \mathbin{/} 2^{X}$, a mesma que aparece no 
+algoritmo de Morris, e portanto, essa ideia pode ser usada para estimarmos o logarítmo da quantidade de elementos 
+distintos em $\Mbb$ da seguinte forma: guardaremos o menor $R$ tal que ainda não tenha aparecido algum inteiro com 
+prefixo~$0^{R}1$.
 
 Dessa maneira, para um fluxo $\Mbb$ com $n$ elementos distintos, $R$ seria a estimativa para~$\lg n$. No entanto, por 
 meio do cálculo do valor esperado desse estimador, é possível concluir que $R$, na verdade, não estima $\lg n$, mas 
@@ -30,9 +32,9 @@ Contudo, mesmo corrigindo esse erro do estimador, este ainda possui uma grande v
 devolvida pode estar muito próxima ou muito longe do valor real. Para contornar essa situação, podemos repetir várias 
 vezes o algoritmo da $\pcounting$ e encontrar a média dos estimadores. E uma forma interessante de se fazer isso em uma 
 única iteração, removendo, assim, a necessidade de executarmos o algoritmo muitas vezes, é dividir de modo uniforme os 
-dados do fluxo em $m$ lotes. Então, um inteiro $x$ faria parte do lote $x \% m$, e olharíamos para o prefixo de 
-$\lfloor x / m \rfloor$. Desse modo, passaríamos a guardar um estimador $R$ para cada lote, e a estimativa para $n$ 
-usaria a média desses valores.
+dados do fluxo em $m$ lotes. Então, um inteiro $x$ faria parte do lote $x \mathbin{\%} m$, e olharíamos para o prefixo 
+de $\lfloor x \mathbin{/} m \rfloor$. Desse modo, passaríamos a guardar um estimador $R$ para cada lote, e a estimativa 
+para $n$ usaria a média desses valores.
 
 Por fim, o algoritmo da $\pcounting$ tem consumo proporcional a $O(mL)$ bits, em que $m$ é o número de lotes e $L$ é a
 quantidade de bits necessária para armazenar algum inteiro do fluxo. Esse consumo é decorrente do fato de cada lote 
@@ -44,19 +46,19 @@ significativa redução do consumo de espaço.
 \label{sec:loglog:algorithm}
 
 Dado um fluxo $\Mbb$ com $n$ elementos distintos, o algoritmo~$\LOG$ devolverá um estimador~$\hat{n}$ para $n$, que terá
-um desvio padrão de $1.30 / \sqrt{m}$~\citep{loglog:03}. Assim como foi feito no algoritmo da $\pcounting$, precisamos 
-ter uma função de hash~$h$ que mapeie uniformemente os dados de um fluxo para inteiros. Tendo esta função em mãos, 
-podemos supor que estamos trabalhando com um fluxo de inteiros aleatórios. E vamos manter o maior~$M$ tal que exista
-algum elemento em~$\Mbb$ cuja representação binária tenha prefixo da forma $0^{M-1}1$.
+um desvio padrão de $1{,}30 \mathbin{/} \sqrt{m}$~\citep{loglog:03}. Assim como foi feito no algoritmo da $\pcounting$, 
+precisamos ter uma função de hash~$h$ que mapeie uniformemente os dados de um fluxo para inteiros. Tendo esta função em 
+mãos, podemos supor que estamos trabalhando com um fluxo de inteiros aleatórios. E vamos manter o maior~$M$ tal que 
+exista algum elemento em~$\Mbb$ cuja representação binária tenha prefixo da forma $0^{M-1}1$.
 
-Para $M \geq 1$, a probabilidade de um inteiro ter um prefixo da forma~$0^{M-1}1$ é $1 / 2^{M}$, ou seja, esperamos que 
-um em cada $2^{M}$ elementos tenha esse prefixo. Por outro lado, podemos inverter essa ideia, e pensar que se temos um 
-inteiro com prefixo da forma $0^{M-1}1$, então pelo menos $2^{M}$ elementos distintos devem ter aparecido. Desse modo, o 
-valor de $M$ será uma aproximação para~$\lg n$, e podemos interpretá-lo como sendo a posição indexada do 1 do dígito 1 
-menos significativo de um inteiro. Uma ideia similar foi vista na Seção~\ref{sec:flajolet-martin:algorithm}, em que 
-definimos a função $\rho$ que retorna a posição indexada do 0 do bit ligado menos significativo de um número. Em vista 
-disso, vamos definir a função $\rho_1$ que retorna o valor anterior só que indexado do 1, e utilizá-la para o cálculo 
-de~$M$.
+Para $M \geq 1$, a probabilidade de um inteiro ter um prefixo da forma~$0^{M-1}1$ é $1 \mathbin{/} 2^{M}$, ou seja, 
+esperamos que um em cada $2^{M}$ elementos tenha esse prefixo. Por outro lado, podemos inverter essa ideia, e pensar que 
+se temos um inteiro com prefixo da forma $0^{M-1}1$, então pelo menos $2^{M}$ elementos distintos devem ter aparecido. 
+Desse modo, o valor de $M$ será uma aproximação para~$\lg n$, e podemos interpretá-lo como sendo a posição indexada do 1 
+do dígito 1 menos significativo de um inteiro. Uma ideia similar foi vista na Seção~\ref{sec:flajolet-martin:algorithm}, 
+em que definimos a função $\rho$ que retorna a posição indexada do 0 do bit ligado menos significativo de um número. Em 
+vista disso, vamos definir a função $\rho_1$ que retorna o valor anterior só que indexado do 1, e utilizá-la para o 
+cálculo de~$M$.
 
 Para reduzirmos a variância da estimativa, dividimos o fluxo~$\Mbb$ em $m = 2^{k}$ lotes de acordo com os bits dos 
 elementos. Dessa forma, um inteiro $x = \langle b_1 b_2 {\dots} b_k {\dots} \rangle$ fará parte do lote 
@@ -64,14 +66,14 @@ $y = \langle b_1 b_2 {\dots} b_k \rangle$, ou seja, os $k$ primeiros bits de um 
 pertence. Em seguida, encontramos $M_y$ tal que $0^{M_y}1$ é prefixo de $\langle b_{k+1} b_{k+2} {\dots} \rangle$, e 
 mantemos o maior valor de $M_y$.
 
-Desse modo, o valor de $M_y$ de cada lote~$y$ será uma estimativa para $\lg n / m$. Para diminuirmos a variância dessa
-aproximação, calculamos a média $\overline{M} = \frac{\sum_y M_y}{m}$. Logo, $\overline{M}$ aproxima $\lg n / m$, e 
-consequentemente, $2^{\overline{M}}$ aproxima $n / m$. E, portanto, a estimativa para $n$ será 
-$m \times 2^{\overline{M}}$.
+Desse modo, o valor de $M_y$ de cada lote~$y$ será uma estimativa para $\lg n \mathbin{/} m$. Para diminuirmos a 
+variância dessa aproximação, calculamos a média \textbf{aritmética} $\overline{M} = \frac{\sum_y M_y}{m}$. Logo, 
+$\overline{M}$ aproxima $\lg n \mathbin{/} m$, e consequentemente, $2^{\overline{M}}$ aproxima $n \mathbin{/} m$. E, 
+portanto, a estimativa para $n$ será $m \times 2^{\overline{M}}$.
 
 No entanto, essa estimativa apresenta um desvio e para corrigí-lo, multiplicamos ela por uma constante $\alpha_m$ cujo 
 valor é proporcional ao número de lotes utilizados no algoritmo. Na prática, podemos usar como fator de correção 
-$\alpha_\infty \approx 0.39701$ assim que $m$ for maior que~64. Em vista disso, a saída do algoritmo~$\LOG$ será um 
+$\alpha_\infty \approx 0{,}39701$ assim que $m$ for maior que~64. Em vista disso, a saída do algoritmo~$\LOG$ será um 
 estimador $\hat{n}$ da forma $\alpha_m \times m \times 2^{\overline{M}}$. E o pseudocódigo a seguir condensa as ideias 
 apresentadas.
 
@@ -202,8 +204,31 @@ atualizada a cada novo elemento inserido no método \texttt{adiciona}.
 
 \section{Algoritmo $\HLOG$}
 
+Apesar do algoritmo~$\LOG$ visto anteriormente ter um consumo de memória pelo menos $6$ menor que a $\pcounting$, o
+desvio padrão dele, que é de $1{,}30 \mathbin{/} \sqrt{m}$, é maior. Isto pode ser um problema se tivermos que trabalhar 
+com quantidades muito grandes, da ordem de bilhões. No entanto, com uma simples modificação no algoritmo~$\logprogram$, 
+obtemos um novo algoritmo com o mesmo consumo de memória, mas desvio padrão de~$1{,}04 \mathbin{/} \sqrt{m}$.
+
+O aprimoramento do algoritmo~$\LOG$ é conhecido como $\HLOG$. E a modificação que deve ser feita em~$\logprogram$ é 
+substituir a média \textbf{aritmética} pela média \textbf{harmônica}. A intuição por trás desta substituição é que a 
+média harmônica é afetada menos por \textit{outliers}, ou seja, valores muito fora do esperado não distorcem tanto a 
+estimativa. A consequência disso é que a variância do estimador é reduzida. 
+
+Tanto no algoritmo~$\LOG$ quanto no $\HLOG$, o valor de $M$ de cada lote é uma aproximação para $\lg n \mathbin{/} m$, e 
+conseguimos obter uma estimativa para $n \mathbin{/} m$ se elevarmos~$2$ a esse valor. Dessa forma, no algoritmo~$\LOG$, 
+a média aritmética das aproximações de $\lg n \mathbin{/} m$ é calculada. Por outro lado, no algoritmo~$\HLOG$, 
+calculamos a média harmônica das aproximações de $n \mathbin{/} m$. Podemos encontrar esse média $\overline{M}$ da 
+seguinte forma:
+
+\[ \overline{M} = \bigg(\frac{\sum\big(2^{M[i]}\big)^{-1}}{m}\bigg)^{-1} = \frac{m}{\sum2^{-M[i]}} \]
+
+O fato de trocarmos a média aritmética pela harmônica também interfere no fator de correção $\alpha_m$. Na prática, 
+podemos usar a aproximação $\alpha_{\infty} \approx 0{,}7213$ assim que $m$ for maior que 128~\citep{HyperLogLogWiki}.
+Por fim, o algoritmo~$\hlogprogram$ traduz essas ideias para pseudocódigo, e é possível notar que ele é praticamente 
+idêntico ao algoritmo~$\logprogram$. A única diferença entre essas soluções está na última linha.
+
 \begin{codebox}
-      \Procname{$\proc{HyperLogLog}(\Mbb, m = 2^k)$}
+      \Procname{$\hlogprogram(\Mbb, m = 2^k)$}
       \li \For $i$ de $0$ até $m$
             \Do
       \li   $M[i] \gets 0$
@@ -214,6 +239,6 @@ atualizada a cada novo elemento inserido no método \texttt{adiciona}.
       \li   $M[lote] \gets \max(M[lote], \rho(b_{k+1}b_{k+2}{\dots}) + 1)$
             \End
       \li
-      \Return $\alpha_m \times m^2 \times \sum_i{2^{-M[i]}}$   
+      \Return $\alpha_m \times m^2 \mathbin{/} \sum_i{2^{-M[i]}}$   
       \End
-    \end{codebox}
+\end{codebox}
