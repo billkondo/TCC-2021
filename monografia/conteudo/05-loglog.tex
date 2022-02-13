@@ -209,10 +209,10 @@ desvio padrão dele, que é de $1{,}30 \mathbin{/} \sqrt{m}$, é maior. Isto pod
 com quantidades muito grandes, da ordem de bilhões. No entanto, com uma simples modificação no algoritmo~$\logprogram$, 
 obtemos um novo algoritmo com o mesmo consumo de memória, mas desvio padrão de~$1{,}04 \mathbin{/} \sqrt{m}$.
 
-O aprimoramento do algoritmo~$\LOG$ é conhecido como $\HLOG$. E a modificação que deve ser feita em~$\logprogram$ é 
-substituir a média \textbf{aritmética} pela média \textbf{harmônica}. A intuição por trás desta substituição é que a 
-média harmônica é afetada menos por \textit{outliers}, ou seja, valores muito fora do esperado não distorcem tanto a 
-estimativa. A consequência disso é que a variância do estimador é reduzida. 
+O aprimoramento do algoritmo~$\LOG$ é conhecido como $\HLOG$~\citep{hyperloglog:07}. E a modificação que deve ser feita 
+em~$\logprogram$ é substituir a média \textbf{aritmética} pela média \textbf{harmônica}. A intuição por trás desta 
+substituição é que a média harmônica é afetada menos por \textit{outliers}, ou seja, valores muito fora do esperado não 
+distorcem tanto a estimativa. A consequência disso é que a variância do estimador é reduzida. 
 
 Tanto no algoritmo~$\LOG$ quanto no $\HLOG$, o valor de $M$ de cada lote é uma aproximação para $\lg n \mathbin{/} m$, e 
 conseguimos obter uma estimativa para $n \mathbin{/} m$ se elevarmos~$2$ a esse valor. Dessa forma, no algoritmo~$\LOG$, 
