@@ -5,10 +5,11 @@
 
 Este capítulo aborda uma outra solução para o problema da contagem distinta aproximada. O 
 Capítulo~\ref{lab:flajolet-martin} apresentou o algoritmo da $\pcounting$, que estima o número de elementos distintos em 
-um fluxo de dados com desvio padrão em torno de $0.78 / \sqrt{m}$. 
+um fluxo de dados com desvio padrão em torno de $0{,}78 \mathbin{/} \sqrt{m}$. 
 
-O algoritmo das $\asampling$ tem um desvio padrão de aproximadamente $1.20 / \sqrt{m}$~\citep{adptive:sampling:90}. 
-As razões para estudarmos esse algoritmo mesmo que ele apresente um erro maior ficarão claras nas próximas seções.
+O algoritmo das $\asampling$ tem um desvio padrão de aproximadamente $1{,}20 \mathbin{/} \sqrt{m}$
+~\citep{adptive:sampling:90}. As razões para estudarmos esse algoritmo mesmo que ele apresente um erro maior ficarão 
+claras nas próximas seções.
 
 \section{Algoritmo das $\asampling$}
 \label{lab:chapter:04:01}
@@ -27,10 +28,10 @@ Quando essa lista tiver mais que $m$ elementos, incrementamos $\delta$ em 1 e pa
 somente elementos com prefixo $0^{\delta + 1}$.
 
 Agora, suponha que em um dado momento do algoritmo, a lista tenha tamanho $l$ e estamos mantendo somente elementos com 
-prefixos $0^{\delta}$. A probabilidade de um elemento ter um prefixo dessa forma é $1 / 2^{\delta}$, e consequentemente,
-esperamos que a cada $2^{\delta}$ itens, pelo menos um item tenha um prefixo desse formato. Assim, se nossa lista tem
-$l$ elementos com prefixo $0^{\delta}$, então devemos ter examinado pelo menos $2^{\delta} l$ itens, e este valor é 
-justamente a estimativa para a quantidade de valores distintos.
+prefixos $0^{\delta}$. A probabilidade de um elemento ter um prefixo dessa forma é $1 \mathbin{/} 2^{\delta}$, e 
+consequentemente, esperamos que a cada $2^{\delta}$ itens, pelo menos um item tenha um prefixo desse formato. Assim, se 
+essa lista tem $l$ elementos com prefixo $0^{\delta}$, então devemos ter examinado pelo menos $2^{\delta} l$ itens, e 
+este valor é justamente a estimativa para a quantidade de valores distintos.
 
 O algoritmo $\AS$ recebe um fluxo $\Mbb$ com $n$ elementos distintos e um parâmetro $m$, que está relacionado com o 
 consumo de memória do algoritmo e sua precisão. O algoritmo usa uma função de hash $h$ para associar de forma uniforme 
@@ -96,7 +97,7 @@ $5 = 101_2$. Em seguida, podemos inserir $54 = 011011_2$ em $LIST$ e como novame
 incrementar $\delta$ e filtrar os itens da lista. A lista atual é 
 \[ \{ 36 = 001001_2, 108 = 0011011_2, 82 = 0100101_2, 54 = 011011_2 \} \ . \] 
 Manteremos somentes os valores cujos prefixos binários se iniciam com dois zeros e portanto, 
-\[ LIST = \{ 36 = 001001_2, 108 = 011011_2 \} \ . \]
+\[ LIST = \{ 36 = 001001_2, 108 = 0011011_2 \} \ . \]
 Por fim, o valor $10 = 0101_2$ não é inserido na lista. E a estimativa para a quantidade de elementos distintos em 
 $\Mbb$ é $2^{\delta} \times |LIST| = 2^2 \times 2 = 8$. Essa estimativa está cometendo um erro de um item, já que $\Mbb$
 tem 9 itens distintos. 
@@ -108,9 +109,10 @@ estimativa tem precisão de $100\%$. Isto é o principal diferencial do algoritm
 $\pcounting$, que como foi visto na Seção~\ref{sec:fm:low_estimates}, apresenta um erro muito grande quando queremos 
 estimar cardinalidades baixas.
 
-Outro fator importante de se destacar é que o estimador devolvido por $\AS$ é 
-\textbf{não-viesado}~\citep{adptive:sampling:90}. Essa característica está relacionada com o fato do algoritmo das 
-$\asampling$ poder estimar valores pequenos sem problemas.
+Outro ponto importante de se destacar é que o estimador devolvido por $\AS$ é 
+\textbf{não-viesado}~\citep{adptive:sampling:90}, ou seja, o valor esperado desse estimador coincide com a quantidade de 
+elementos distintos que se quer estimar. Essa característica está relacionada com o fato do algoritmo das $\asampling$
+poder estimar valores pequenos sem problemas.
 
 \newpage
 \section{Implementando $\asampling$}
@@ -156,9 +158,9 @@ forma, a complexidade do método~\texttt{adiciona} é $O(1)$ amortizado.
 Por fim, falta esclarecer como foi codificada a verificação se um inteiro tem prefixo da forma $0^{\delta}$, ou em 
 outras palavras, se a representação binária de um inteiro começa com pelo menos $\delta$ zeros. Lembremos dessa forma, 
 da função $\rho$ definida na Seção~\ref{sec:flajolet-martin:algorithm}. Essa função recebe um inteiro $x$ e devolve a 
-posição indexada a partir do zero do bit menos significativo de $x$. Assim, $\rho(12) = \rho(0011_2) = 2$ e 
+posição indexada a partir do zero do bit ligado menos significativo de $x$. Assim, $\rho(12) = \rho(0011_2) = 2$ e 
 $\rho(24) = \rho(00011_2) = 3$. Note que a saída da função $\rho$ corresponde também a quantidade de bits zeros no 
-prefixo da representação binária de um inteiro. Podemos, portanto, aproveitar o método $p$ da classe 
+prefixo da representação binária de um inteiro. Podemos, portanto, aproveitar o método \texttt{p} da classe 
 \texttt{ProbabilisticCounting} para implementar o método \texttt{zeros\_no\_prefixo} e agora, para verificar se um 
 inteiro~$x$ tem prefixo da forma $0^{\texttt{delta}}$, basta testar se \texttt{zeros\_no\_prefixo(x)} é maior ou igual a
 \texttt{delta}.
@@ -172,7 +174,7 @@ de números pseudo-aleatórios dos experimentos do algoritmo da~$\pcounting$ foi
 foram aproveitados.
 
 Os resultados do primeiro experimento podem ser observados na Figura~\ref{fig:as:experimento:01}. É possível perceber
-que a estrutura com o parâmetro $m$ maior teve uma precisão melhor que a estrutura com $m$ menor ao longo de toda a 
+que a estrutura com o parâmetro $m$ maior teve no geral, uma precisão melhor que a estrutura com $m$ menor ao longo da 
 simulação. 
 
 \begin{figure}
@@ -192,10 +194,11 @@ simulação.
 
 
 Os gráficos com a evolução do erro relativo do experimento anterior estão na Figura~\ref{fig:as:experimento:01:erro}.
-O desvio padrão do algoritmo das $\asampling$ é $1.20/\sqrt{m}$. Portanto, para a estrutura com $m = 64$, o desvio 
-padrão é de $15\%$. As estimativas devolvidas por essa estrutura ficaram entre dois desvios padrões na maior parte da 
-simulação, apresentando um erro maior quando esta se aproximava do fim. Já a estrutura com $m = 1024$ tem desvio padrão 
-de $3{,}75\%$, e a simulação dela teve valores que ficaram dentro de um desvio na maior parte das iterações.
+O desvio padrão do algoritmo das $\asampling$ é $1{,}20 \mathbin{/} \sqrt{m}$. Portanto, para a estrutura com $m = 64$, 
+o desvio padrão é de $15\%$. As estimativas devolvidas por essa estrutura ficaram entre dois desvios padrões na maior 
+parte da simulação, apresentando um erro maior quando esta se aproximava do fim. Já a estrutura com $m = 1024$ tem 
+desvio padrão de $3{,}75\%$, e a simulação dela teve valores que ficaram dentro de um desvio na maior parte das 
+iterações.
 
 \begin{figure}
   \centering
@@ -253,7 +256,7 @@ desvio padrão. E podemos notar que com um valor de $m$ maior, a variância do a
     \includegraphics[width=\linewidth, height=4cm]{figuras/adaptive_sampling_variance_1024.png}
     \label{fig:as:experimento:02:1024}
   \end{subfigure}
-  \caption{Segundo experimento do algoritmo $\AS$. Foram realizadas dez mil simulações e em cada simulação, foram 
+  \caption{Segundo experimento do algoritmo $\AS$. Foram realizadas dez mil simulações, e em cada simulação, foram 
     inseridos em estruturas~\texttt{AdaptiveSampling} com $m = 64$ e $m = 1024$, um milhão de inteiros de~64 bits 
     gerados uniformemente. Os resultados foram utilizados para a construção dos histogramas de frequência acima. }
   \label{fig:as:experimento:02}
@@ -264,8 +267,7 @@ algoritmo tem pontos interessantes, como se basear em padrões de bits para cons
 fluxos com poucos elementos. Porém, a principal desvantagem dessa solução é o consumo de memória. Se considerarmos uma
 aplicação que precise lidar com hashes de 32~bits, então o consumo de memória da estrutura~\texttt{AdaptiveSampling} 
 seria de pelos menos $32 \times m$~bits no pior caso, quando a lista $LIST$ passa a ter mais que $m$ elementos. Esse
-custo é o mesmo que o do algoritmo~$\pcounting$ quando $L = 32$. Dessa forma, as $\asampling$, que têm um desvio maior
-que a $\pcounting$, têm também um consumo de espaço pior. 
+custo é o mesmo que o do algoritmo~$\pcounting$ quando $L = 32$.
 
 Para que esse gasto de memória fosse reduzido sem que se perdesse muita precisão, demorou mais de 20 anos desde a 
 criação da $\pcounting$. Veremos na próxima seção como podemos reduzir ainda mais esse consumo.

@@ -26,7 +26,7 @@ def constroi_grafico(
     m: int,
     inicio: int = 0,
     fim: int = -1,
-    mostra_x_label=True,
+    mostra_y_label=True,
 ):
     _, ax = plt.subplots()
     ax.plot(
@@ -43,13 +43,14 @@ def constroi_grafico(
         alpha=0.5,
     )
 
-    if mostra_x_label:
-        ax.set_ylabel("Quantidade de elementos distintos", labelpad=15)
+    if mostra_y_label:
+        ax.set_ylabel("Quantidade de elementos distintos", labelpad=15, fontsize=16)
 
-    ax.set_xlabel("Iterações", labelpad=15)
+    ax.set_xlabel("Iterações", labelpad=15, fontsize=16)
     ax.legend()
-    ax.set_title(rf"$m = {m}$", fontsize=12)
-    ax.tick_params(axis="x", labelsize=8)
+    ax.set_title(rf"$m = {m}$", fontsize=16)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", labelsize=12)
     plt.ticklabel_format(style="plain")
     plt.tight_layout()
     plt.show()
@@ -62,7 +63,7 @@ def constroi_grafico_erro(
     inicio: int = 0,
     fim: int = -1,
     erro_esperado: float = 0,
-    mostra_x_label=True,
+    mostra_y_label=True,
 ):
     erros: List[int] = []
 
@@ -110,13 +111,14 @@ def constroi_grafico_erro(
         ax.set_yticks([-2 * erro_esperado, -erro_esperado, 0.0, erro_esperado, 2 * erro_esperado])
         ax.tick_params(axis="y")
 
-    if mostra_x_label:
-        ax.set_ylabel("Erro Relativo", labelpad=15)
+    if mostra_y_label:
+        ax.set_ylabel("Erro Relativo", labelpad=15, fontsize=16)
 
-    ax.set_xlabel("Iterações", labelpad=15)
+    ax.set_xlabel("Iterações", labelpad=15, fontsize=16)
     ax.legend()
-    ax.set_title(rf"$m = {m}$", fontsize=12)
-    ax.tick_params(axis="x", labelsize=8)
+    ax.set_title(rf"$m = {m}$", fontsize=16)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", labelsize=12)
     plt.ticklabel_format(style="plain")
     plt.tight_layout()
     plt.show()
@@ -125,7 +127,7 @@ def constroi_grafico_erro(
 def experimento(
     M: int,
     erro_esperado: float = 0,
-    mostra_x_label=True,
+    mostra_y_label=True,
 ):
     random.seed(0)
     adaptive_sampling = AdaptiveSampling(m=M)
@@ -148,8 +150,8 @@ def experimento(
 
     print(time.time() - start_time)
 
-    constroi_grafico(tamanhos, respostas, M)
-    constroi_grafico_erro(tamanhos, respostas, M, erro_esperado=erro_esperado)
+    constroi_grafico(tamanhos, respostas, M, mostra_y_label=mostra_y_label)
+    constroi_grafico_erro(tamanhos, respostas, M, erro_esperado=erro_esperado, mostra_y_label=mostra_y_label)
     constroi_grafico(tamanhos, respostas, M, fim=M * 4)
     constroi_grafico_erro(
         tamanhos,
@@ -157,7 +159,7 @@ def experimento(
         M,
         fim=M * 4,
         erro_esperado=erro_esperado,
-        mostra_x_label=mostra_x_label,
+        mostra_y_label=mostra_y_label,
     )
 
 
