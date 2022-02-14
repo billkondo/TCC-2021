@@ -5,7 +5,7 @@
 Na década de 1970, Robert Morris ~\citep{morris:78} estudou o problema de contar rapidamente \textit{trigramas} cujas 
 frequências podiam chegar até 130 mil. Esses trigramas eram trios de caracteres que ocorriam em textos.
 
-O objetivo, então, era utilizar as contagens de trigramas na implementação de corretores ortográficos estátisticos 
+O objetivo, então, era utilizar as contagens de trigramas na implementação de corretores ortográficos estatísticos 
 ~\citep{morris:lorinda:75} para editores de textos ~\citep{mcmahon:cherry:morris:78} que acompanhariam as distribuições 
 do sistema operacional Unix dos laboratórios da Bell ~\citep{lumbroso:2018}. Contagens similares têm aplicação no 
 projeto de compressores de textos estatísticos ~\citep{text:compression:1990}.
@@ -34,10 +34,10 @@ inserções de elementos.
 
 Nesse sentido, o problema estudado por Morris pode ser considerado \textbf{incremental} (não há remoções de elementos), 
 e dessa forma, o conjunto $\Mbb$ pode ser visto como sendo um \textbf{fluxo} $x_1, x_2, \dots, x_t, \dots$ de elementos, 
-e as consultas seriam "Quantos elementos o conjunto $\Mbb$ possui \textbf{neste instante}$?$" ou 
-"Quantos elementos já passaram por este fluxo".
+e as consultas seriam ``Quantos elementos o conjunto $\Mbb$ possui \textbf{neste instante}$?$'' ou 
+``Quantos elementos já passaram por este fluxo''.
 
-No entanto, estudaremos detalhadamente nesse texto, as versões estatícas dos problemas apresentados, uma vez que, as 
+No entanto, estudaremos detalhadamente nesse texto, as versões estáticas dos problemas apresentados, uma vez que, as 
 análises dos algoritmos que resolvem esses problemas se baseiam nessas versões. E veremos que obter a versão 
 \textit{online} a partir da \textit{offline} é uma tarefa simples, e assim, as aplicações e simulações desses algoritmos 
 serão baseadas em versões dinâmicas.
@@ -46,13 +46,14 @@ Na próxima seção, veremos com mais detalhes o algoritmo de Morris que fornece
 \proc{ContagemAproximada($\Mbb$, $k$)}, em que $k$ é uma variável aleatória cujo valor é quase certamente $\lg \lg n$.
 
 \section{Algoritmo de \proc{Morris}}
+\label{chap:morris:algorithm}
 
 Para armazenarmos \textit{exatamente} um valor entre $0$ e $n$, são necessários registradores com~$\Omega(\lg n)$ bits. 
 Então, para que seja possível contar o número de elementos em um conjunto~$\Mbb$ com até $n$ elementos usando menos 
 bits, devemos abandonar a \textit{exatidão} da contagem e buscar alternativas aceitáveis.
 
 Morris sugeriu utilizar um contador $X$ para armazenar o valor de $\lg n$ ao invés de $n$. Neste caso, o estimador 
-\textit{aproximado} $\hat{n}$ de $n$ seria~$2^{X} - 1$. Este ``-1`` na expressão faz com que essa aproximação se ajuste 
+\textit{aproximado} $\hat{n}$ de $n$ seria~$2^{X} - 1$. Este ``-1'' na expressão faz com que essa aproximação se ajuste 
 à situação em que $\Mbb = \emptyset$. E um contador como este pode ser armazenado em $O(\lg X) = O(\lg \lg n)$ bits.
 
 A política de incremento de $X$ passa a ser a questão central do algoritmo. Morris propôs uma estratégia simples para 
@@ -159,10 +160,10 @@ X_k = \begin{cases}
 A relação acima é decorrente das linhas~\ref{li:morris:for:start}--\ref{li:morris:end}. Na $k$-ésima iteração deste 
 laço, a condicional da linha~\ref{li:morris:increment:condition} garante que o valor de $X_k$ será $X_{k-1} + 1$ se o 
 número $r$ gerado na linha~\ref{li:morris:generator} for~zero. A probabilidade deste evento ocorrer é 
-$\Pbb(g(X_{k-1}) = 0) = 1/2^{X_{k-1}}$, uma vez que, $r$ é um número aleatório escolhido uniformemente 
+$\Pbb(g(X_{k-1}) = 0) = 1 \mathbin{/} 2^{X_{k-1}}$, uma vez que, $r$ é um número aleatório escolhido uniformemente 
 entre~$0$~e~$2^{X_{k-1}} - 1$, inclusive. Nesse sentido, a probabilidade de o valor de $X_k$ ser $X_{k - 1}$ é igual ao 
 complementar de $\Pbb(g(X_{k-1}) = 0)$ e assim, 
-\[\Pbb(g(X_{k-1}) \not\eq 0) = 1 - \Pbb(g(X_{k-1}) = 0) = 1 - 1/2^{X_{k-1}} \ . \]
+\[\Pbb(g(X_{k-1}) \not\eq 0) = 1 - \Pbb(g(X_{k-1}) = 0) = 1 - 1 \mathbin{/} 2^{X_{k-1}} \ . \]
 
 Podemos, agora, obter a partir da recorrência~\eqref{morris:rec:xk}, uma expressão \textit{recursiva} para os valores de 
 $2^{X_k} - 1$ para $k = 0,1,2,\dots$.
@@ -197,8 +198,8 @@ Figura~\ref{fig:morris-tree}. Nesta árvore, podemos encontrar os possíveis val
 $X_2$ e $X_3$, além das probabilidades de cada variável assumir um certo valor. As setas da cor verde indicam que o 
 contador foi incrementado e as da cor vermelha, que o contador não sofreu mudanças. Assim, para que tenhamos, por 
 exemplo, $X_3 = 3$, é necessário que durante as iterações do algoritmo, obtenhamos $g(1) = 0$ e $g(2) = 0$. Este evento 
-ocorre com probabilidade $1/2 \times 1/4 = 1/8$. Na figura, este fato é indicado com a fração $1/8$ próxima à folha de 
-rótulo $X_3 = 3$.
+ocorre com probabilidade $1 \mathbin{/} 2 \times 1 \mathbin{/} 4 = 1 \mathbin{/} 8$. Na figura, este fato é indicado com 
+a fração $1 \mathbin{/} 8$ próxima à folha de rótulo $X_3 = 3$.
 
 \begin{figure}
   \centering
@@ -330,7 +331,7 @@ Logo, temos que
 \[  \Pbb\bigg(|\proc{Morris}(\Mbb) - n| \geq 4\sqrt{2} \times \frac{2}{\sqrt{2}}\bigg) =  
     \Pbb(|\proc{Morris}(\Mbb) - n| \geq 4n) \leq \frac{1}{32} \ . \]
     
-Portando, podemos concluir que 
+Portanto, podemos concluir que 
 \begin{align}
   \Pbb(|\proc{Morris}(\Mbb) - n| \geq 4n) \leq \frac{1}{32} < 0{,}032 \ .  \label{morris:error:result}
 \end{align}
@@ -401,7 +402,7 @@ de~\citep{LectureNotesAndoni}.
 O algoritmo \proc{Morris++} recebe um conjunto $\Mbb = \{ e_1, e_2, \dots, e_n \}$ e um número positivo~$t$, e devolve 
 um estimador~$\hat{n}$ para $n$. Este estimador será a média aritmética de $t$ execuções de \proc{Morris}($\Mbb$). Esta 
 estratégia é inspirada na \proc{Lei dos Grandes Números}, que diz que a média dos resultados obtidos de um grande número 
-de experimentos deve se aproximar do valor esperado à medida que mais experimentos são realizados.
+de experimentos deve se aproximar do valor esperado conforme mais experimentos são realizados.
 
 \begin{codebox}
   \Procname{$\proc{Morris++}(\Mbb, t)$}
@@ -427,7 +428,7 @@ para $i = 1, 2, \dots, t$. A igualdade~\eqref{morris:plus:n:exp} é decorrência
 \eqref{morris:plus:n:var}, do teorema \hyperref[morris:theorem:variance]{da variância de \proc{Morris}($\Mbb$)}.
 
 De maneira semelhante ao que já havíamos feito, denotaremos por $\proc{Morris++}(\Mbb, t)$ como sendo o estimador 
-devolvido pelo algoritmo tendo o conjunto $\Mbb$ e o número inteiro $t$ como entrada. É evidente que 
+devolvido pelo algoritmo tendo o conjunto $\Mbb$ e o número inteiro~$t$ como entrada. É evidente que 
 $\proc{Morris}(\Mbb) = \proc{Morris++}(\Mbb, 1)$.
 
 \begin{theorem}[do valor esperado de $\proc{Morris++}$]
@@ -479,7 +480,7 @@ $\proc{Morris}(\Mbb) = \proc{Morris++}(\Mbb, 1)$.
   
   Para todo $i < j$ as variáveis aleatórias $n_i$ e $n_j$ são independentes e portanto não correlacionadas,
   ou seja, $\Cov(n_i,n_j) = 0$. Isto implica a igualdade~\eqref{demo:morrs:plus:var:01}.
-  As igualdades~\eqref{demo:morris:plus:var:02} e~\eqref{demo:morris:plus:var:03} são devidas as identidades 
+  As igualdades~\eqref{demo:morris:plus:var:02} e~\eqref{demo:morris:plus:var:03} são devidas às identidades 
   em~\eqref{morris:plus:n:var}.
 \end{proof}
 
@@ -594,14 +595,14 @@ class Morris:
 Na implementação acima, a função \textit{randint} da biblioteca \hyperref[PythonRandom]{random do python} faz o papel do 
 gerador~$g$ de números aleatórios do algoritmo $\Morris$. Essa função recebe inteiros $a$ e $b$, e retorna de modo 
 uniforme um inteiro aleatório entre $a$ e $b$ inclusive. Dessa forma, no Programa \ref{morris:code}, a probabilidade de 
-a variável $r$ receber o valor zero é $1/2^{X}$, que coincide com a chance do contador ser incrementado no algoritmo 
-$\Morris$.
+a variável $r$ receber o valor zero é $1 \mathbin{/} 2^{X}$, que coincide com a chance do contador ser incrementado no 
+algoritmo $\Morris$.
 
 Um comentário importante a se fazer sobre a implementação de geradores de números aleatórios, como a função 
 \textit{randint} é que na prática, funções deste tipo geram números \textbf{pseudo-aleatórios}. Isto quer dizer, na 
 maioria das vezes, que o programa define um ponto de partida e salta para outros pontos de maneira previsível. E a 
 aparente aleatoriedade deste processo é o desconhecimento do ponto inicial. Um exemplo simples de função geradora de 
-números pseudo-aleatórios é a seguinte: tome três primos $a, b, m$. Defina um inteiro inicial~$s$ e outro inteiro $t$ 
+números pseudo-aleatórios é o seguinte: tome três primos $a, b, m$. Defina um inteiro inicial~$s$ e outro inteiro $t$ 
 cujo valor é igual a~$s$ inicialmente. Dessa forma, toda vez que pedirmos para essa função gerar um número aleatório, 
 retornaremos~$t$ e em seguida, igualaremos~$t$ a $(t \times b + a) \mod m$, em que $x \mod y$ é o resto da divisão de 
 $x$ por $y$.
@@ -624,49 +625,56 @@ podemos usar um gerador de inteiros pseudo-aleatórios no lugar de~$g$ sem neces
 do algoritmo. As simulações a serem exibidas a seguir devem mostrar indícios que de fato, a precisão do algoritmo de 
 $\Morris$ não fica comprometida com essa mudança.
 
-\begin{figure}
-  \centering
-  \begin{subfigure}{.5\textwidth}
-    \centering
-    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_first.png}
-    \caption{Estimativas}
-    \label{fig:morris:100}
-  \end{subfigure}%
-  \begin{subfigure}{.5\textwidth}
-    \centering
-    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_erro_first.png}
-    \caption{Erro Relativo}
-    \label{fig:morris:error:100}
-  \end{subfigure}
-  \caption{Primeiras iterações do primeiro experimento do algoritmo~$\Morris$. Foram inseridos em uma 
-  estrutura~\texttt{Morris}, um milhão de elementos. Em outras palavras, o método~\texttt{adiciona} foi chamado um 
-  milhão de vezes. Depois de cada inserção, o resultado do método~\texttt{conta} foi utilizado para a construção dos 
-  gráficos com a evolução da estimativa e do erro relativo.}
-\end{figure}
-
 O primeiro experimento a ser apresentado é simular uma situação em que um milhão de elementos são inseridos na estrutura 
 \texttt{Morris}. Para fazermos isso, chamamos o método \texttt{adiciona} do Programa~\ref{morris:code} um milhão de 
 vezes. Para cada vez que executamos esse método, calculamos o erro relativo do algoritmo, ou seja, na $i$-ésima 
 iteração da simulação, após o método \texttt{adiciona} ter sido chamado, chamamos o método \texttt{conta} e armazenamos 
-seu retorno em uma variável temporária \proc{temp}. Assim, o erro relativo naquela iteração foi $(\proc{temp} - i) / i$, 
-uma vez que, $i$ pode ser visto como a quantidade de itens que já passaram pela estrutura.
+seu retorno em uma variável temporária \proc{temp}. Assim, o erro relativo naquela iteração foi 
+$(\proc{temp} - i) \mathbin{/} i$, uma vez que, $i$ pode ser visto como a quantidade de itens que já passaram pela 
+estrutura.
 
-Dessa forma, a Figura~\ref{fig:morris:100} exibe um gráfico cujo eixo $x$ das abcissas representa as iterações da 
+Dessa forma, a Figura~\ref{fig:morris:first} exibe um gráfico cujo eixo $x$ das abcissas representa as iterações da 
 simulação e o eixo $y$ das ordenadas, o retorno do método \texttt{conta}. A linha laranja do gráfico ilustra a evolução 
 da \textbf{estimativa} de itens inseridos ao longo das iterações e a linha azul, evolução da quantidade \textbf{real} de 
 itens inseridos ao longo das iterações. Assim, analisando essas duas linhas, podemos ter uma ideia se a estimativa do 
 algoritmo se aproxima ou se distância do valor correto conforme mais iterações acontecem.
 
-No entanto, somente com esse gráfico, pode ser difícil visualizar o erro relativo do algoritmo ao longo das iterações. 
-É por isso que construímos também, o gráfico da Figura~\ref{fig:morris:error:100}, em que o eixo $x$ representa 
-novamente as iterações da simulação e o eixo $y$, o erro relativo.
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_first.png}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth, height=4cm]{figuras/morris_erro_first.png}
+  \end{subfigure}
+  \caption{Primeiras iterações do primeiro experimento do algoritmo~$\Morris$. Foram inseridos em uma 
+  estrutura~\texttt{Morris}, um milhão de elementos. Em outras palavras, o método~\texttt{adiciona} foi chamado um 
+  milhão de vezes. Depois de cada inserção, o resultado do método~\texttt{conta} foi utilizado para a construção dos 
+  gráficos com a evolução da estimativa e do erro relativo.}
+  \label{fig:morris:first}
+\end{figure}
 
-Para as primeiras cem iterações da simulação, é possível perceber pela Figura~\ref{fig:morris:error:100}, que o erro 
-relativo não é maior que $0.8$. Na seção sobre a 
-\hyperref[sec:morris:analysis]{qualidade da aproximação do algoritmo $\Morris$}, chegamos à conclusão que o erro 
+No entanto, somente com esse gráfico, pode ser difícil visualizar o erro relativo do algoritmo ao longo das iterações. 
+É por isso que construímos também, o gráfico do erro relativo na Figura~\ref{fig:morris:first}, em que o eixo $x$ 
+representa novamente as iterações da simulação e o eixo $y$, o erro relativo.
+
+
+Para as primeiras cem iterações da simulação, é possível perceber que o erro relativo não é maior que $80\%$. Na seção 
+sobre a \hyperref[sec:morris:analysis]{qualidade da aproximação do algoritmo $\Morris$}, chegamos à conclusão que o erro 
 relativo cometido por $\Morris(\Mbb)$ é quase certamente menor do que 4. Nesse sentido, o pedaço inicial da simulação 
 está dentro do esperado. Vamos agora, verificar se esse resultado esperado se mantém conforme mais iterações são 
 realizadas.
+
+A Figura~\ref{fig:morris:full}, que exibe um gráfico com erro relativo ao longo de toda a simulação, nos leva
+à conclusão que o erro relativo do algoritmo ficou dentro da faixa esperada, que é menos que~4. Essa mesma figura, que 
+também exibe um gráfico que destaca a evolução da estimativa da quantidade de itens inseridos ao longo de toda a 
+simulação, ressalta uma importante característa da estrutura: que quanto mais itens tiverem sido inseridos, mais 
+demorado é para que a estimativa cresça. Isto está diretamente relacionado com a probabilidade do contador~$X$ ser 
+incrementado no algoritmo~$\Morris$. Contudo, esse incremento demorado não é uma certeza absoluta, uma vez que, existem 
+casos nessa simulação em que um crescimento da estimativa ocorreu em menos iterações que o 
+crescimento anterior. 
 
 \begin{figure}
   \centering
@@ -674,35 +682,16 @@ realizadas.
     \centering
     \captionsetup{justification=centering}
     \includegraphics[width=\linewidth, height=4cm]{figuras/morris_full.png}
-    \caption{Estimativas}
-    \label{fig:morris:1000000}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
     \captionsetup{justification=centering}
     \includegraphics[width=\linewidth, height=4cm]{figuras/morris_erro_full.png}
-	  \caption{Erro Relativo}
-    \label{fig:morris:error:1000000}
   \end{subfigure}
   \caption{Todas as iterações do primeiro experimento do algoritmo~$\Morris$.}
+  \label{fig:morris:full}
 \end{figure}
 
-A Figura~\ref{fig:morris:error:1000000}, que exibe um gráfico com erro relativo ao longo de toda a simulação, nos leva
-à conclusão que o erro relativo do algoritmo ficou dentro da faixa esperada, que é menos que~4. Já a 
-Figura~\ref{fig:morris:1000000}, que exibe um gráfico que destaca a evolução da estimativa da quantidade de itens 
-inseridos ao longo de toda a simulação, ressalta uma importante característa da estrutura: que quanto mais itens tiverem
-sido inseridos, mais demorado é para que a estimativa cresça. Isto está diretamente relacionado com a probabilidade do 
-contador~$X$ ser incrementado no algoritmo~$\Morris$. Contudo, esse incremento demorado não é uma certeza absoluta, uma
-vez que, existem casos nessa simulação em que um crescimento da estimativa ocorreu em menos iterações que o 
-crescimento anterior. 
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[height=4cm, width=.5\textwidth]{figuras/morris_interval.png}
-	\caption{Situação no primeiro experimento do algoritmo $\Morris$, em que o contador foi incrementado mais cedo que o 
-  esperado. As linhas verticais indicam as iterações nas quais ocorreram um incremento do contador. }
-  \label{fig:morris:interval}
-\end{figure}
 
 Uma dessas situações pode ser vista na Figura~\ref{fig:morris:interval}. Nessa figura, as linhas verticais indicam as 
 iterações nas quais o contador foi incrementado. Assim, o contador foi incrementado nas iterações de números 75720, 
@@ -714,14 +703,13 @@ $241343 - 176384 = 64959$~iterações.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[height=4cm, width=.5\textwidth]{figuras/morris_variance.png}
-	\caption{Segundo experimento do algoritmo $\Morris$. Foram realizadas dez mil simulações. Em cada simulação, foram 
-  inseridos um milhão de elementos em uma estrutura~\texttt{Morris} e ao final de todas as inserções, o resultados do 
-  método~\texttt{conta} foi utilizado para construir o gráfico com as distribuições das estimativas devolvidas pelo 
-  algoritmo.}
-  \label{fig:morris:variance}
+  \includegraphics[height=4cm, width=.5\textwidth]{figuras/morris_interval.png}
+	\caption{Situação no primeiro experimento do algoritmo $\Morris$, em que o contador foi incrementado mais cedo que o 
+  esperado. As linhas verticais indicam as iterações nas quais ocorreram um incremento do contador. }
+  \label{fig:morris:interval}
 \end{figure}
 
+\newpage
 O próximo experimento a ser apresentado consiste em repetir a simulação anterior várias vezes para que possamos ter uma 
 ideia da variância da estrutura~\texttt{Morris}. Dessa forma, repetimos dez mil vezes a simulação anterior e guardamos 
 as frequências das estimativas devolvidas pelo algoritmo~$\Morris$. A distribuição dessas frequências pode ser vista na 
@@ -734,6 +722,16 @@ Analisando a Figura~\ref{fig:morris:variance}, podemos concluir que na maioria d
 algoritmo~$\Morris$ ficou menor ou igual que 4, como foi previsto em~\eqref{morris:error:result}. A melhor aproximação 
 devolvida pelo algoritmo acontece quando $X = 20$, ou seja, a estimativa devolvida é $2^{20} - 1 \approx 1.000.000$. E 
 assim, para até $X = 18$, estaríamos tendo um erro de quatro vezes menos, e $X = 22$, quatro vezes mais.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=4cm, width=.5\textwidth]{figuras/morris_variance.png}
+	\caption{Segundo experimento do algoritmo $\Morris$. Foram realizadas dez mil simulações. Em cada simulação, foram 
+  inseridos um milhão de elementos em uma estrutura~\texttt{Morris} e ao final de todas as inserções, o resultados do 
+  método~\texttt{conta} foi utilizado para construir o gráfico com as distribuições das estimativas devolvidas pelo 
+  algoritmo.}
+  \label{fig:morris:variance}
+\end{figure}
 
 Com esses dois experimentos realizados, foi possível termos uma ideia da variância e precisão do algoritmo~$\Morris$. 
 Dessa forma, podemos partir para a implementação da versão aprimorada desse algoritmo. Essa implementação terá como 
@@ -761,46 +759,43 @@ class MorrisPlus:
 
 O parâmetro \texttt{t} da classe \texttt{MorrisPlus} indica quantas estruturas \texttt{Morris} estão sendo mantidas. Em 
 outras palavras, esse parâmetro tem o mesmo significado da variável $t$ no algoritmo~$\Morrispp$, que é quantas vezes 
-executaremos o algoritmo~$\Morris$ para obter uma média das estimativas.
+executaremos o algoritmo~$\Morris$ para obtermos uma média das estimativas.
 
 Vamos, agora, repetir os mesmos experimentos feitos para a estrutura \texttt{Morris} só que utilizando a implementação 
-\texttt{MorrisPlus}. O esperado é que vejamos a \proc{Lei dos Grandes Números} em ação e que a variância do Programa
-~\ref{morris:plus:code} seja menor. E o valor de $t$ utilizado nos próximos experimentos foi de $1000$ e assim, 
+\texttt{MorrisPlus}. O esperado é que vejamos a \proc{Lei dos Grandes Números} em ação e que a variância do 
+Programa~\ref{morris:plus:code} seja menor. E o valor de $t$ utilizado nos próximos experimentos foi de $1000$ e assim, 
 poderemos comparar os resultados deles com as contas desenvolvidas na seção sobre como 
 \hyperref[sec:morris:plus]{aprimorar o algoritmo~$\Morris$}.
+
+O primeiro experimento a ser repetido é aquele em que desejamos observar a evolução do estimador devolvido pela 
+estrutura~\texttt{MorrisPlus}. Para isso, chamamos o método \texttt{adiciona} um milhão de vezes e construímos o 
+gráfico com as estimativas ao longos das chamadas dessa função. O resultado dessa simulação pode ser visto no gráfico 
+das estimativas da Figura~\ref{fig:morris:plus:full}, em que podemos notar que a linha laranja, que representa as 
+estimativas devolvidas, se aproxima bastante da linha azul, que representa os valores esperados.
 
 \begin{figure}
   \centering
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[height=4cm, width=\linewidth]{figuras/morris_plus_full.png}
-    \caption{Estimativas}
-    \label{fig:morris:plus:full}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
     \captionsetup{justification=centering}
     \includegraphics[width=\linewidth, height=4cm]{figuras/morris_plus_erro_full.png}
-	  \caption{Erro Relativo}
-    \label{fig:morris:plus:erro:full}
   \end{subfigure}
   \caption{Primeiro experimento do algoritmo~$\Morrispp$. Foram inseridos em um estrutura~\texttt{MorrisPlus}, um milhão
   de elementos.}
+  \label{fig:morris:plus:full}
 \end{figure}
 
-O primeiro experimento a ser repetido é aquele em que desejamos observar a evolução do estimador devolvido pela 
-estrutura~\texttt{MorrisPlus}. Para isso, chamamos o método \texttt{adiciona} um milhão de vezes e construímos o 
-gráfico com as estimativas ao longos das chamadas dessa função. O resultado dessa simulação pode ser visto na 
-Figura~\ref{fig:morris:plus:full}, em que podemos notar que a linha laranja, que representa as estimativas devolvidas, 
-se aproxima bastante da linha azul, que representa os valores esperados.
-
-A Figura~\ref{fig:morris:plus:erro:full} exibe um gráfico com a evolução do erro relativo cometido pela estrutura
+A Figura~\ref{fig:morris:plus:full} também exibe um gráfico com a evolução do erro relativo cometido pela estrutura
 ~\texttt{MorrisPlus} ao longo das iterações da simulação anterior. Em \eqref{morris:plus:expected_result}, foi previsto
 que se executássemos a subrotina $\Morris$ mil vezes dentro do algoritmo~$\Morrispp$, deveríamos ter um erro relativo
 menor que $10\%$ quase certamente. Contudo, no início da simulação, o erro relativo cometido foi maior que $15\%$. Isto 
-é evidenciado na Figura~\ref{fig:morris:plus:erro:first}, que destaca o erro relativo nas primeiras 50 iterações. 
+é evidenciado na Figura~\ref{fig:morris:plus:error}, que destaca o erro relativo nas primeiras 50 iterações. 
 Podemos, assim, desconsiderar essas iterações iniciais e ver como o erro evolui a partir da iteração de número 51. A 
-Figura~\ref{fig:morris:plus:erro:sem:first} ilustra essa situação, e é possível perceber que o desvio cometido foi menor
+Figura~\ref{fig:morris:plus:error} também ilustra essa situação, e é possível perceber que o desvio cometido foi menor
 que $5\%$, que está dentro do previsto.
 
 \begin{figure}
@@ -808,17 +803,14 @@ que $5\%$, que está dentro do previsto.
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[height=4cm, width=\linewidth]{figuras/morris_plus_erro_first.png}
-    \caption{50 primeiras iterações}
-    \label{fig:morris:plus:erro:first}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
     \captionsetup{justification=centering}
     \includegraphics[height=4cm, width=\textwidth]{figuras/morris_plus_erro_sem_first.png}
-	  \caption{Desconsiderando as 50 primeiras iterações}
-    \label{fig:morris:plus:erro:sem:first}
   \end{subfigure}
   \caption{Erro relativo do primeiro experimento do algoritmo~$\Morrispp$.}
+  \label{fig:morris:plus:error}
 \end{figure}
 
 Podemos, agora, partir para o segundo experimento do algoritmo~$\Morrispp$, cujo objetivo é verificar a variância dele.

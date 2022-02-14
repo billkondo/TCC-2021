@@ -50,13 +50,13 @@ def constroi_grafico(
     for vline in vlines:
         ax.axvline(x=vline, ls=":")
 
-    ax.set_xlabel("Iterações", labelpad=15)
-    ax.set_ylabel("Quantidade de elementos", labelpad=15)
-    ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris}")
+    ax.set_xlabel("Iterações", labelpad=15, fontsize=16)
+    ax.set_ylabel("Quantidade de elementos", labelpad=15, fontsize=16)
+    ax.set_title(r"Estimativas", fontsize=16)
     ax.legend()
     ax.ticklabel_format(style="plain")
-    ax.tick_params(axis="x", labelsize=8)
-    ax.tick_params(axis="y", labelsize=8)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", labelsize=12)
     plt.tight_layout()
     plt.show()
 
@@ -78,13 +78,13 @@ def constroi_grafico_erro_relativo(
     # Linha de erro relativo zero
     ax.axhline(y=0, xmin=0, xmax=1000000, linestyle=":")
 
-    ax.set_xlabel("Iterações", labelpad=15)
-    ax.set_ylabel("Erro relativo", labelpad=15)
-    ax.set_title(r"Experimento 1 - Algoritmo \textbf{Morris}")
+    ax.set_xlabel("Iterações", labelpad=15, fontsize=16)
+    ax.set_ylabel("Erro relativo", labelpad=15, fontsize=16)
+    ax.set_title(r"Erro Relativo", fontsize=16)
     ax.legend()
     ax.ticklabel_format(style="plain")
-    ax.tick_params(axis="x", labelsize=8)
-    ax.tick_params(axis="y", labelsize=8)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.tick_params(axis="y", labelsize=12)
     plt.tight_layout()
     plt.show()
 
