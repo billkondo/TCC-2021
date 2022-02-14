@@ -67,7 +67,7 @@ $2^{R}/\phi = 2^4/0.77351 \approx 21$. A estimativa anterior está muito distant
 seguintes verificaremos se essa situação se repete para fluxos com muito mais elementos.
 
 O algoritmo $\pc$ a seguir recebe um fluxo $\Mbb = \{ x_1, x_2, \dots, x_s, \dots \}$ com $n$ elementos distintos, 
-um inteiro $L$ que representa quantos bits o algoritmo consumirá e uma função de hash~$h$ que mapeia os elementos $\Mbb$ 
+um inteiro $L$ que representa quantos bits cada hash possui e uma função de hash~$h$ que mapeia os elementos $\Mbb$ 
 para inteiros entre $0$ e $2^L - 1$ inclusive. E esse algoritmo devolve estimador $\hat{n}$ para $n$ da forma 
 $2^{R}/\phi$, em que, $R$ é um número inteiro e $\phi$, uma constante teórica. Veremos mais adiante que 
 $\Ebb(R) = \lg \phi n$, $\phi = 0.77351{\dots}$ e $\sigma(R) = 1.12$.
@@ -84,7 +84,7 @@ $\Ebb(R) = \lg \phi n$, $\phi = 0.77351{\dots}$ e $\sigma(R) = 1.12$.
   \li   $\bitmap[\rho(y)] \gets 1$                          \label{li:pc:for:end}
       \End
   \li $R \gets \{ \min 0 \leq i \leq L: \bitmap[i] = 0 \}$  \label{li:pc:r:def}
-  \li\Return $2^R/\phi$
+  \li\Return $2^R \mathbin{/} \phi$
   \End
 \end{codebox}
 
@@ -118,20 +118,21 @@ prefixo da forma $0^{R}1$, podemos nos questionar quantas palavras tem esse pref
 palavras terão esse prefixo.
 
 Assim, para um fluxo $\Mbb_h$ com $n$ elementos distintos, é possível se perguntar quantos destes elementos começam com
-o dígito 1. A resposta para esta pergunta é que \textbf{esperamos} que $n/2$ palavras desse fluxo se iniciem com o 
-dígito 1. E $n/2^2 = n / 4$ palavras devem ter o prefixo $0^{2-1}1 = 01$. Da mesma maneira, $n/2^3 = n/8$ palavras devem 
-possuir um prefixo da forma $0^{3-1}1 = 001$. O vetor $\bitmap$, desse modo, armazena quais prefixos já apareceram no 
-fluxo $\Mbb_h$. Falta, agora, entender o papel da variável $R$.
+o dígito 1. A resposta para esta pergunta é que \textbf{esperamos} que $n \mathbin{/} 2$ palavras desse fluxo se iniciem 
+com o dígito 1. E $n \mathbin{/} 2^2 = n \mathbin{/} 4$ palavras devem ter o prefixo $0^{2-1}1 = 01$. Da mesma maneira, 
+$n \mathbin{/} 2^3 = n \mathbin{/} 8$ palavras devem possuir um prefixo da forma $0^{3-1}1 = 001$. O vetor $\bitmap$, 
+desse modo, armazena quais prefixos já apareceram no fluxo $\Mbb_h$. Falta, agora, entender o papel da variável $R$.
 
 Suponha que $R = 4$, ou seja, $\bitmap[R] = 0$ e para $0 \leq i < R$, $\bitmap[i] = 1$. Vamos usar a ideia vista acima
-para tentar estimar o número de elementos distintos que devem ter aparecido. Esperamos que $1/2$ dos elementos de 
-$\Mbb_h$ se iniciem com o dígito 1, logo, a cada dois elementos sorteados ao acaso de $\Mbb_h$, pelo menos um deve 
-começar com 1. Em outras palavras, devem ter aparecido pelos menos duas palavras para que $\bitmap[0] = 1$. Vamos ver se 
-esse raciocínio faz sentido para $\bitmap[1] = 1$. O esperado é que $1/4$ dos elementos de $\Mbb_h$ comecem com $01$, 
-que a cada quatro palavras sorteadas de $\Mbb_h$, pelo menos uma comece com $01$ e assim, devem ter aparecido quatro 
-palavras para que $\bitmap[1] = 1$. Analogamente, devem ter aparecido pelo menos 8 palavras para que $\bitmap[2] = 1$ e 
-16 palavras para que $\bitmap[3] = 1$. Como $\bitmap[R = 4] = 0$, então ainda não devem ter aparecido $32$ palavras no 
-fluxo $\Mbb_h$. Portanto, a melhor estimativa nesse caso é afirmar que $\Mbb_h$ possui $2^R = 16$ elementos distintos. 
+para tentar estimar o número de elementos distintos que devem ter aparecido. Esperamos que $1 \mathbin{/} 2$ dos 
+elementos de $\Mbb_h$ se iniciem com o dígito 1, logo, a cada dois elementos sorteados ao acaso de $\Mbb_h$, pelo menos 
+um deve começar com 1. Em outras palavras, devem ter aparecido pelos menos duas palavras para que $\bitmap[0] = 1$. 
+Vamos ver se esse raciocínio faz sentido para $\bitmap[1] = 1$. O esperado é que $1 \mathbin{/} 4$ dos elementos de 
+$\Mbb_h$ comecem com $01$, que a cada quatro palavras sorteadas de $\Mbb_h$, pelo menos uma comece com $01$ e assim, 
+devem ter aparecido quatro palavras para que $\bitmap[1] = 1$. Analogamente, devem ter aparecido pelo menos 8 palavras 
+para que $\bitmap[2] = 1$ e 16 palavras para que $\bitmap[3] = 1$. Como $\bitmap[R = 4] = 0$, então ainda não devem ter 
+aparecido $32$ palavras no fluxo $\Mbb_h$. Portanto, a melhor estimativa nesse caso é afirmar que $\Mbb_h$ possui 
+$2^R = 16$ elementos distintos. 
 
 A ideia descrita nessa seção é a base para os algoritmos que resolvem o problema da contagem distinta aproximada, e 
 entendê-la ajudará a vermos a origem das soluções. Na próxima seção, serão expostas alguns aspectos da prova do 
@@ -250,7 +251,7 @@ modificado manterá $m$ vetores $\bitmap$, de maneira que para cada elemento $x$
 vamos setar $\bitmap_j[\rho(\mathbb{H}_{j}(x))] = 1$. Quando todos os itens de $\Mbb$ forem percorridos, calcularemos 
 $R_j = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$ para todo $0 \leq j < m$ e em seguida, encontraremos a média 
 desses valores obtendo $\overline{R}$. Por fim, a estimativa para o número de elementos distintos em $\Mbb$ será 
-$2^{\overline{R}} / \phi$. 
+$2^{\overline{R}} \mathbin{/} \phi$. 
 
 Uma outra forma de vermos essa solução é que estamos executando em pararelo $m$ funções $\pc$ e para isso, temos que 
 passar uma função de hash diferente para cada execução, a fim de produzir vetores $\bitmap$ diferentes ao final.
@@ -276,8 +277,8 @@ passar uma função de hash diferente para cada execução, a fim de produzir ve
       \Do
   \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
       \End
-  \li $\overline{R} = \sum_{j=0}^{m-1} \mathbb{R}[j] / m$
-  \li \Return $2^{\overline{R}}/\phi$
+  \li $\overline{R} = \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
+  \li \Return $2^{\overline{R}} \mathbin{/} \phi$
   \End
 \end{codebox}
 
@@ -305,33 +306,34 @@ a seguir mostram como essa divisão é feita.
       \End
   \li \For cada $x$ em $\Mbb$                                                         \label{li:pcpp:for:start}
       \Do
-  \li   $\texttt{lote} \gets h(x) \mod k$
-  \li   $y \gets \lfloor h(x) / k \rfloor$
+  \li   $\texttt{lote} \gets h(x) \bmod k$
+  \li   $y \gets \lfloor h(x) \mathbin{/} k \rfloor$
   \li   $\bitmap_{\texttt{lote}}[y] = 1$                                              \label{li:pcpp:for:end}
       \End
   \li \For $i$ de $0$ até $m$
       \Do
   \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$             \label{li:pcpp:rmin}
       \End
-  \li $\overline{R} = \sum_{j=0}^{m-1} \mathbb{R}[j] / m$
-  \li \Return $m \times 2^{\overline{R}}/\phi$
+  \li $\overline{R} = \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
+  \li \Return $m \ \times \ 2^{\overline{R}} \mathbin{/} \phi$
   \End
 \end{codebox}
 
 Se a função de hash $h$ distribuir os $n$ elementos distintos do fluxo $\Mbb$ uniformemente entre os $m$ lotes, então 
-esperamos que cada lote tenha aproximadament $\frac{n}{m}$ elementos. Nesse caso, $2^{\overline{R_n}}/\phi$ seria uma 
-aproximação para $\frac{n}{m}$. É devido a este fato que a saída do algoritmo~$\pcpp$ é 
-$\mathbf{m} \times 2^{\overline{R_n}}/\phi$, pois este valor é uma estimativa para $\mathbf{m} \times \frac{n}{m} = n$. 
+esperamos que cada lote tenha aproximadament $\frac{n}{m}$ elementos. Nesse caso, $2^{\overline{R_n}} \mathbin{/} \phi$ 
+seria uma aproximação para $\frac{n}{m}$. É devido a este fato que a saída do algoritmo~$\pcpp$ é 
+$\mathbf{m} \ \times \ 2^{\overline{R_n}} \mathbin{/} \phi$, pois este valor é uma estimativa para 
+$\mathbf{m} \ \times \ \frac{n}{m} = n$. 
 
 Na Seção~\ref{sec:flajolet-martin:algorithm}, vimos que no algoritmo~$\pc$, precisamos de pelo menos $O(L)$ bits para 
 armazenarmos o vetor $\bitmap$. Como o algoritmo~$\pcpp$ tem $m$ vetores $\bitmap$, o custo de espaço dele é de pelo 
 menos $O(mL)$ bits.
 
-Por fim, o desvio padrão do algoritmo $\pcpp$ é em torno de $0{,}78 / \sqrt{m}$. Isto quer dizer que para $m = 64$, o 
-desvio esperado é em torno de $10\%$. Dessa forma, a escolha de $m$ depende das exigências do problema. Se precisarmos 
-de uma precisão maior, escolheremos um valor de $m$  maior, mas teremos um algoritmo mais custoso em termos de tempo e 
-espaço. Por outro lado, se a exigência é, por exemplo, decidir qual de dois conjuntos tem a menor quantidade de 
-elementos distintos, podemos escolher um valor menor de $m$ para fazer essa comparação, mesmo tendo um risco maior de 
+Por fim, o desvio padrão do algoritmo $\pcpp$ é em torno de $0{,}78 \mathbin{/} \sqrt{m}$. Isto quer dizer que para 
+$m = 64$, o desvio esperado é em torno de $10\%$. Dessa forma, a escolha de $m$ depende das exigências do problema. Se 
+precisarmos de uma precisão maior, escolheremos um valor de $m$  maior, mas teremos um algoritmo mais custoso em termos 
+de tempo e espaço. Por outro lado, se a exigência é, por exemplo, decidir qual de dois conjuntos tem a menor quantidade 
+de elementos distintos, podemos escolher um valor menor de $m$ para fazer essa comparação, mesmo tendo um risco maior de 
 escolher o conjunto errado.
 
 \section{Estimando valores pequenos com a \proc{Contagem Probabilística}}
@@ -345,8 +347,8 @@ da tabela. Suponha que cada hash seja um inteiro de 4 bytes (32 bits) e que exis
 percorridos. Para armazenar essa tabela, gastaríamos pelos menos 4 MB. Por outro lado, se usarmos o algoritmo da
 $\pcounting$ para resolver esse problema, o consumo de memória seria proporcional ao valor $m$ e não dependeria da 
 quantidade de itens distintos. Suponha que $\bitmap$ seja um vetor de bits e que tenhamos $m$ vetores deste tipo. Se $m$ 
-for igual a 1024, então a memória consumida por esse algoritmo seria em torno de 32 KB, que é um consumo de espaço
-\textbf{30 vezes menor} que a solução exata.
+for igual a 1024, então a memória consumida por esse algoritmo seria em torno de 4 KB, que é um consumo de espaço
+\textbf{1000 vezes menor} que a solução exata.
 
 O desvio padrão da $\pcounting$ para $m = 1024$ é em torno de $2{,}5\%$. Logo, para um fluxo de milhões de itens 
 distintos, o erro esperado seria em torno das dezenas ou centenas de milhares. Com esse tipo de desvio, teríamos como 
@@ -365,15 +367,16 @@ $R_n$ é um estimador \textit{viesado} de $\lg n$. E analogamente, o estimador d
 \textit{viesado}.  
 
 Então, além do erro padrão, existe também o viés do algoritmo da \proc{Contagem Probabilística}, cujo valor é 
-$1 + 0{,}31/m$. Contudo, para valores de $m$ maiores que $32$, o viés se torna desprezíval se comparado ao desvio padrão. 
-Dessa forma, uma pessoa pode ser induzida a concluir que a escolha de $m$ é o único cuidado que ela deve tomar ao 
-utilizar esse algoritmo. No entanto, ainda existe o problema de estimar \textbf{baixas cardinalidades} com essa 
+$1 + 0{,}31 \mathbin{/} m$. Contudo, para valores de $m$ maiores que $32$, o viés se torna desprezíval se comparado ao 
+desvio padrão. Dessa forma, uma pessoa pode ser induzida a concluir que a escolha de $m$ é o único cuidado que ela deve 
+tomar ao utilizar esse algoritmo. No entanto, ainda existe o problema de estimar \textbf{baixas cardinalidades} com essa 
 estrutura.
 
 Suponha, portanto, que $m = 64$ e que o hash do único elemento que já passou por um fluxo $\Mbb$ comece com $1$. Logo, 
 se passarmos $\Mbb$ para $\pcpp$, existiria um vetor $\bitmap$ cuja primeira posição teria o valor $1$, e o restante dos 
-vetores $\bitmap$ teriam todos valores zero. Assim, $\overline{R}$ seria igual a $1/64$, e o estimador de $n$ teria o valor 
-de $64 \ 2^{\frac{1}{64}}/\phi \approx 83.64$. Esta estimativa está muito distante do valor real, que é $n = 1$.
+vetores $\bitmap$ teriam todos valores zero. Assim, $\overline{R}$ seria igual a $1 \mathbin{/} 64$, e o estimador de 
+$n$ teria o valor de $64 \ \times \ 2^{\frac{1}{64}} \mathbin{/} \phi \approx 83.64$. Esta estimativa está 
+muito distante do valor real, que é $n = 1$.
 
 Em vista disso, um tratamento especial deve ser dado para situações em que a cardinalidade do número de elementos 
 distintos de um conjunto for baixa. Poderíamos, por exemplo, manter os elementos percorridos em uma tabela de hash, e 
@@ -520,10 +523,10 @@ que essa distância cresce quando o valor de $m$ aumenta.
 Em vista desse erro no início do algoritmo, vamos desconsiderar as primeiras iterações do experimento anterior e tentar 
 observar se \texttt{ProbabilisticCounting} começa a produzir melhores estimativas conforme mais itens são inseridos 
 nessa estrutura. A Figura~\ref{fig:pc:experimento:01:sem:first} exibe a evolução das estimativas devolvidas 
-desconsiderando as primeiras. O desvio padrão da $\pcounting$ é de $0{,}78 / \sqrt{m}$, e portanto, para $m = 64$, esse 
-desvio é de $9{,}8 \%$, e para $m = 1024$, $2{,}4 \%$. Sendo assim, se desconsiderarmos as primeiras estimativas, a 
-$\pcounting$ com $m = 64$ devolveu valores dentro de dois desvios padrões. Já na simulação com $m = 1024$, as 
-estimativas ficaram dentro de um desvio, indicando um aumento de precisão.
+desconsiderando as primeiras. O desvio padrão da $\pcounting$ é de $0{,}78 \mathbin{/} \sqrt{m}$, e portanto, para 
+$m = 64$, esse desvio é de $9{,}8 \%$, e para $m = 1024$, $2{,}4 \%$. Sendo assim, se desconsiderarmos as primeiras 
+estimativas, a $\pcounting$ com $m = 64$ devolveu valores dentro de dois desvios padrões. Já na simulação com 
+$m = 1024$, as estimativas ficaram dentro de um desvio, indicando um aumento de precisão.
 
 \begin{figure}
   \centering

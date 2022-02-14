@@ -31,9 +31,9 @@ desvio $\phi$ mensurável e podemos, em vista disso, corrigí-lo.
 Contudo, mesmo corrigindo esse erro do estimador, este ainda possui uma grande variância, ou seja, a estimativa 
 devolvida pode estar muito próxima ou muito longe do valor real. Para contornar essa situação, podemos repetir várias 
 vezes o algoritmo da $\pcounting$ e encontrar a média dos estimadores. E uma forma interessante de se fazer isso em uma 
-única iteração, removendo, assim, a necessidade de executarmos o algoritmo muitas vezes, é dividir de modo uniforme os 
-dados do fluxo em $m$ lotes. Então, um inteiro $x$ faria parte do lote $x \mathbin{\%} m$, e olharíamos para o prefixo 
-de $\lfloor x \mathbin{/} m \rfloor$. Desse modo, passaríamos a guardar um estimador $R$ para cada lote, e a estimativa 
+única iteração, removendo assim, a necessidade de executarmos o algoritmo muitas vezes, é dividir de modo uniforme os 
+dados do fluxo em $m$ lotes. Então, um inteiro $x$ faria parte do lote $x \bmod m$, e olharíamos para o prefixo de 
+$\lfloor x \mathbin{/} m \rfloor$. Desse modo, passaríamos a guardar um estimador $R$ para cada lote, e a estimativa 
 para $n$ usaria a média desses valores. Essa técnica é conhecida como \textbf{média estocástica}.
 
 Por fim, o algoritmo da $\pcounting$ tem consumo proporcional a $O(mL)$ bits, em que $m$ é o número de lotes e $L$ é a
@@ -66,10 +66,10 @@ $y = \langle b_1 b_2 {\dots} b_k \rangle$, ou seja, os $k$ primeiros bits de um 
 pertence. Em seguida, encontramos $M_y$ tal que $0^{M_y}1$ é prefixo de $\langle b_{k+1} b_{k+2} {\dots} \rangle$, e 
 mantemos o maior valor de $M_y$.
 
-Desse modo, o valor de $M_y$ de cada lote~$y$ será uma estimativa para $\lg n \mathbin{/} m$. Para diminuirmos a 
-variância dessa aproximação, calculamos a média \textbf{aritmética} $\overline{M} = \frac{\sum_y M_y}{m}$. Logo, 
-$\overline{M}$ aproxima $\lg n \mathbin{/} m$, e consequentemente, $2^{\overline{M}}$ aproxima $n \mathbin{/} m$. E, 
-portanto, a estimativa para $n$ será $m \times 2^{\overline{M}}$.
+Desse modo, o valor de $M_y$ de cada lote~$y$ será uma estimativa para $\lg \frac{n}{m}$. Para diminuirmos a variância 
+dessa aproximação, calculamos a média \textbf{aritmética} $\overline{M} = \frac{\sum_y M_y}{m}$. Logo, $\overline{M}$ 
+aproxima $\lg \frac{n}{m}$, e consequentemente, $2^{\overline{M}}$ aproxima $\frac{n}{m}$. E, portanto, a estimativa 
+para $n$ será $m \times 2^{\overline{M}}$.
 
 No entanto, essa estimativa apresenta um desvio e para corrigí-lo, multiplicamos ela por uma constante $\alpha_m$ cujo 
 valor é proporcional ao número de lotes utilizados no algoritmo. Na prática, podemos usar como fator de correção 
@@ -136,9 +136,9 @@ primeiros bits definem o lote de um elemento e os 22 restantes serão utilizados
 que $M \leq 22$ e precisamos de somente $5$ bits para guardar esse valor. Portanto, o custo de espaço do 
 algoritmo~$\LOG$ nesse caso é de $0{,}625$~KB, que é cerca de seis vezes menor que na $\pcounting$.
 
-Essa diferença é maior ainda se trabalharmos com inteiros de $64$ bits e valores de $m$ na ordem de $65536 = 2^{16}$,
+Essa diferença é maior ainda se trabalharmos com inteiros de $64$ bits e valores de $m$ na ordem de $65536 = 2^{16}$
 para termos estimativas mais precisas. No algoritmo~$\LOG$, $M$ pode ser armazenado com 6 bits, pois $M \leq 48$, e 
-desse modo, o custo de memória é de $50$~KB, dez vezes menos que a $\pcounting$, que gasta aproximadamente 
+desse modo, o custo de memória é de $50$~KB, dez vezes menos que na $\pcounting$, que gasta aproximadamente 
 $524$~KB.
 
 \section{Implementando $\LOG$}
