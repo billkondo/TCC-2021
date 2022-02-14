@@ -1,0 +1,84 @@
+\chapter{Contagem na vida real}
+
+Nos últimos capítulos, vimos algumas soluções do problema de estimar a quantidade de elementos distintos de um fluxo de
+dados. A solução mais usada atualmente é a estrutura de dados \hyperref[sec:loglog:hyperloglog]{HyperLogLog}. 
+
+O Redis, que é um banco de dados de chave-valor salvo em memória, oferece uma implementação dessa estrutura de dados. 
+Nessa estrutura, precisamos definir um valor de~$m$, que é um parâmetro relacionado à precisão das estimativas e ao 
+consumo de memória. No Redis, esse valor é de $2^{14} = 16384$. Assim, o desvio padrão dessa implementação é de 
+$1{,}04 \mathbin{/} \sqrt{m} = 1{,}04 \mathbin{/} \sqrt{16384} \approx 0{,}81\%$.
+
+A função de hash utilizada na implementação do Redis produz saídas de 64 bits. Como $m = 14$, os valores que são 
+considerados nos lotes do $\HLOG$ tem $50$ bits, e são necessários somente $6$ bits para guardar a informação de cada 
+lote. Em vista disso, são armazenados 16 mil lotes que consomem 6 bits cada, e o consumo da estrutura fica em torno de 
+12~KB.
+
+As aplicações que utilizam alguma solução do problema da contagem distinta aproximada precisam geralmente, manter 
+quantos elementos distintos apareceram em \textbf{vários} fluxos de dados. A consequência disso é que surge a 
+necessidade de por exemplo, salvarmos uma estrutura~$\HLOG$ em um banco de dados para evitar termos todas as estruturas 
+desse tipo em memória. Nesse sentido, o Programa~\ref{hloglog:code} está incompleto, pois em um primeiro momento, não 
+existe uma forma fácil de guardarmos a classe~\texttt{HyperLogLog} em um banco de dados.
+
+A implementação do Redis contorna esse problema separando o código dos métodos \texttt{adiciona} e \texttt{conta} do 
+armazenamento dos dados dos lotes~\citep{HyperLogLogDetails}. Por conta disso, a estrutura~$\HLOG$ do Redis é somente 
+uma sequência de bits que comprime a informação dos lotes. E com essa representação em bits, podemos guardar essa 
+estrutura no banco de dados.
+
+\section{Quantas visitas um site teve?}
+
+Uma das métricas interessantes que aplicativos e sites podem coletar é a quantidade de acessos diários. A importância 
+desse tipo de informação é que ela pode ajudar a responder perguntas como ``Tenho muitos acessos nos fins de semana?'' 
+ou ``Depois do lançamento de uma certa funcionalidade, o número de acessos aumentou?''.
+
+Contudo, pode existir situações em que é importante identificar o número de acessos distintos. Esse dado pode ser 
+interessante para lojas virtuais ou redes sociais, uma vez que, essas aplicações dependem que várias pessoas diferentes
+acessem esse tipo de site ou aplicativo.
+
+Para resolvermos esse problema, podemos aproveitar o endereço de IP dos usuários que acessarem os servidores de um site.
+Dessa forma, estaríamos trabalhando com um fluxo de endereços, e queremos descobrir quantos IP's distintos apareceram em
+um certo dia. Portanto, inserimos os IP's que forem acessando o servidor em uma estrutura~$\HLOG$, e ao final do dia, 
+salvamos a estimativa no banco de dados e zeramos o $\HLOG$. Assim, esse banco teria a informação dos acessos distintos 
+diários. E essa ideia pode ser estendida para obtermos quantos acessos diferentes um site teve em uma certa hora do dia.
+
+\section{Quantas pessoas leram um artigo?}
+
+O problema anterior exigiu o uso de apenas uma estrutura~$\HLOG$. Porém, existem situações nas quais mais estruturas 
+desse tipo precisam ser utilizadas. Um desses casos é contar quantas visualizações um dado artigo teve.
+
+Reddit é uma plataforma cuja principal funcionalidade é permitir a criação de canais de discussões sobre diversos 
+assuntos. Uma métrica interessante, portanto, é quantos usuários distintos visualizaram uma discussão específica. Apesar
+de essa métrica não estar sendo coletada atualmente por esse site por conta de problemas de 
+performace~\citep{RedditDisabled}, a solução apresentada pela equipe de engenharia dele exibe uma situação em que várias 
+estruturas~$\HLOG$ são utilizadas~\citep{Reddit}.
+
+Os engenheiros do Reddit utilizaram a implementação do~$\HLOG$ disponível no Redis. Para entendermos os próximos passos,
+é necessário termos noção de como funciona esse banco de dados. O Redis é basicamente um conjunto de chaves e valores, e
+o programador tem a sua disposição alguns métodos para interagir com esse conjunto. Um desses métodos é o \texttt{SET},
+que recebe os parâmetros \texttt{key} e \texttt{value} e adiciona a essa coleção esse par de chave e valor. Se já 
+existir um par com a chave \texttt{key}, o valor antigo é substituído por \texttt{value}.
+
+Outro comando útil é o \texttt{PFADD}, que recebe uma chave~\texttt{key} e uma palavra. Este método insere elementos em 
+uma estrutura~$\HLOG$ e retorna 1 se o item for de fato inserido ou 0, caso contrário. Nesse sentido, o Redis supõem que 
+o valor da chave~\texttt{key} é uma sequência de bits que representa um $\HLOG$. Caso a chave~\texttt{key} não exista no 
+momento da inserção, uma estrutura vazia é criada. E também existe o comando \texttt{PFCOUNT} que recebe uma chave 
+\texttt{key} e retorna a estimativa para a quantidade de dados diferentes inseridos na estrutura~$\HLOG$, que está 
+armazenada no valor desta chave.
+
+Em vista disso, a solução do Reddit armazena várias estruturas~$\HLOG$ em uma instância do Redis, de modo que cada 
+estrutura está associada a uma discussão. Contudo, o Redis é um banco de dados salvo em memória, e não é possível 
+guardar todas as estruturas de uma vez. Para contornar isso, as estruturas são salvas em disco, mais especificamente em
+um banco de dados não-relacional chamado Cassandra. Dessa forma, o Redis só terá as estruturas cujas respectivas 
+discussões foram acessadas recentemente.
+
+De modo simplificado, para cada nova visualização que precisar ser contada, precisamos verificar se a estrutura 
+associada à discussão visualizada está presente no Redis. Se estiver, basta chamarmos o método~\texttt{PFADD} passando 
+como argumentos o identificador da discussão como chave e o identificador do usuário, que pode ser o endereço IP, como
+valor. E caso o retorno de \texttt{PFADD} seja 1, indicando que o contador foi incrementado, devemos atualizar a nova
+contagem no Cassandra.
+
+Se a estrutura~$\HLOG$ da discussão não existir no Redis, devemos procurá-la no Cassandra e criar uma nova caso ela não
+exista. Em seguida, devemos carregá-la no Redis, e o modo de se fazer isso é chamar o método~\texttt{SET} passando como
+parâmetro o identificador da discussão como chave e o $\HLOG$ como valor. Por fim, os mesmos passos da situação em que 
+a discussão já está no Redis devem ser seguidos.
+
+Por fim, devemos consultar o Cassandra para sabermos quantas visualizações distintas uma discussão específica teve.
