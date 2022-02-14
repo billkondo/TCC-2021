@@ -34,7 +34,7 @@ vezes o algoritmo da $\pcounting$ e encontrar a média dos estimadores. E uma fo
 única iteração, removendo, assim, a necessidade de executarmos o algoritmo muitas vezes, é dividir de modo uniforme os 
 dados do fluxo em $m$ lotes. Então, um inteiro $x$ faria parte do lote $x \mathbin{\%} m$, e olharíamos para o prefixo 
 de $\lfloor x \mathbin{/} m \rfloor$. Desse modo, passaríamos a guardar um estimador $R$ para cada lote, e a estimativa 
-para $n$ usaria a média desses valores.
+para $n$ usaria a média desses valores. Essa técnica é conhecida como \textbf{média estocástica}.
 
 Por fim, o algoritmo da $\pcounting$ tem consumo proporcional a $O(mL)$ bits, em que $m$ é o número de lotes e $L$ é a
 quantidade de bits necessária para armazenar algum inteiro do fluxo. Esse consumo é decorrente do fato de cada lote 
@@ -54,11 +54,11 @@ exista algum elemento em~$\Mbb$ cuja representação binária tenha prefixo da f
 Para $M \geq 1$, a probabilidade de um inteiro ter um prefixo da forma~$0^{M-1}1$ é $1 \mathbin{/} 2^{M}$, ou seja, 
 esperamos que um em cada $2^{M}$ elementos tenha esse prefixo. Por outro lado, podemos inverter essa ideia, e pensar que 
 se temos um inteiro com prefixo da forma $0^{M-1}1$, então pelo menos $2^{M}$ elementos distintos devem ter aparecido. 
-Desse modo, o valor de $M$ será uma aproximação para~$\lg n$, e podemos interpretá-lo como sendo a posição indexada do 1 
-do dígito 1 menos significativo de um inteiro. Uma ideia similar foi vista na Seção~\ref{sec:flajolet-martin:algorithm}, 
-em que definimos a função $\rho$ que retorna a posição indexada do 0 do bit ligado menos significativo de um número. Em 
-vista disso, vamos definir a função $\rho_1$ que retorna o valor anterior só que indexado do 1, e utilizá-la para o 
-cálculo de~$M$.
+Desse modo, o valor de $M$ será uma aproximação para~$\lg n$, e podemos interpretá-lo como sendo a posição indexada a 
+partir do 1 do bit ligado menos significativo de um inteiro. Uma ideia similar foi vista na 
+Seção~\ref{sec:flajolet-martin:algorithm}, em que definimos a função $\rho$ que retorna a posição indexada a partir 0 do 
+bit ligado menos significativo de um número. Em vista disso, vamos definir a função $\rho_1$ que retorna o valor 
+anterior só que indexado a partir do 1, e utilizá-la para o cálculo de~$M$.
 
 Para reduzirmos a variância da estimativa, dividimos o fluxo~$\Mbb$ em $m = 2^{k}$ lotes de acordo com os bits dos 
 elementos. Dessa forma, um inteiro $x = \langle b_1 b_2 {\dots} b_k {\dots} \rangle$ fará parte do lote 
@@ -101,30 +101,30 @@ ou seja, estamos desconsiderando o desvio da estimativa devolvida pelo algoritmo
 
 Inicialmente, os vetores $M$ estão zerados, ou seja, $M[i] = 0$ para $0 \leq i < 4$. Na primeira iteração do algoritmo,
 temos que verificar em qual lote o elemento $50 = 010011_2$ se encontra. Como $k = 2$, os primeiros $2$ bits definem o
-lote e assim, $50$ faz parte do lote $01_2 = 2$. Ao final da primeira iteração, temos que $M[2] = 2$, já que 
-$\rho(0011_2) = 2$ e dessa forma, $0011_2$ tem prefixo da forma $0^21$
+lote e assim, $50$ faz parte do lote $01_2 = 2$. Ao final da primeira iteração, temos que $M[2] = 3$, já que 
+$\rho_1(0011_2) = 3$ e dessa forma, $0011_2$ tem prefixo da forma $0^21$
 
-Na segunda iteração, o número do lote de $85 = 1010101_2$ é $1$, e $\rho(10101_2) = 0$. Desse modo, $M[1] = 0$. Os 
+Na segunda iteração, o número do lote de $85 = 1010101_2$ é $1$, e $\rho_1(10101_2) = 1$. Desse modo, $M[1] = 1$. Os 
 próximos elementos a serem considerados, $45 = 101101_2$ e $29 = 10111_2$, fazem parte do lote de número~$1$, e têm 
-prefixo da forma $0^01$. Dessa maneira, $M[1]$ continua sendo zero após esses itens serem processados. Precisamos, assim,
-analisar $89 = 1001101_2$, que pertence ao lote~$1$. Como $\rho(01101_2) = 1$, $M[1]$ passa a ter valor $1$.
+prefixo da forma $0^01$. Dessa maneira, $M[1]$ continua sendo um após esses itens serem processados. Precisamos, assim,
+analisar $89 = 1001101_2$, que pertence ao lote~$1$. Como $\rho_1(01101_2) = 2$, $M[1]$ passa a ter valor $2$.
 
-O próximo elemento de $\Mbb$ é $82 = 0100101_2$ cujo lote é $2$. Temos que $\rho(00101) = 2$, mas o valor de $M$ do 
-lote~$2$ já é $2$, sendo assim, $M[2]$ continua com o mesmo valor. Continuando o exemplo, devemos processar 
-$87 = 1110101_2$. Este item está no lote~$3$, e $\rho(10101_2) = 0$. Logo, $M[3]$ permanece zerado. No caso seguinte, 
-$10 = 0101_2$ faz parte do lote $2$ e $\rho(01_2) = 1$. Contudo, $M[2]$ é maior que $1$ e portanto, não é atualizado. 
-Por fim, $92 = 0011101_2$ vai para o lote~$0$, $\rho(11101_2) = 0$ e $M[0]$ fica inalterado.
+O próximo elemento de $\Mbb$ é $82 = 0100101_2$ cujo lote é $2$. Temos que $\rho_1(00101) = 3$, mas o valor de $M$ do 
+lote~$2$ já é $3$, sendo assim, $M[2]$ continua com o mesmo valor. Continuando o exemplo, devemos processar 
+$87 = 1110101_2$. Este item está no lote~$3$, e $\rho_1(10101_2) = 1$. Logo, $M[3]$ passa a ser igual a 1. No caso 
+seguinte, $10 = 0101_2$ faz parte do lote $2$ e $\rho_1(01_2) = 2$. Contudo, $M[2]$ é maior que $2$ e portanto, não é 
+atualizado. Por fim, $92 = 0011101_2$ vai para o lote~$0$, $\rho_1(11101_2) = 1$ e $M[0] = 1$.
 
-Os valores de $M$ ao processarmos todos os elementos de $\Mbb$ são: $M[0] = 0$, $M[1] = 1$, $M[2] = 2$ e $M[3] = 0$. 
-Logo, o valor médio $\overline{M}$ de $M$ é $(0 + 1 + 2 + 0) / 4 = 3 / 4 = 0{,}75$. E a estimativa para a quantidade de 
+Os valores de $M$ ao processarmos todos os elementos de $\Mbb$ são: $M[0] = 1$, $M[1] = 2$, $M[2] = 3$ e $M[3] = 1$. 
+Logo, o valor médio $\overline{M}$ de $M$ é $(1 + 2 + 3 + 1) / 4 = 7 / 4 = 1{,}75$. E a estimativa para a quantidade de 
 itens distintos em 
-$\Mbb$ é $\alpha_m \times m \times 2^{\overline{M}} = 1 \times 4 \times 2^{0{,}75} = 6{,}72{\dots} \approx 6$.
+$\Mbb$ é $\alpha_m \times m \times 2^{\overline{M}} = 1 \times 4 \times 2^{1{,}75} = 13{,}45{\dots} \approx 13$.
 
 \section{Consumo de espaço do $\LOG$}
 
 No algoritmo da $\pcounting$, vimos a ideia de dividirmos os elementos de um fluxo de dados em $m$ lotes. E como cada 
 lote armazena um vetor $\bitmap$ com $L$ bits, o consumo de espaço dessa solução é de $O(mL)$ bits. Assim, para 
-$m = 1024$ e $L = 32$, a $\pcounting$ gasta $32$ KB de memória para estimar o número de itens distintos em um fluxo.
+$m = 1024$ e $L = 32$, a $\pcounting$ gasta $4$ KB de memória para estimar o número de itens distintos em um fluxo.
 
 Por outro lado, o algoritmo~$\LOG$ também divide os dados de um fluxo $\Mbb$ com $n$ elementos distintos em $m$ lotes. 
 Só que ao invés de um lote guardar a informação se um prefixo já apareceu ou não, ele armazena uma aproximação para 
@@ -134,12 +134,12 @@ necessários $\lg \lg n$ bits. Este fato deu origem ao nome do algoritmo.
 Considerando o exemplo anterior em que $m = 1024 = 2^{10}$ e que os dados do fluxo são inteiros de $32$ bits, os 10 
 primeiros bits definem o lote de um elemento e os 22 restantes serão utilizados para encontrar $M$. Dessa forma, temos 
 que $M \leq 22$ e precisamos de somente $5$ bits para guardar esse valor. Portanto, o custo de espaço do 
-algoritmo~$\LOG$ nesse caso é de $1024 \times 5 \approx$ $5$ KB, que é cerca de seis vezes menor que na $\pcounting$.
+algoritmo~$\LOG$ nesse caso é de $0{,}625$~KB, que é cerca de seis vezes menor que na $\pcounting$.
 
 Essa diferença é maior ainda se trabalharmos com inteiros de $64$ bits e valores de $m$ na ordem de $65536 = 2^{16}$,
 para termos estimativas mais precisas. No algoritmo~$\LOG$, $M$ pode ser armazenado com 6 bits, pois $M \leq 48$, e 
-desse modo, o custo de memória é de $65536 \times 6 \approx 400$ KB, dez vezes menos que a $\pcounting$, que gasta 
-$65536 \times 64 \approx 4$ MB.
+desse modo, o custo de memória é de $50$~KB, dez vezes menos que a $\pcounting$, que gasta aproximadamente 
+$524$~KB.
 
 \section{Implementando $\LOG$}
 
@@ -180,17 +180,18 @@ Seção~\ref{sec:loglog:algorithm}, que os $k$ primeiros bits definem o lote. Lo
 informação do lote de~$x$. Sabendo disto, precisamos de um modo de recortar esses bits. 
 
 Um jeito de fazermos isto é montarmos um número tal que os primeiros \texttt{B} bits dele sejam~1 e os restantes, 0. 
-Vamos chamá-lo de $y$. Nesse sentido, $x \& y$ resultará em um inteiro $z$ cuja represetação binária tem as seguintes 
-propriedades: os \texttt{B} primeiros bits correspondem aos \texttt{B} bits iniciais de $x$, e os bits restantes são 
-zero. Portanto, $z$ é justamente o lote de~$x$. Falta, assim, saber como calcular $y$. Um número com as mesmas 
-características de $y$ é~$2^{\texttt{B}} - 1$, e podemos calculá-lo usando o operador $<<$, que é equivalente à 
+Vamos chamá-lo de $y$. Nesse sentido, $x \mathbin{\&} y$ resultará em um inteiro $z$ cuja represetação binária tem as 
+seguintes propriedades: os \texttt{B} primeiros bits correspondem aos \texttt{B} bits iniciais de $x$, e os bits 
+restantes são zero. Portanto, $z$ é justamente o lote de~$x$. Falta, assim, saber como calcular $y$. Um número com as 
+mesmas características de $y$ é~$2^{\texttt{B}} - 1$, e podemos calculá-lo usando o operador $<<$, que é equivalente à 
 potenciação na base $2$ quando aplicado ao número~$1$.
 
 Um exemplo que pode deixar a ideia anterior clara é o seguinte: suponha que $\texttt{B} = 2$. Logo, 
 $2^{\texttt{B}} - 1 = 2^2 - 1 = 3 = 11_2$. Note que todos os bits de $3$ estão ligados até a posição~$2$. Tomemos alguns
-valores para $x$, como $7 = 111_2$ e $13 = 1011_2$. O lote do elemento $7$ é $7 \& 3 = 111_2 \& 110_2 = 110_2 = 3$, e de
-13, $13 \& 3 = 1011_2 \& 1100_2 = 1000_2 = 1$. Podemos ver que os lotes calculados batem de fato com os valores 
-esperados.
+valores para $x$, como $7 = 111_2$ e $13 = 1011_2$. O lote do elemento $7$ é 
+$7 \mathbin{\&} 3 = 111_2 \mathbin{\&} 110_2 = 110_2 = 3$, e de 13, 
+$13 \mathbin{\&} 3 = 1011_2 \mathbin{\&} 1100_2 = 1000_2 = 1$. Podemos ver que os lotes calculados batem de fato com os 
+valores esperados.
 
 Uma vez calculado o lote de um elemento~$x$, precisamos remover os \texttt{B} bits iniciais dele para que possamos 
 prosseguir com o algoritmo. Um modo de fazermos isto é utilizando o operador $>>$ que remove os bits menos 
@@ -202,7 +203,9 @@ Por fim, para que possamos ter um método \texttt{conta} com complexidade consta
 valores de $M$ já pré-computada para que a média deles seja calculada rapidamente. Dessa forma, a variável~$Z$ é mantida
 atualizada a cada novo elemento inserido no método \texttt{adiciona}. 
 
+\newpage
 \section{Algoritmo $\HLOG$}
+\label{sec:loglog:hyperloglog}
 
 Apesar do algoritmo~$\LOG$ visto anteriormente ter um consumo de memória pelo menos $6$ menor que a $\pcounting$, o
 desvio padrão dele, que é de $1{,}30 \mathbin{/} \sqrt{m}$, é maior. Isto pode ser um problema se tivermos que trabalhar 
@@ -233,12 +236,56 @@ idêntico ao algoritmo~$\logprogram$. A única diferença entre essas soluções
             \Do
       \li   $M[i] \gets 0$
             \End
-      \li \For cada $x = b_1b_2{\dots}$ em $\Mbb$ 
+      \li \For cada $x$ em $\Mbb$ 
             \Do
+      \li   $b_1b_2{\dots} = h(x)$
       \li   $lote \gets \langle b_1 {\dots} b_k \rangle$
-      \li   $M[lote] \gets \max(M[lote], \rho(b_{k+1}b_{k+2}{\dots}) + 1)$
+      \li   $M[lote] \gets \max(M[lote], \rho_1(b_{k+1}b_{k+2}{\dots}))$
             \End
       \li
       \Return $\alpha_m \times m^2 \mathbin{/} \sum_i{2^{-M[i]}}$   
       \End
 \end{codebox}
+
+\newpage
+\section{Implementando $\HLOG$}
+
+\begin{lstlisting}[style=mypython,caption=Implementação do algoritmo $\hlogprogram$,captionpos=b, label=hloglog:code]
+class HyperLogLog:
+      def __init__(self, m=64):
+          self.m = m
+          self.B = math.floor(math.log2(m))
+          self.M = [0] * m
+          self.Z = self.m
+          self.alpha = 0.7213
+  
+      def p(self, x: int):
+          return (x & -x).bit_length()
+  
+      @property
+      def prefixo(self):
+          return (1 << self.B) - 1
+  
+      def adiciona(self, x: int):
+          lote = x & self.prefixo
+          w = x >> self.B
+  
+          if self.p(w) > self.M[lote]:
+              self.Z -= math.pow(2, -self.M[lote])
+              self.M[lote] = self.p(w)
+              self.Z += math.pow(2, -self.M[lote])
+  
+      def conta(self):
+          return math.floor(self.alpha * self.m * self.m / self.Z)
+\end{lstlisting}
+
+O Programa~\ref{hloglog:code} foi baseado no algoritmo~$\hlogprogram$ e é quase idêntico ao Programa~\ref{loglog:code}, 
+que foi inspirado no algoritmo~$\logprogram$. Na implementação do $\LOG$, a variável~\texttt{Z} era a soma dos valores 
+de \texttt{M}. Como no $\HLOG$, a média aritmética é substituída pela harmônica, a variável~\texttt{Z} passa a guardar 
+outro tipo de soma. Em vista disso, o formato do estimador também muda, e consequentemente, o método~\texttt{conta} da 
+classe \texttt{HyperLogLog} é ligeiramente diferente do mesmo método da classe \texttt{LogLog}.
+
+Essa troca de médias também afeta o método~\texttt{adiciona}. As implementações apresentadas retornam a estimativa da 
+quantidade de elementos distintos em tempo constante, e assim, a cada novo item inserido no método~\texttt{adiciona}, 
+devemos atualizar a variável~\texttt{Z} para evitar computá-la toda vez que o método~\texttt{conta} for chamado. E é 
+justamente essa atualização da variável~\texttt{Z} que difere nos dois programas.
