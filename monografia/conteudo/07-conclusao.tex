@@ -1,1 +1,51 @@
 \chapter{Conclusão}
+
+Ao longo desse texto, vimos algumas soluções do problema da contagem distinta aproximada. Um fato comum entre elas é que
+todas dependem de um parâmetro~$m$ que afeta a acurácia e o consumo de memória dos algoritmos. Outro ponto é que todas
+utilizam alguma função de hash que mapeia os elementos de um fluxo de dados para inteiros. E a quantidade de bits destes
+interfere também no consumo de espaço. Em vista disso, supondo que essa quantidade é de 32~bits, a 
+Tabela~\ref{tab:comparar} compara diferentes estruturas de dados que resolvem esse problema de contagem.
+
+\begin{center}
+  \def\arraystretch{2}%
+  \begin{table}
+    \begin{tabular}{ |p{5cm}||p{2.5cm}|p{6cm}|  }
+      \hline
+      \multicolumn{1}{|p{5cm}|}{\centering Algoritmo } 
+      & \multicolumn{1}{|p{2.5cm}|}{\centering Desvio Padrão }  
+      & \multicolumn{1}{|p{6cm}|}{\centering Consumo de memória por lote } \\
+      \hline
+      \multicolumn{1}{|p{5cm}|}{\centering \hyperref[sec:flajolet-martin:algorithm]{$\pc$} } 
+      & \multicolumn{1}{|p{2.5cm}|}{\centering $0{,}78 \mathbin{/} \sqrt{m}$ }
+      & \multicolumn{1}{|p{6cm}|}{\centering 32 bits } \\
+      \hline
+      \multicolumn{1}{|p{5cm}|}{\centering \hyperref[lab:chapter:04:01]{$\AS$} } 
+      & \multicolumn{1}{|p{2.5cm}|}{\centering $1{,}20 \mathbin{/} \sqrt{m}$ }
+      & \multicolumn{1}{|p{6cm}|}{\centering 32 bits } \\
+      \hline
+      \multicolumn{1}{|p{5cm}|}{\centering \hyperref[sec:loglog:algorithm]{$\LOG$} } 
+      & \multicolumn{1}{|p{2.5cm}|}{\centering $1{,}30 \mathbin{/} \sqrt{m}$ }
+      & \multicolumn{1}{|p{6cm}|}{\centering $\leq$ 5 bits } \\
+      \hline
+      \multicolumn{1}{|p{5cm}|}{\centering \hyperref[sec:loglog:hyperloglog]{$\HLOG$} } 
+      & \multicolumn{1}{|p{2.5cm}|}{\centering $1{,}04 \mathbin{/} \sqrt{m}$ }
+      & \multicolumn{1}{|p{6cm}|}{\centering $\leq$ 5 bits } \\
+      \hline
+     \end{tabular}
+     \caption{\label{tab:comparar} Soluções da contagem distinta aproximada. Estamos supondo as saídas das funções de 
+     hash são inteiros de 32 bits.}
+  \end{table}
+\end{center}
+
+A base desses algoritmos é tentar manter uma aproximação de $\lg n$, sendo que $n$ é a quantidade de elementos distintos
+em um fluxo de dados. O custo de memória para mantermos uma aproximação desse tipo é da ordem de $O(\lg n)$ bits, que 
+representa uma grande redução se compararmos com o gasto de espaço linear da solução que insere todos os elementos em 
+uma tabela.
+
+Encontrar um estimador para $\lg n$ é possível por conta de \hyperref[sec:flajolet-martin:pattern]{padrões nos bits} de 
+números aleatórios. Contudo, essa estimativa tem uma grande variância, e para contornar esse problema, dividimos 
+uniformemete o fluxo de dados em $m$ lotes.
+
+Sendo assim, a $\pcounting$ é um dos algoritmos com menor desvio padrão até os dias de hoje. No entanto, o 
+algoritmo~$\HLOG$ se tornou a principal solução para o problema da contagem distinta aproximada, devido ao seu consumo 
+de memória seis vezes menor que o da $\pcounting$.
