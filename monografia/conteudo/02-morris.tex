@@ -224,7 +224,7 @@ invariante.
 
 \begin{proof}[Demonstração \ (da relação invariante)]
   A prova será por indução no número $k$ de elementos de $\Mbb$ já examinados. Vimos anteriormente que 
-  $\Ebb\big(2^0 - 1 \big) = 0$ e asssim, a relação vale para $k = 0$.
+  $\Ebb\big(2^0 - 1 \big) = 0$ e assim, a relação vale para $k = 0$.
 
   Suponhamos, agora, que a relação invariante vale para algum $k - 1$, $k \geq 1$. Mostraremos que isso implica que esta
   relação vale para $k$. Dessa forma, temos que
@@ -243,7 +243,7 @@ invariante.
 \end{proof}  
 
 Saber que $\Ebb(\proc{Morris}(\Mbb)) = |\Mbb| = n$ não é suficiente para garantir a qualidade do estimador $2^{X} - 1$
-devolvido pelo algoritmo. É desejável que além do valor esperado ser próximo ou igual ao tamnho do conjunto $\Mbb$, que
+devolvido pelo algoritmo. É desejável que além do valor esperado ser próximo ou igual ao tamanho do conjunto $\Mbb$, que
 a variância da variável aleatória \proc{Morris}($\Mbb$) não seja \textit{muito grande}. Intuitivamente, isso nos diria 
 que a probabilidade do estimador calculado ser longe do valor esperado é pequena. Então, apresentaremos o valor da 
 variância de $\proc{Morris}(\Mbb)$ no próximo teorema.
@@ -562,7 +562,7 @@ anteriores.
 
 Primeiramente, vamos lembrar as diferenças entre uma solução \textbf{estática} e \textbf{dinâmica} para o problema da 
 contagem aproximada: enquanto que na versão estática, passamos um conjunto $\Mbb$ para o \textit{algoritmo} que devolve 
-uma estimativa para a quantidade de elementos em $\Mbb$, na versão dinâmica, construíremos uma 
+uma estimativa para a quantidade de elementos em $\Mbb$, na versão dinâmica, construiremos uma 
 \textit{estrutura de dados} que realizará as operações de adição e contagem de itens. Nesse sentido, consideraremos 
 que $\Mbb$ é um fluxo de dados $x_1, x_2, \dots, x_n, \dots$, e estaremos interessados em saber a estimativa da 
 quantidade de elementos que já foram adicionados na estrutura em um dado instante.
@@ -633,7 +633,7 @@ seu retorno em uma variável temporária \proc{temp}. Assim, o erro relativo naq
 $(\proc{temp} - i) \mathbin{/} i$, uma vez que, $i$ pode ser visto como a quantidade de itens que já passaram pela 
 estrutura.
 
-Dessa forma, a Figura~\ref{fig:morris:first} exibe um gráfico cujo eixo $x$ das abcissas representa as iterações da 
+Dessa forma, a Figura~\ref{fig:morris:first} exibe um gráfico cujo eixo $x$ das abscissas representa as iterações da 
 simulação e o eixo $y$ das ordenadas, o retorno do método \texttt{conta}. A linha laranja do gráfico ilustra a evolução 
 da \textbf{estimativa} de itens inseridos ao longo das iterações e a linha azul, evolução da quantidade \textbf{real} de 
 itens inseridos ao longo das iterações. Assim, analisando essas duas linhas, podemos ter uma ideia se a estimativa do 
@@ -670,7 +670,7 @@ realizadas.
 A Figura~\ref{fig:morris:full}, que exibe um gráfico com erro relativo ao longo de toda a simulação, nos leva
 à conclusão que o erro relativo do algoritmo ficou dentro da faixa esperada, que é menos que~4. Essa mesma figura, que 
 também exibe um gráfico que destaca a evolução da estimativa da quantidade de itens inseridos ao longo de toda a 
-simulação, ressalta uma importante característa da estrutura: que quanto mais itens tiverem sido inseridos, mais 
+simulação, ressalta uma importante característica da estrutura: que quanto mais itens tiverem sido inseridos, mais 
 demorado é para que a estimativa cresça. Isto está diretamente relacionado com a probabilidade do contador~$X$ ser 
 incrementado no algoritmo~$\Morris$. Contudo, esse incremento demorado não é uma certeza absoluta, uma vez que, existem 
 casos nessa simulação em que um crescimento da estimativa ocorreu em menos iterações que o 
@@ -713,7 +713,7 @@ $241343 - 176384 = 64959$~iterações.
 O próximo experimento a ser apresentado consiste em repetir a simulação anterior várias vezes para que possamos ter uma 
 ideia da variância da estrutura~\texttt{Morris}. Dessa forma, repetimos dez mil vezes a simulação anterior e guardamos 
 as frequências das estimativas devolvidas pelo algoritmo~$\Morris$. A distribuição dessas frequências pode ser vista na 
-Figura~\ref{fig:morris:variance}, e para construir o eixo das abcissas, utilizamos o valor do contador~\texttt{X} da 
+Figura~\ref{fig:morris:variance}, e para construir o eixo das abscissas, utilizamos o valor do contador~\texttt{X} da 
 classe \texttt{Morris} após todos os elementos terem sido inseridos. Nesse sentido, esse eixo apresentará em quantas 
 simulações o contador~\texttt{X} terminou por exemplo, com o valor 19. Nos experimentos realizados, isso aconteceu 3617 
 vezes.
@@ -769,7 +769,7 @@ poderemos comparar os resultados deles com as contas desenvolvidas na seção so
 
 O primeiro experimento a ser repetido é aquele em que desejamos observar a evolução do estimador devolvido pela 
 estrutura~\texttt{MorrisPlus}. Para isso, chamamos o método \texttt{adiciona} um milhão de vezes e construímos o 
-gráfico com as estimativas ao longos das chamadas dessa função. O resultado dessa simulação pode ser visto no gráfico 
+gráfico com as estimativas ao longo das chamadas dessa função. O resultado dessa simulação pode ser visto no gráfico 
 das estimativas da Figura~\ref{fig:morris:plus:full}, em que podemos notar que a linha laranja, que representa as 
 estimativas devolvidas, se aproxima bastante da linha azul, que representa os valores esperados.
 

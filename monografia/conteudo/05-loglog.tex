@@ -2,7 +2,7 @@
 
 Em 1978, Morris resolveu o problema de estimar quantos elementos passaram por um fluxo de dados sem armazenar esse valor 
 em um contador. E as ideias principais da \hyperref[chap:morris:algorithm]{solução dele} era guardar uma aproximação do 
-logarítmo dessa quantidade e incrementá-la por meio de um método probabilístico que lembra lançamentos de moedas. Dessa 
+logaritmo dessa quantidade e incrementá-la por meio de um método probabilístico que lembra lançamentos de moedas. Dessa 
 forma, se temos um fluxo com $n$ elementos, e $X$ é a aproximação do algoritmo de Morris para~$\lg n$, então $X$ deve 
 ser incrementado com probabilidade $1 \mathbin{/} 2^X$ para cada novo elemento, e isto é equivalente a lançarmos uma 
 moeda $X$ vezes e aumentar $X$ somente se todas as jogadas forem cara. 
@@ -14,14 +14,14 @@ essa estimativa. Portanto, os dados de $\Mbb$ são mapeados para inteiros por me
 podemos considerar que esses elementos são na verdade palavras binárias de tamanho infinito. Essa simplificação nos 
 permite agrupar os itens de $\Mbb$ por prefixos da forma $0^{*}1$. A razão de fazermos isto é que a probabilidade de a 
 representação binária de um inteiro ter um prefixo da forma $0^{X-1}1$ é $1 \mathbin{/} 2^{X}$, a mesma que aparece no 
-algoritmo de Morris, e portanto, essa ideia pode ser usada para estimarmos o logarítmo da quantidade de elementos 
+algoritmo de Morris, e portanto, essa ideia pode ser usada para estimarmos o logaritmo da quantidade de elementos 
 distintos em $\Mbb$ da seguinte forma: guardaremos o menor $R$ tal que ainda não tenha aparecido algum inteiro com 
 prefixo~$0^{R}1$.
 
 Dessa maneira, para um fluxo $\Mbb$ com $n$ elementos distintos, $R$ seria a estimativa para~$\lg n$. No entanto, por 
 meio do cálculo do valor esperado desse estimador, é possível concluir que $R$, na verdade, não estima $\lg n$, mas 
 $\lg \phi n$~\citep{flajolet:martin:85}. Em outras palavras, o algoritmo da $\pcounting$ produz uma estimativa com um 
-desvio $\phi$ mensurável e podemos, em vista disso, corrigí-lo.
+desvio $\phi$ mensurável e podemos, em vista disso, corrigi-lo.
 
 Contudo, mesmo corrigindo esse erro do estimador, este ainda possui uma grande variância, ou seja, a estimativa 
 devolvida pode estar muito próxima ou muito longe do valor real. Para contornar essa situação, podemos repetir várias 
@@ -175,7 +175,7 @@ Seção~\ref{sec:loglog:algorithm}, que os $k$ primeiros bits definem o lote. Lo
 informação do lote de~$x$. Sabendo disto, precisamos de um modo de recortar esses bits. 
 
 Um jeito de fazermos isto é montarmos um número tal que os primeiros \texttt{B} bits dele sejam~1 e os restantes, 0. 
-Vamos chamá-lo de $y$. Nesse sentido, $x \mathbin{\&} y$ resultará em um inteiro $z$ cuja represetação binária tem as 
+Vamos chamá-lo de $y$. Nesse sentido, $x \mathbin{\&} y$ resultará em um inteiro $z$ cuja representação binária tem as 
 seguintes propriedades: os \texttt{B} primeiros bits correspondem aos \texttt{B} bits iniciais de $x$, e os bits 
 restantes são zero. Portanto, $z$ é justamente o lote de~$x$. Falta, assim, saber como calcular $y$. Um número com as 
 mesmas características de $y$ é~$2^{\texttt{B}} - 1$, e podemos calculá-lo usando o operador $<<$, que é equivalente à 
@@ -190,7 +190,7 @@ valores esperados.
 
 Uma vez calculado o lote de um elemento~$x$, precisamos remover os \texttt{B} bits iniciais dele para que possamos 
 prosseguir com o algoritmo. Um modo de fazermos isto é utilizando o operador $>>$ que remove os bits menos 
-significativos de um inteiro. Assim, seja $w = x >> \texttt{B}$. A represetação binária de $w$ será a mesma que a de 
+significativos de um inteiro. Assim, seja $w = x >> \texttt{B}$. A representação binária de $w$ será a mesma que a de 
 $x$, só que sem os primeiros \texttt{B} bits. Logo, tomando novamente $B = 2$ e $x = 13 = 1011_2$, $w$ seria igual a 
 $1011_2 >> 2 = 11_2$.
 
