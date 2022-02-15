@@ -265,14 +265,14 @@ passar uma função de hash diferente para cada execução, a fim de produzir ve
   \li    \For cada $x$ em $\Mbb$
           \Do
   \li       $y \gets \mathbb{H}_{j}(x)$
-  \li       $\bitmap_j[\rho(y)] = 1$
+  \li       $\bitmap_j[\rho(y)] \gets 1$
           \End
       \End
   \li \For $i$ de $0$ até $m$
       \Do
-  \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
+  \li    $\mathbb{R}[j] \gets \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
       \End
-  \li $\overline{R} = \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
+  \li $\overline{R} \gets \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
   \li \Return $2^{\overline{R}} \mathbin{/} \phi$
   \End
 \end{codebox}
@@ -303,13 +303,13 @@ a seguir mostram como essa divisão é feita.
       \Do
   \li   $\texttt{lote} \gets h(x) \bmod k$
   \li   $y \gets \lfloor h(x) \mathbin{/} k \rfloor$
-  \li   $\bitmap_{\texttt{lote}}[y] = 1$                                              \label{li:pcpp:for:end}
+  \li   $\bitmap_{\texttt{lote}}[y] \gets 1$                                              \label{li:pcpp:for:end}
       \End
   \li \For $i$ de $0$ até $m$
       \Do
-  \li    $\mathbb{R}[j] = \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$             \label{li:pcpp:rmin}
+  \li    $\mathbb{R}[j] \gets \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$             \label{li:pcpp:rmin}
       \End
-  \li $\overline{R} = \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
+  \li $\overline{R} \gets \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
   \li \Return $m \ \times \ 2^{\overline{R}} \mathbin{/} \phi$
   \End
 \end{codebox}
