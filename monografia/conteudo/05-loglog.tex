@@ -49,11 +49,11 @@ exista algum elemento em~$\Mbb$ cuja representação binária tenha prefixo da f
 Para $M \geq 1$, a probabilidade de um inteiro ter um prefixo da forma~$0^{M-1}1$ é $1 \mathbin{/} 2^{M}$, ou seja, 
 esperamos que um em cada $2^{M}$ elementos tenha esse prefixo. Por outro lado, podemos inverter essa ideia, e pensar que 
 se temos um inteiro com prefixo da forma $0^{M-1}1$, então pelo menos $2^{M}$ elementos distintos devem ter aparecido. 
-Desse modo, o valor de $M$ será uma aproximação para~$\lg n$, e podemos interpretá-lo como sendo a posição indexada a 
-partir do 1 do bit ligado menos significativo de um inteiro. Uma ideia similar foi vista na 
-Seção~\ref{sec:flajolet-martin:algorithm}, em que definimos a função $\rho$ que retorna a posição indexada a partir 0 do 
-bit ligado menos significativo de um número. Em vista disso, vamos definir a função $\rho_1$ que retorna o valor 
-anterior só que indexado a partir do 1, e utilizá-la para o cálculo de~$M$.
+Desse modo, o valor de $M$ será uma aproximação para~$\lg n$, e podemos interpretá-lo como sendo a posição indexada do 1 
+do bit ligado menos significativo de um inteiro. Uma ideia similar foi vista na 
+Seção~\ref{sec:flajolet-martin:algorithm}, em que definimos a função $\rho$ que retorna a posição indexada do 0 do bit 
+ligado menos significativo de um número. Em vista disso, vamos definir a função $\rho_1$ que retorna o valor anterior só 
+que indexado do 1, e utilizá-la para o cálculo de~$M$.
 
 Para reduzirmos a variância da estimativa, dividimos o fluxo~$\Mbb$ em $m = 2^{k}$ lotes de acordo com os bits dos 
 elementos. Dessa forma, um inteiro $x = \langle b_1 b_2 {\dots} b_k {\dots} \rangle$ fará parte do lote 
@@ -202,10 +202,11 @@ atualizada a cada novo elemento inserido no método \texttt{adiciona}.
 \section{Algoritmo $\HLOG$}
 \label{sec:loglog:hyperloglog}
 
-Apesar do algoritmo~$\LOG$ visto anteriormente ter um consumo de memória pelo menos $6$ menor que a $\pcounting$, o
-desvio padrão dele, que é de $1{,}30 \mathbin{/} \sqrt{m}$, é maior. Isto pode ser um problema se tivermos que trabalhar 
-com quantidades muito grandes, da ordem de bilhões. No entanto, com uma simples modificação no algoritmo~$\logprogram$, 
-obtemos um novo algoritmo com o mesmo consumo de memória, mas desvio padrão de~$1{,}04 \mathbin{/} \sqrt{m}$.
+Apesar do algoritmo~$\LOG$ visto anteriormente ter um consumo de memória pelo menos $6$ vezes menor que a $\pcounting$, 
+o desvio padrão dele, que é de $1{,}30 \mathbin{/} \sqrt{m}$, é maior. Isto pode ser um problema se tivermos que 
+trabalhar com quantidades muito grandes, da ordem de bilhões. No entanto, com uma simples modificação no 
+algoritmo~$\logprogram$, obtemos um novo algoritmo com o mesmo consumo de memória, mas desvio padrão 
+de~$1{,}04 \mathbin{/} \sqrt{m}$.
 
 O aprimoramento do algoritmo~$\LOG$ é conhecido como $\HLOG$~\citep{hyperloglog:07}. E a modificação que deve ser feita 
 em~$\logprogram$ é substituir a média \textbf{aritmética} pela média \textbf{harmônica}. A intuição por trás desta 
@@ -215,8 +216,8 @@ distorcem tanto a estimativa. A consequência disso é que a variância do estim
 Tanto no algoritmo~$\LOG$ quanto no $\HLOG$, o valor de $M$ de cada lote é uma aproximação para $\lg n \mathbin{/} m$, e 
 conseguimos obter uma estimativa para $n \mathbin{/} m$ se elevarmos~$2$ a esse valor. Dessa forma, no algoritmo~$\LOG$, 
 a média aritmética das aproximações de $\lg n \mathbin{/} m$ é calculada. Por outro lado, no algoritmo~$\HLOG$, 
-calculamos a média harmônica das aproximações de $n \mathbin{/} m$. Podemos encontrar esse média $\overline{M}$ da 
-seguinte forma:
+calculamos a média harmônica das aproximações de $n \mathbin{/} m$. Podemos encontrar a média $\overline{M}$ da seguinte 
+forma:
 
 \[ \overline{M} = \bigg(\frac{\sum\big(2^{M[i]}\big)^{-1}}{m}\bigg)^{-1} = \frac{m}{\sum2^{-M[i]}} \]
 

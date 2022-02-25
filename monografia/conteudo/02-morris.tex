@@ -15,9 +15,9 @@ somos capazes de representar ou \textit{contar} de 0 até 255. Em geral, uma mem
 inteiros entre 0 e $2^{n} - 1$.
 
 Devido à limitação de espaço e ao desejo de eficiência, Morris projetou um algoritmo para realizar estimativas ou 
-\textit{contagens aproximadas}, uma vez que, não era possível manter as frequências \textit{exatas} dos trigramas. Com 
+\textit{contagens aproximadas}, uma vez que não era possível manter as frequências \textit{exatas} dos trigramas. Com 
 seu algoritmo, Morris trouxe aleatorização e probabilidade para o centro da discussão. E para tornarmos essa discussão 
-mais precisa, consideraremos o problema de determinar o número \textbf{aproximado} de elementos de um dado 
+mais precisa, consideraremos o problema de determinar um número \textbf{aproximado} de elementos de um dado 
 \textbf{conjunto}~$\Mbb$. 
 
 \begin{quote}
@@ -134,8 +134,8 @@ examinados é $n$. Assim, o seguinte teorema segue como consequência dessa rela
   Se $\Mbb$ é um conjunto com $n$ elementos, então $\Ebb(\morrisestimator) = n$.
 \end{theorem}
 
-Denotemos por $X_k$ como sendo o valor da variável $X$ na linha~\ref{li:morris:for:start} após $k$ elementos de~$\Mbb$ 
-terem sido examinados no laço das linhas~\ref{li:morris:for:start}--\ref{li:morris:end}. Inspecionaremos o valor de 
+Denotemos por $X_k$ o valor da variável $X$ na linha~\ref{li:morris:for:start} após $k$ elementos de~$\Mbb$ terem sido 
+examinados no laço das linhas~\ref{li:morris:for:start}--\ref{li:morris:end}. Inspecionaremos o valor de 
 $\Ebb\big(2^{X_k} - 1\big)$ para alguns valores específicos de $k$ antes de passarmos para a demonstração da relação 
 invariante.
 
@@ -243,7 +243,7 @@ invariante.
 \end{proof}  
 
 Saber que $\Ebb(\proc{Morris}(\Mbb)) = |\Mbb| = n$ não é suficiente para garantir a qualidade do estimador $2^{X} - 1$
-devolvido pelo algoritmo. É desejável que além do valor esperado ser próximo ou igual ao tamanho do conjunto $\Mbb$, que
+devolvido pelo algoritmo. É desejável que além do valor esperado ser próximo ou igual ao tamanho do conjunto $\Mbb$,
 a variância da variável aleatória \proc{Morris}($\Mbb$) não seja \textit{muito grande}. Intuitivamente, isso nos diria 
 que a probabilidade do estimador calculado ser longe do valor esperado é pequena. Então, apresentaremos o valor da 
 variância de $\proc{Morris}(\Mbb)$ no próximo teorema.
@@ -312,7 +312,7 @@ variância de $\proc{Morris}(\Mbb)$ no próximo teorema.
 
 Dessa forma, podemos estimar o erro do algoritmo \proc{Morris} a partir dos Teoremas 
 \hyperref[morris:theorem:expected_value]{do valor esperado} e \hyperref[morris:theorem:variance]{da variância}. Seja
-$\sigma$ o desvio padrão de \proc{Morris}($\Mbb$). A \hyperref[ap:chebyshev]{desigualdade de Cherbyshev} nos diz que 
+$\sigma$ o desvio padrão de \proc{Morris}($\Mbb$). A \hyperref[ap:chebyshev]{desigualdade de Chebyshev} nos diz que 
 para todo $c > 0$, 
 \begin{align}
   \Pbb(|\proc{Morris}(\Mbb) - n| \geq c\sigma) \leq \frac{1}{c^2} \ .  \label{morris:error}
@@ -394,7 +394,7 @@ uma grande variabilidade. Nesta seção, veremos uma técnica que a partir de um
 variância, obteremos um novo algoritmo com variância menor.
 
 Em nosso caso, nos apoiaremos no algoritmo \proc{Morris} para construir o algoritmo \proc{Morris++} que tem o mesmo 
-valor esperado e menor variância que \proc{Morris}. Como foi visto em \eqref{morris:error}, a desigualdade de Cherbyshev
+valor esperado e menor variância que \proc{Morris}. Como foi visto em \eqref{morris:error}, a desigualdade de Chebyshev
 limita o erro em função da variância, e assim, o erro relativo de \proc{Morris++} também será menor que o de 
 \proc{Morris}. E as demonstrações apresentadas aqui serão também baseadas nas notas de aula 
 de~\citep{LectureNotesAndoni}.
@@ -491,7 +491,7 @@ Sejam $\epsilon$ e $\gamma$ números reais tais que $0 < \gamma \leq 1$ e $\epsi
 \[ \Pbb(|\Morrispp(\Mbb,t)-n| \geq \epsilon n) \leq \gamma \ . \]
 
 Seja $\sigma_t$ o desvio padrão de $\Morrispp(\Mbb,t)$. Do teorema 
-\hyperref[morris:plus:expected_value]{do valor esperado de $\Morrispp$} junto com a desigualdade de Cherbyshev, obtemos 
+\hyperref[morris:plus:expected_value]{do valor esperado de $\Morrispp$} junto com a desigualdade de Chebyshev, obtemos 
 que
 \[ \Pbb(|\Morrispp(\Mbb,t)-n| \geq c\sigma_t) \leq \frac{1}{c^2} \ . \]
 

@@ -37,9 +37,9 @@ desenvolvido por Flajolet e Martin, conhecido como \proc{Contagem Probabilístic
 O algoritmo da \proc{Contagem Probabilística} supõe a existência uma função de hash~$h$ que associa uniformemente cada 
 elemento do fluxo $\Mbb$ para um número inteiro entre $0$ e $2^L-1$ inclusive, em que $L$ é a quantidade de bits que 
 cada hash possui. O algoritmo também utiliza a função $\rho$ que recebe um inteiro $y$ de $L$ bits e devolve a posição 
-indexada do zero do dígito~1 menos significativo da representação binária de $y$. Vamos ver exemplos dessa função para 
-$L = 4$. Temos que $\rho(12) = \rho(0011_2) = 2$ e $\rho(9) = \rho(1001_2) = 0$. Um caso particular é quando $y = 0$, e 
-nesta situação, $\rho(0) = L$. E teremos um vetor $\bitmap$ de tamanho $L + 1$ inicializado com zeros.
+do primeiro dígito~1 da representação binária de $y$. Vamos ver exemplos dessa função para $L = 4$. Temos que 
+$\rho(12) = \rho(0011_2) = 2$ e $\rho(9) = \rho(1001_2) = 0$. Um caso particular é quando $y = 0$, e nesta situação, 
+$\rho(0) = L$. E teremos um vetor $\bitmap$ de tamanho $L + 1$ inicializado com zeros.
 
 Assim, para cada $x_i$ em $\Mbb$, calcularemos um inteiro $y_i \coloneqq h(x_i)$. Em seguida, encontraremos o valor de 
 $\rho(y_i)$ e setaremos a posição $\rho(y_i)$ do vetor $\bitmap$ para $1$. Dessa forma, esse vetor guardará quais valores 
@@ -78,7 +78,7 @@ $\Ebb(R) = \lg \phi n$, $\phi = 0.77351{\dots}$ e $\sigma(R) = 1.12$.
   \li   $y \gets h(x)$
   \li   $\bitmap[\rho(y)] \gets 1$                          \label{li:pc:for:end}
       \End
-  \li $R \gets \{ \min 0 \leq i \leq L: \bitmap[i] = 0 \}$  \label{li:pc:r:def}
+  \li $R \gets \min \{ 0 \leq i \leq L: \bitmap[i] = 0 \}$  \label{li:pc:r:def}
   \li\Return $2^R \mathbin{/} \phi$
   \End
 \end{codebox}
@@ -154,12 +154,12 @@ interesse principal da demonstração é encontrar fórmulas ou estimativas para
 
 O primeiro teorema de ~\citep{flajolet:martin:85} mostra uma fórmula \textit{exata} e \textit{discreta} para $q_{n,k}$. 
 A principal ideia para encontrar essa fórmula é agrupar as palavras binárias por prefixos da forma $0^k1$. Nesse sentido, 
-defini-se $E_k = \{ x  \ | \ \rho(x) = k \}$, ou seja, $E_k$ é o conjunto de todas as palavras aleatórias com prefixos
-iguais a $0^k1$. Da mesma forma, defini-se $K_k = \{ x \ | \ \rho(x) \geq k \}$. Em seguida, as diferentes entradas 
+define-se $E_k = \{ x  \ | \ \rho(x) = k \}$, ou seja, $E_k$ é o conjunto de todas as palavras aleatórias com prefixos
+iguais a $0^k1$. Da mesma forma, define-se $K_k = \{ x \ | \ \rho(x) \geq k \}$. Em seguida, as diferentes entradas 
 $\Mbb$ com $n$ elementos distintos são representadas por um polinômio:
 \[ P_k^{(n)} = (E_0 + E_1 + \twodots + E_{k-1} + K_k)^n .\]
 
-O próximo passo é tentar expandir esse polinômio usando \textit{inclusão e exclusão}, e associar uma medida 
+O próximo passo é tentar expandir esse polinômio usando \textit{inclusão e exclusão}, e associar uma medida de
 probabilidade para $E_0, E_1, \twodots, E_{k-1}, K_k$. E a prova deste teorema termina encontrando uma relação entre 
 $q_{n,k}$ e esta expansão de polinômio.
 
@@ -178,7 +178,7 @@ que
 \[ \Ebb(R_n) = \sum_{k \geq 1} k p_{n,k} \approx \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi 
   \Big( \frac{n}{2^{k+1}} \Big) \Big] \ . \]
 
-Desse modo, defini-se a função real $F(x)$ como sendo
+Desse modo, define-se a função real $F(x)$ como sendo
 \[ F(x) =  \sum_{k \geq 1} k \Big[ \psi \Big( \frac{n}{2^k} \Big) - \psi \Big( \frac{n}{2^{k+1}} \Big) \Big] \ . \]
 
 E o Lema 1 do artigo, afirma que 
@@ -270,7 +270,7 @@ passar uma função de hash diferente para cada execução, a fim de produzir ve
       \End
   \li \For $i$ de $0$ até $m$
       \Do
-  \li    $\mathbb{R}[j] \gets \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
+  \li    $\mathbb{R}[j] \gets \min \{ 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$
       \End
   \li $\overline{R} \gets \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
   \li \Return $2^{\overline{R}} \mathbin{/} \phi$
@@ -299,7 +299,7 @@ a seguir mostram como essa divisão é feita.
   \li       $\bitmap_{j}[i] \gets 0$
           \End
       \End
-  \li \For cada $x$ em $\Mbb$                                                         \label{li:pcpp:for:start}
+  \li \For cada $x$ em $\Mbb$                                                             \label{li:pcpp:for:start}
       \Do
   \li   $\texttt{lote} \gets h(x) \bmod k$
   \li   $y \gets \lfloor h(x) \mathbin{/} k \rfloor$
@@ -307,7 +307,7 @@ a seguir mostram como essa divisão é feita.
       \End
   \li \For $i$ de $0$ até $m$
       \Do
-  \li    $\mathbb{R}[j] \gets \{ \min 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$             \label{li:pcpp:rmin}
+  \li    $\mathbb{R}[j] \gets \min \{ 0 \leq i \leq L: \bitmap_{j}[i] = 0 \}$             \label{li:pcpp:rmin}
       \End
   \li $\overline{R} \gets \sum_{j=0}^{m-1} \mathbb{R}[j] \mathbin{/} m$
   \li \Return $m \ \times \ 2^{\overline{R}} \mathbin{/} \phi$
